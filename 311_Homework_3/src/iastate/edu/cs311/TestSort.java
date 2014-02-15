@@ -8,7 +8,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 /**
  * @author aguibert
@@ -23,10 +26,18 @@ public class TestSort
         RANDOM
     }
 
-    private final int testSize = 5;
+    private final int testSize = 500;
     //private static InsertionSort<Integer> is = new InsertionSort<Integer>();
     //private static QuickSort<Integer> is = new QuickSort<Integer>();
     private static MergeSort<Integer> is = new MergeSort<Integer>();
+
+    @Rule
+    public TestName tn = new TestName();
+
+    @Before
+    public void doBefore() {
+        System.out.println("\nStarting test: " + tn.getMethodName());
+    }
 
     @Test
     public void testIncreasing() {

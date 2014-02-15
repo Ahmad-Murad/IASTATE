@@ -1,0 +1,6 @@
+## GITIGNORE file ##
+.metadata
+.metadata/
+bin/
+tmp/
+

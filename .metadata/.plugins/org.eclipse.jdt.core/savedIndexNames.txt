@@ -1,23 +1,18 @@
-INDEX VERSION 1.126+C:\Users\IBM_ADMIN\Documents\Andrew\workspace\.metadata\.plugins\org.eclipse.jdt.core
-4041092966.index
+INDEX VERSION 1.126+R:\User Folders\Documents\GitHub\IASTATE\.metadata\.plugins\org.eclipse.jdt.core
+3133528496.index
 3974580528.index
-1115467115.index
-2130518532.index
 3065916431.index
-1303381641.index
+1115467115.index
+30765161.index
+1995173708.index
+1498219845.index
+4155206848.index
 163172794.index
 4108727661.index
-1995173708.index
-1299022128.index
-802919216.index
-2390820021.index
-1697886153.index
-30765161.index
-3133528496.index
-305854171.index
-316003487.index
-1657330681.index
-4155206848.index
 3824690890.index
-1498219845.index
-3113702907.index
+254289712.index
+1112522964.index
+1299022128.index
+1697886153.index
+4041092966.index
+305854171.index

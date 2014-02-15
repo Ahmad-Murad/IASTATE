@@ -1,0 +1,32 @@
+/**
+ * 
+ */
+package iastate.edu.cs311;
+
+import java.util.ArrayList;
+
+/**
+ * @author aguibert
+ * 
+ */
+public class InsertionSort<E extends Comparable<? super E>> implements SortAnalysis<E> {
+
+    public InsertionSort() {}
+
+    @Override
+    public int analyzeSort(ArrayList<E> list) {
+        long startTime = System.currentTimeMillis();
+        doInsertionSort(list);
+        long endTime = System.currentTimeMillis();
+        return (int) (endTime - startTime);
+    }
+
+    private void doInsertionSort(ArrayList<E> list) {
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = i + 1; i < list.size(); j++)
+                if (list.get(i).compareTo(list.get(i + 1)) == 1) {
+                    // need to swap
+                }
+        }
+    }
+}

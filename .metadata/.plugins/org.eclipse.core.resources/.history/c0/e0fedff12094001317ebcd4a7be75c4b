@@ -1,0 +1,27 @@
+/**
+ * 
+ */
+package iastate.edu.cs311;
+
+import java.util.ArrayList;
+
+/**
+ * @author aguibert
+ * 
+ */
+public class QuickSort<E extends Comparable<? super E>> implements SortAnalysis<E> {
+
+    public QuickSort() {}
+
+    @Override
+    public int analyzeSort(ArrayList<E> list) {
+        long startTime = System.currentTimeMillis();
+        doQuickSort(list, 0, list.size() - 1);
+        long endTime = System.currentTimeMillis();
+        return (int) (endTime - startTime);
+    }
+
+    private void doQuickSort(ArrayList<E> list, int left, int right) {
+
+    }
+}

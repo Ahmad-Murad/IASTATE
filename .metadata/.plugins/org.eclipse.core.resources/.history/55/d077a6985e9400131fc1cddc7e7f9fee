@@ -1,0 +1,33 @@
+/**
+ * 
+ */
+package iastate.edu.cs311;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author aguibert
+ * 
+ */
+public class MergeSort<E extends Comparable<? super E>> implements SortAnalysis<E> {
+
+    public MergeSort() {}
+
+    @Override
+    public int analyzeSort(ArrayList<E> list) {
+        long startTime = System.currentTimeMillis();
+        doMergeSort(list);
+        long endTime = System.currentTimeMillis();
+        return (int) (endTime - startTime);
+    }
+
+    private void doMergeSort(ArrayList<E> list) {
+        sortSplit(list.subList(0, list.size() / 2), list.subList((list.size() / 2) + 1, list.size() - 1));
+    }
+
+    private void sortSplit(List<E> left, List<E> right)
+    {
+
+    }
+}

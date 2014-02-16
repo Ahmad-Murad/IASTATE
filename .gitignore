@@ -3,4 +3,5 @@
 .metadata/
 bin/
 tmp/
+*.class
 

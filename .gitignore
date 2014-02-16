@@ -2,6 +2,7 @@
 .metadata
 .metadata/
 bin/
+bin/*
 tmp/
 *.class
 

@@ -26,7 +26,7 @@ public class TestSort
         RANDOM
     }
 
-    private final int testSize = 500;
+    private final int testSize = 5000;
     //private static InsertionSort<Integer> is = new InsertionSort<Integer>();
     //private static QuickSort<Integer> is = new QuickSort<Integer>();
     private static MergeSort<Integer> is = new MergeSort<Integer>();
@@ -42,7 +42,7 @@ public class TestSort
     @Test
     public void testIncreasing() {
         ArrayList<Integer> increasingList = fillArr(testSize, TYPE.INCREASING);
-        long time = is.analyzeSort(increasingList);
+        is.analyzeSort(increasingList);
 
         assertTrue("Array list was not sorted:\n" + increasingList.toString(), isSorted(increasingList));
     }
@@ -50,7 +50,7 @@ public class TestSort
     @Test
     public void testDecreasing() {
         ArrayList<Integer> increasingList = fillArr(testSize, TYPE.DECREASING);
-        long time = is.analyzeSort(increasingList);
+        is.analyzeSort(increasingList);
 
         assertTrue("Array list was not sorted:\n" + increasingList.toString(), isSorted(increasingList));
     }
@@ -58,7 +58,7 @@ public class TestSort
     @Test
     public void testRandom() {
         ArrayList<Integer> increasingList = fillArr(testSize, TYPE.RANDOM);
-        long time = is.analyzeSort(increasingList);
+        is.analyzeSort(increasingList);
 
         assertTrue("Array list was not sorted:\n" + increasingList.toString(), isSorted(increasingList));
     }
@@ -66,7 +66,7 @@ public class TestSort
     @Test
     public void testSame() {
         ArrayList<Integer> increasingList = fillArr(testSize, TYPE.SAME);
-        long time = is.analyzeSort(increasingList);
+        is.analyzeSort(increasingList);
 
         assertTrue("Array list was not sorted:\n" + increasingList.toString(), isSorted(increasingList));
     }

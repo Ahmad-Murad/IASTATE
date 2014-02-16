@@ -36,4 +36,5 @@ public class InsertionSort<E extends Comparable<? super E>> implements SortAnaly
             }
         }
     }
+
 }

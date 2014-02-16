@@ -5,6 +5,6 @@ bin/
 bin/*
 tmp/
 *.class
-
-
-*.class
+311_Homework_3/bin/iastate/edu/cs311/QuickSort.class
+311_Homework_3/bin/iastate/edu/cs311/QuickSort.class
+311_Homework_3/bin/iastate/edu/cs311/TestSort.class

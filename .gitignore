@@ -3,8 +3,6 @@
 .metadata/
 bin/
 bin/*
-tmp/
 *.class
-311_Homework_3/bin/iastate/edu/cs311/QuickSort.class
-311_Homework_3/bin/iastate/edu/cs311/QuickSort.class
-311_Homework_3/bin/iastate/edu/cs311/TestSort.class
+311_Homework_3/bin
+311_Homework_3/bin/*

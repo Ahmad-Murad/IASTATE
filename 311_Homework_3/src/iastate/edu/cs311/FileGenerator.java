@@ -22,7 +22,7 @@ public class FileGenerator {
 
     public static void main(String args[])
     {
-        testAndWriteToCSV("mrg_alt");
+        testAndWriteToCSV("mrg_rnd");
     }
 
     private static void testAndWriteToCSV(String fileName) {
@@ -49,6 +49,7 @@ public class FileGenerator {
         else
             throw new RuntimeException("Bad fileName: " + fileName);
 
+        System.out.println("Using " + sorter.getClass().getSimpleName() + " with type: " + type);
         testAndWriteToCSV(fileName, sorter, type);
     }
 

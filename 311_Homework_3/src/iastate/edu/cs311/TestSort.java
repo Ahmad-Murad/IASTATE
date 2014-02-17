@@ -31,7 +31,7 @@ public class TestSort
         ALTERNATING
     }
 
-    private static final int testSize = 100;
+    private static final int testSize = 13000;
     private static InsertionSort<Integer> is = new InsertionSort<Integer>();
     private static QuickSort<Integer> qs = new QuickSort<Integer>();
     private static MergeSort<Integer> ms = new MergeSort<Integer>();
@@ -185,7 +185,7 @@ public class TestSort
         printArray(testList, "Sorted array:  ");
     }
 
-    @SuppressWarnings({ "unchecked", "unused" })
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void checkStuffNotDestroyed_QS() {
         ArrayList<Integer> testList = fillArr(testSize, TYPE.ALTERNATING);
@@ -197,9 +197,6 @@ public class TestSort
         printArray(testList, "Sorted array:  ");
         printArray(verifyList, "Verify array:  ");
 
-        if (testSize > 100)
-            return;
-
         for (int i = 0; i < testSize; i++) {
             if (!testList.contains(verifyList.get(i))) {
                 fail("TestList did NOT contain element: " + verifyList.get(i));
@@ -207,7 +204,7 @@ public class TestSort
         }
     }
 
-    @SuppressWarnings({ "unchecked", "unused" })
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void checkStuffNotDestroyed_IS() {
         ArrayList<Integer> testList = fillArr(testSize, TYPE.ALTERNATING);
@@ -219,9 +216,6 @@ public class TestSort
         printArray(testList, "Sorted array:  ");
         printArray(verifyList, "Verify array:  ");
 
-        if (testSize > 100)
-            return;
-
         for (int i = 0; i < testSize; i++) {
             if (!testList.contains(verifyList.get(i))) {
                 fail("TestList did NOT contain element: " + verifyList.get(i));
@@ -229,7 +223,7 @@ public class TestSort
         }
     }
 
-    @SuppressWarnings({ "unchecked", "unused" })
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void checkStuffNotDestroyed_MS() {
         ArrayList<Integer> testList = fillArr(testSize, TYPE.ALTERNATING);
@@ -240,9 +234,6 @@ public class TestSort
 
         printArray(testList, "Sorted array:  ");
         printArray(verifyList, "Verify array:  ");
-
-        if (testSize > 100)
-            return;
 
         for (int i = 0; i < testSize; i++) {
             if (!testList.contains(verifyList.get(i))) {

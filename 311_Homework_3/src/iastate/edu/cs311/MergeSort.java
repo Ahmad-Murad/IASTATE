@@ -54,7 +54,8 @@ public class MergeSort<E extends Comparable<? super E>> implements SortAnalysis<
         int leftIndex = 0, rightIndex = 0;
         for (int i = 0; i < merged.size(); i++)
         {
-            if (rightIndex >= right.size()
+            if (leftIndex < left.size()
+                && rightIndex >= right.size()
                 || (leftIndex < left.size() && left.get(leftIndex).compareTo(right.get(rightIndex)) != 1)) {
                 // if left[leftIndex] <= right[rightIndex], choose left
                 merged.set(i, left.get(leftIndex));

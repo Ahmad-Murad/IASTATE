@@ -23,14 +23,23 @@ public class MergeSort<E extends Comparable<? super E>> implements SortAnalysis<
     }
 
     private void doMergeSort(List<E> list) {
-        // validate input
+        // arrays of size 0 or 1 are already sorted
         if (list == null || list.size() <= 1)
             return;
 
+        // Small optimization, if there are only 2 elements, compare or swap
+        // no need to bother with splitting and using more recursion
+        if (list.size() == 2 && (list.get(0).compareTo(list.get(1)) == 1)) {
+            E temp = list.get(0);
+            list.set(0, list.get(1));
+            list.set(1, temp);
+            return;
+        }
+
         // split array in half
         int middle = list.size() / 2;
-        List<E> leftHalf = list.subList(0, middle);
-        List<E> rightHalf = list.subList(middle, list.size());
+        List<E> leftHalf = new ArrayList<E>(list.subList(0, middle));
+        List<E> rightHalf = new ArrayList<E>(list.subList(middle, list.size()));
 
         // recursively sort the two halves
         doMergeSort(leftHalf);

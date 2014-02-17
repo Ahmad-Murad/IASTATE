@@ -8,7 +8,6 @@ import iastate.edu.cs311.TestSort.TYPE;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * @author Andrew
@@ -19,10 +18,38 @@ public class FileGenerator {
     private static InsertionSort<Integer> is = new InsertionSort<Integer>();
     private static QuickSort<Integer> qs = new QuickSort<Integer>();
     private static MergeSort<Integer> ms = new MergeSort<Integer>();
+    private static final int testSize = 100000;
 
     public static void main(String args[])
     {
-        testAndWriteToCSV("mrg_sam", ms, TYPE.SAME);
+        testAndWriteToCSV("mrg_alt");
+    }
+
+    private static void testAndWriteToCSV(String fileName) {
+        SortAnalysis<Integer> sorter;
+        TYPE type;
+
+        if (fileName.contains("mrg"))
+            sorter = ms;
+        else if (fileName.contains("ins"))
+            sorter = is;
+        else if (fileName.contains("qic"))
+            sorter = qs;
+        else
+            throw new RuntimeException("Bad fileName: " + fileName);
+
+        if (fileName.contains("alt"))
+            type = TYPE.ALTERNATING;
+        else if (fileName.contains("dec"))
+            type = TYPE.DECREASING;
+        else if (fileName.contains("inc"))
+            type = TYPE.INCREASING;
+        else if (fileName.contains("rnd"))
+            type = TYPE.RANDOM;
+        else
+            throw new RuntimeException("Bad fileName: " + fileName);
+
+        testAndWriteToCSV(fileName, sorter, type);
     }
 
     private static void testAndWriteToCSV(String fileName, SortAnalysis<Integer> sorter, TYPE type)
@@ -32,75 +59,32 @@ public class FileGenerator {
 
         fileName = "output/" + fileName + ".csv";
 
-        FileWriter csv = null;
-        try {
-            csv = new FileWriter(fileName);
+        try (FileWriter csv = new FileWriter(fileName)) {
+            csv.append("Array Size, Actual\n");
 
-            csv.append("Array Size, time(ms)\n");
-
-            for (int size = 1000; size <= 100000; size += 1000) {
-                ArrayList<Integer> list = fillArr(size, type);
+            for (int size = testSize / 100; size <= testSize; size += (testSize / 100)) {
+                ArrayList<Integer> list = TestSort.fillArr(size, type);
                 long time = sorter.analyzeSort(list);
-                checkSorted(list);
+                if (!isSorted(list, size))
+                    throw new RuntimeException("Array NOT sorted");
                 csv.append(size + " , ");
                 csv.append(time + "\n");
             }
-
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
-        } finally {
-            try {
-                if (csv != null) {
-                    csv.flush();
-                    csv.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-    private static ArrayList<Integer> fillArr(int size, TYPE fillType) {
-        ArrayList<Integer> list = new ArrayList<Integer>(size);
+    public static boolean isSorted(ArrayList<Integer> list, int expSize) {
+        if (list.size() != expSize)
+            return false;
 
-        if (TYPE.INCREASING == fillType) {
-            for (int i = 0; i < size; i++)
-                list.add(new Integer(i));
-        }
-        else if (TYPE.DECREASING == fillType) {
-            for (int i = 0; i < size; i++)
-                list.add(new Integer(size - i));
-        }
-        else if (TYPE.SAME == fillType) {
-            for (int i = 0; i < size; i++)
-                list.add(new Integer(size));
-        }
-        else if (TYPE.RANDOM == fillType) {
-            Random rand = new Random(size);
-            for (int i = 0; i < size; i++) {
-                list.add(new Integer(rand.nextInt()));
-            }
-        }
-        else {
-            throw new RuntimeException("Invalid fillType of: " + fillType);
-        }
-
-        if (size < 100)
-            System.out.println("Created array: " + list.toString());
-
-        return list;
-    }
-
-    private static void checkSorted(ArrayList<Integer> list) {
         for (int i = 0; i < list.size() - 1; i++) {
             if (list.get(i).compareTo(list.get(i + 1)) == 1) {
-                if (list.size() < 200) {
-                    System.out.println("Array NOT sorted: " + list.toString());
-                }
-                throw new RuntimeException("Array NOT Sorted");
+                return false;
             }
         }
-        return;
+        return true;
     }
 }

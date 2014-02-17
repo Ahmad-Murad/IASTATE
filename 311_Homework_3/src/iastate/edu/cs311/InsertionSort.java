@@ -22,19 +22,21 @@ public class InsertionSort<E extends Comparable<? super E>> implements SortAnaly
     }
 
     private void doInsertionSort(ArrayList<E> list) {
-        for (int i = 0; i < list.size() - 1; i++) {
-            if (list.get(i).compareTo(list.get(i + 1)) == 1) {
+        for (int i = 0; i < list.size() - 1; i++)
+        {
+            // check if element to the right is > current element
+            if (list.get(i).compareTo(list.get(i + 1)) == 1)
+            {
                 E elementToInsert = list.get(i + 1);
                 // need to insert in sorted array... look backwards
-                for (int k = i; k >= 0; k--) {
-                    list.set(k + 1, list.get(k)); // slide the element 1 to the right
-                    if (elementToInsert.compareTo(list.get(k)) != 1) {
-                        // if elementToInsert <= list[k], insert element onto k
-                        list.set(k, elementToInsert);
-                    }
+                int j = i;
+                while (j >= 0 && elementToInsert.compareTo(list.get(j)) == -1) {
+                    // slide j to the right
+                    list.set(j + 1, list.get(j));
+                    j--;
                 }
+                list.set(j + 1, elementToInsert);
             }
         }
     }
-
 }

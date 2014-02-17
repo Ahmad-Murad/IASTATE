@@ -28,97 +28,62 @@ public class QuickSort<E extends Comparable<? super E>> implements SortAnalysis<
         Integer pivotInd = 0, left = pivotInd + 1, right = list.size() - 1, leftSub, rightSub;
         E pivotVal;
 
+        // Stack will be ordered: [top] right/left  ...  right/left [bottom]
         stack.push(pivotInd);
         stack.push(right);
 
         while (stack.size() > 0)
         {
+            // Grab sub-indexes off the stack in correct order (right then left)
             rightSub = stack.pop();
             leftSub = stack.pop();
 
             left = leftSub + 1;
-            pivotInd = leftSub;
             right = rightSub;
-            pivotVal = list.get(pivotInd);
 
+            // if the left boundary overlaps the right boundary, this subsection is sorted
             if (left > right)
                 continue;
 
+            // choose pivot as leftmost element in subarray
+            pivotInd = leftSub;
+            pivotVal = list.get(pivotInd);
+
             while (left < right)
             {
+                // find an element which is <= pivot
                 while ((left <= right) && (list.get(left).compareTo(pivotVal) != 1))
                     left++;
 
+                // find an element which is >= pivot
                 while ((left <= right) && (list.get(right).compareTo(pivotVal) != -1))
                     right--;
 
+                // if we have two different elements on the incorrect side of pivot, swap them
                 if (right >= left) {
-                    // need to swap
                     E temp = list.get(right);
                     list.set(right, list.get(left));
                     list.set(left, temp);
                 }
             }
 
+            // get the pivot index to the correct spot if left/right iteration terminated early
             if (pivotInd <= right && list.get(pivotInd).compareTo(list.get(right)) == 1) {
-                // need to swap
                 E temp = list.get(right);
                 list.set(right, list.get(pivotInd));
                 list.set(pivotInd, temp);
             }
 
+            // if there are additional subarrays that need to be sorted,
+            // then push the subarray endpoint indexes to the stack
             if (leftSub < right) {
                 stack.push(leftSub);
                 stack.push(right - 1);
             }
-
             if (rightSub > right) {
                 stack.push(right + 1);
                 stack.push(rightSub);
             }
         }
     }
-//    private void doQuickSort(ArrayList<E> list, int left, int right) {
-//        int pivotIndex = rand.nextInt(list.size());
-//        E pivotValue = list.get(pivotIndex);
-//        System.out.println("pivot is: " + pivotValue.toString() + " at index: " + pivotIndex);
-//        E largest1 = null;
-//        E largest2 = null;
-//
-//        while (left < right) {
-//            // select element: arr[left] >= pivot
-//            while (left < right && list.get(left).compareTo(pivotValue) == -1) {
-//                left++;
-//
-//                // check for largest and 2nd largest element
-//                if (largest1 == null || list.get(right).compareTo(largest1) >= 0) {
-//                    largest2 = largest1;
-//                    largest1 = list.get(right);
-//                }
-//                else if (largest2 == null || list.get(right).compareTo(largest2) == 1) {
-//                    largest2 = list.get(right);
-//                }
-//            }
-//
-//            // select element: arr[right] <= pivot
-//            while (left < right && list.get(right).compareTo(pivotValue) == 1) {
-//                right--;
-//            }
-//
-//            // check for largest and 2nd largest element
-//            if (largest1 == null || list.get(right).compareTo(largest1) >= 0) {
-//                largest2 = largest1;
-//                largest1 = list.get(right);
-//            }
-//            else if (largest2 == null || list.get(right).compareTo(largest2) == 1) {
-//                largest2 = list.get(right);
-//            }
-//
-//            // swap the elements
-//            E temp = list.get(left);
-//            list.set(left++, list.get(right));
-//            list.set(right--, temp);
-//        }
-//        System.out.println("Largest1: " + largest1 + " Largest2: " + largest2);
-//    }
 }

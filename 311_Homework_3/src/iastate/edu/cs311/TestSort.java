@@ -19,7 +19,7 @@ import org.junit.rules.TestName;
  */
 public class TestSort
 {
-    private enum TYPE {
+    public enum TYPE {
         INCREASING,
         DECREASING,
         SAME,
@@ -27,9 +27,9 @@ public class TestSort
     }
 
     private final int testSize = 5000;
-    //private static InsertionSort<Integer> is = new InsertionSort<Integer>();
-    //private static QuickSort<Integer> is = new QuickSort<Integer>();
-    private static MergeSort<Integer> is = new MergeSort<Integer>();
+    private static InsertionSort<Integer> is = new InsertionSort<Integer>();
+    private static QuickSort<Integer> qs = new QuickSort<Integer>();
+    private static MergeSort<Integer> ms = new MergeSort<Integer>();
 
     @Rule
     public TestName tn = new TestName();

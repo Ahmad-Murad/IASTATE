@@ -3,33 +3,34 @@ package hw6;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
 
-    private class vWrapper {
-        public final int id;
-        public boolean marked = false;
-
-        vWrapper(int id) {
-            this.id = id;
-        }
-    }
+    private final int UNMARKED = 0;
+    private final int TEMP_MARK = 1;
+    private final int PERM_MARK = 2;
 
     private ArrayList<Integer> sorted;
-    private Set<vWrapper> unmarked;
+    private Integer[] marks;
+    private Graph<V, E> g;
+    private int numUnmarked = 0;
 
     @Override
     public List<Integer> sortVertices(Graph<V, E> graph) {
+        g = graph;
         sorted = new ArrayList<Integer>();
-        for (Integer i : graph.getVertices())
-            unmarked.add(new vWrapper(i));
-
-        while (!unmarked.isEmpty()) {
-            dfs(unmarked.iterator().next());
+        marks = new Integer[graph.getVertices().size() + 1];
+        for (Integer i : graph.getVertices()) {
+            marks[i] = UNMARKED;
+            numUnmarked++;
         }
 
-        return null;
+        int i = 1;
+        while (numUnmarked > 0) {
+            dfs(i++);
+        }
+
+        return sorted;
     }
 
     @Override
@@ -44,5 +45,30 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
         return null;
     }
 
-    private void dfs(vWrapper vert) {}
+    private void dfs(Integer vert) {
+        // Check if graph has a cycle (not a DAG)
+        if (marks[vert] == TEMP_MARK) {
+            numUnmarked = 0;
+            sorted = null;
+            return;
+        }
+
+        if (marks[vert] == UNMARKED) {
+            mark(vert, TEMP_MARK); // mark vertex temporarily
+            for (Integer curEdge : g.getEdgesOf(vert)) {
+                dfs(g.getTarget(curEdge));
+            }
+            mark(vert, PERM_MARK);
+            sorted.add(0, vert);
+        }
+    }
+
+    private void mark(int toMark, int newMark) {
+        int oldMark = marks[toMark];
+        marks[toMark] = newMark;
+        if (newMark == UNMARKED && oldMark != UNMARKED)
+            numUnmarked++;
+        else if (oldMark == UNMARKED && (newMark == TEMP_MARK || newMark == PERM_MARK))
+            numUnmarked--;
+    }
 }

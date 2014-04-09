@@ -4,12 +4,12 @@ import static org.junit.Assert.fail;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class Tester {
 
@@ -47,12 +47,13 @@ public class Tester {
                 System.out.println(verticies[i - 1] + " -> " + verticies[graph.getTarget(curEdge) - 1]);
     }
 
+    @Test
     public void testTopSort() {
         JimAlgorithm<String, String> ja = new JimAlgorithm<String, String>();
-        Collection<List<Integer>> sorts = ja.generateValidSortS(graph);
-        System.out.println("Genereated " + sorts.size() + " different sortings.");
-        for (List<Integer> aSort : sorts)
-            System.out.println(aSort);
+        List<Integer> aSort = ja.sortVertices(graph);
+        System.out.println(aSort);
+        if (aSort.size() != verticies.length)
+            fail("Expected " + verticies.length + " verticies.  Instead got " + aSort.size());
     }
 
     //@Test

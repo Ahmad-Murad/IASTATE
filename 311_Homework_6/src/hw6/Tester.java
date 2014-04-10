@@ -118,21 +118,91 @@ public class Tester {
             System.out.println("Disconnected potential sort: " + getOrdering(dc, sort));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidStart() {
+        Graph<Integer, MyEdgeData> g = new MyGraph<>();
+        g.addVertex(1);
+
+        Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
+        myDij.setGraph(g);
+        myDij.setStart(2);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testNotSetGraph() {
+        Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
+        myDij.setStart(2);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testInvalidCompute1() {
+        Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
+        myDij.setGraph(new MyGraph<Integer, MyEdgeData>());
+        myDij.setWeighing(new MyWeighing());
+        myDij.computeShortestPath();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testInvalidCompute2() {
+        Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
+        Graph<Integer, MyEdgeData> g = new MyGraph<Integer, MyEdgeData>();
+        g.addVertex(1);
+        myDij.setGraph(g);
+        myDij.setStart(1);
+        myDij.computeShortestPath();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testInvalidCompute3() {
+        Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
+        Graph<Integer, MyEdgeData> g = new MyGraph<Integer, MyEdgeData>();
+        g.addVertex(1);
+        myDij.setGraph(g);
+        myDij.setWeighing(new MyWeighing());
+        myDij.computeShortestPath();
+    }
+
     @Test
     public void testDijkstra1() {
         Graph<Integer, MyEdgeData> g = new MyGraph<>();
         g.addVertex(1);
         g.addVertex(2);
         g.addVertex(3);
+        g.addVertex(4);
         g.addEdge(1, 2, new MyEdgeData(1.0, "Street 1"));
         g.addEdge(2, 3, new MyEdgeData(1.0, "Street 2"));
+        g.addEdge(1, 4, new MyEdgeData(0.1, "quick1"));
+        g.addEdge(4, 3, new MyEdgeData(0.1, "quick2"));
 
         Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
         myDij.setGraph(g);
         myDij.setStart(1);
         myDij.setWeighing(new MyWeighing());
         myDij.computeShortestPath();
-        System.out.println("Test1 dijkstra: " + myDij.getPath(3));
+        List<Integer> path = myDij.getPath(3);
+        System.out.println("Test1 dijkstra: " + path);
+    }
+
+    @Test
+    public void testDijkstra2() {
+        Graph<Integer, MyEdgeData> g = new MyGraph<>();
+        g.addVertex(1);
+        g.addVertex(2);
+        g.addVertex(3);
+        g.addVertex(4);
+        g.addEdge(1, 2, new MyEdgeData(1.0, "Street 1"));
+        g.addEdge(2, 3, new MyEdgeData(1.0, "Street 2"));
+        g.addEdge(1, 4, new MyEdgeData(0.1, "quick1"));
+        g.addEdge(4, 3, new MyEdgeData(0.1, "quick2"));
+
+        Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
+        myDij.setGraph(g);
+        myDij.setStart(1);
+        myDij.setWeighing(new MyWeighing());
+        myDij.computeShortestPath();
+        double cost = myDij.getCost(3);
+        if (cost != 0.2)
+            fail("Expected cost to be 0.2 but was: " + cost);
     }
 
     private Graph<String, MyEdgeData> parseFile(HashMap<Integer, Integer> verts) {

@@ -2,6 +2,7 @@ package hw6;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,8 +18,6 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
     @Override
     public void setGraph(Graph<V, E> graph) {
         this.graph = graph;
-        dist = new HashMap<Integer, Double>();
-        prev = new HashMap<Integer, Integer>();
     }
 
     @Override
@@ -51,20 +50,24 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
 
         mustCompute = false;
 
+        dist = new HashMap<Integer, Double>();
+        prev = new HashMap<Integer, Integer>();
+
         // Do Dijkstra's
+        Set<Integer> verticies = new HashSet<Integer>();
         for (Integer vert : graph.getVertices()) {
             dist.put(vert, Double.MAX_VALUE);
             prev.put(vert, null);
+            verticies.add(vert); // need to make a deep copy of graph verticies
         }
 
-        Set<Integer> verticies = graph.getVertices();
         dist.put(start, 0.0);
         while (!verticies.isEmpty()) {
             // Compute vertex with shortest distance
             Integer shortest = null;
             Double shortestDist = Double.MAX_VALUE;
             for (Integer vert : dist.keySet()) {
-                if (dist.get(vert) < shortestDist) {
+                if (verticies.contains(vert) && dist.get(vert) < shortestDist) {
                     shortestDist = dist.get(vert);
                     shortest = vert;
                 }
@@ -97,6 +100,7 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
 
         List<Integer> path = new ArrayList<Integer>();
         Integer previous = prev.get(endId);
+        path.add(0, endId);
         // While previous is defined
         while (previous != null && previous != Double.MAX_VALUE) {
             path.add(0, previous); // Build path, inserting at the front as we go
@@ -111,11 +115,11 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
     @Override
     public double getCost(int endId) throws IllegalArgumentException,
                     IllegalStateException {
-        double cost = 0.0;
-        for (Integer element : getPath(endId)) {
-            cost += dist.get(element);
-        }
+        if (mustCompute)
+            throw new IllegalStateException("Need to set graph and start point before getting a path.");
+        if (!graph.getVertices().contains(endId))
+            throw new IllegalArgumentException("Did not find " + endId + " in the current graph.");
 
-        return cost;
+        return dist.get(endId);
     }
 }

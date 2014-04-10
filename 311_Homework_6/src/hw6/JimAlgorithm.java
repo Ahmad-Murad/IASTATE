@@ -43,8 +43,19 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
 
     @Override
     public List<Integer> shortestPath(Graph<V, E> graph, List<Integer> locations, Weighing<E> weigh) {
-        // TODO extra credit
-        throw new UnsupportedOperationException();
+
+        Dijkstra<V, E> dij = new MyDijkstra<>();
+        dij.setGraph(graph);
+        dij.setWeighing(weigh);
+        List<Integer> shortestPath = new ArrayList<Integer>();
+        for (int i = 0; i < locations.size() - 1; i++) {
+            dij.setStart(locations.get(i)); // Set start to cur location
+            dij.computeShortestPath();
+            // Get path to next location, and add it to shortestPath result
+            shortestPath.addAll(dij.getPath(locations.get(i + 1)));
+
+        }
+        return shortestPath;
     }
 
     @Override

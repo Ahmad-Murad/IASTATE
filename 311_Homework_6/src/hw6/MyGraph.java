@@ -9,7 +9,7 @@ public class MyGraph<V, E> implements Graph<V, E> {
     private HashMap<Integer, Vertex> vertices = new HashMap<Integer, Vertex>();
     private HashMap<Integer, Edge> edges = new HashMap<Integer, Edge>();
 
-    private static int _eCount = 1;
+    private int _eCount = 1;
 
     public class Edge
     {
@@ -26,7 +26,7 @@ public class MyGraph<V, E> implements Graph<V, E> {
         }
     }
 
-    private static int _vCount = 1;
+    private int _vCount = 1;
 
     public class Vertex
     {

@@ -2,6 +2,7 @@ package hw6;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
@@ -13,7 +14,7 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
     private ArrayList<Integer> sorted;
     private Integer[] marks;
     private Graph<V, E> g;
-    private int numUnmarked = 0;
+    private int numUnmarked = 0, startSeed = 0;
 
     @Override
     public List<Integer> sortVertices(Graph<V, E> graph) {
@@ -25,32 +26,45 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             numUnmarked++;
         }
 
-        int i = 1;
-        while (numUnmarked > 0) {
-            dfs(i++);
+        Iterator<Integer> verts = graph.getVertices().iterator();
+        for (int i = 0; i < startSeed; i++)
+            verts.next();
+        try {
+            while (numUnmarked > 0) {
+                Integer cur = (verts.hasNext()) ? verts.next() : (verts = graph.getVertices().iterator()).next();
+                dfs(cur);
+            }
+        } catch (IllegalStateException ise) {
+            return null; // There was a cycle in the graph
         }
 
         return sorted;
     }
 
     @Override
-    public List<Integer> shortestPath(Graph<V, E> graph,
-                                      List<Integer> locations, Weighing<E> weigh) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Integer> shortestPath(Graph<V, E> graph, List<Integer> locations, Weighing<E> weigh) {
+        // TODO extra credit
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<List<Integer>> generateValidSortS(Graph<V, E> graph) {
-        return null;
+        // TODO not generating every type of sort
+        Collection<List<Integer>> sorts = new ArrayList<List<Integer>>();
+        startSeed = graph.getVertices().size();
+        while (startSeed > 0) {
+            List<Integer> sort = sortVertices(graph);
+            if (!sorts.contains(sort))
+                sorts.add(sort);
+            startSeed--;
+        }
+        return sorts;
     }
 
     private void dfs(Integer vert) {
         // Check if graph has a cycle (not a DAG)
         if (marks[vert] == TEMP_MARK) {
-            numUnmarked = 0;
-            sorted = null;
-            return;
+            throw new IllegalStateException("Graph had a cycle in it.");
         }
 
         if (marks[vert] == UNMARKED) {

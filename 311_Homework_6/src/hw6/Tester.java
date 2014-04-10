@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -37,7 +38,7 @@ public class Tester {
         graph.addEdge(6, 7, "F->G");
     }
 
-    //@Test
+    @Test
     public void testBasic() {
         if (graph.getVertices().size() != verticies.length)
             fail("Graph did not contain " + verticies.length + " verticies.");
@@ -51,9 +52,20 @@ public class Tester {
     public void testTopSort() {
         JimAlgorithm<String, String> ja = new JimAlgorithm<String, String>();
         List<Integer> aSort = ja.sortVertices(graph);
-        System.out.println(aSort);
+        System.out.println("Topological sort: " + getOrdering(graph, aSort));
         if (aSort.size() != verticies.length)
             fail("Expected " + verticies.length + " verticies.  Instead got " + aSort.size());
+    }
+
+    @Test
+    public void testAllTopSorts() {
+        JimAlgorithm<String, String> ja = new JimAlgorithm<String, String>();
+        Collection<List<Integer>> allSorts = ja.generateValidSortS(graph);
+        for (List<Integer> aSort : allSorts) {
+            System.out.println("Potential top. sort: " + aSort);
+            if (aSort.size() != verticies.length)
+                fail("Expected " + verticies.length + " verticies.  Instead got " + aSort.size());
+        }
     }
 
     //@Test
@@ -67,6 +79,43 @@ public class Tester {
             if (!String.valueOf(g.getAttribute(edgeID).wt).contains("92.919"))
                 fail("Weight was: " + g.getAttribute(edgeID).wt);
         }
+    }
+
+    @Test
+    public void testCycleGraph() {
+        Graph<String, String> cycle = new MyGraph<String, String>();
+        cycle.addVertex("A");
+        cycle.addVertex("B");
+        cycle.addEdge(1, 2, "A->B");
+        cycle.addEdge(2, 1, "B->A");
+        JimAlgorithm<String, String> ja = new JimAlgorithm<>();
+        List<Integer> sort = ja.sortVertices(cycle);
+        if (sort != null)
+            fail("Should have been a cycle in the graph.");
+    }
+
+    @Test
+    public void testDisconnected() {
+        Graph<String, String> dc = new MyGraph<String, String>();
+        dc.addVertex("A");
+        dc.addVertex("B");
+        dc.addVertex("C");
+        JimAlgorithm<String, String> ja = new JimAlgorithm<>();
+        List<Integer> sort = ja.sortVertices(dc);
+        System.out.println("Disconnected graph: " + getOrdering(dc, sort));
+    }
+
+    @Test
+    public void testAllSorts() {
+        Graph<String, String> dc = new MyGraph<String, String>();
+        dc.addVertex("A");
+        dc.addVertex("B");
+        dc.addVertex("C");
+        dc.addEdge(1, 2, "1->2");
+        JimAlgorithm<String, String> ja = new JimAlgorithm<>();
+        Collection<List<Integer>> sorts = ja.generateValidSortS(dc);
+        for (List<Integer> sort : sorts)
+            System.out.println("Disconnected potential sort: " + getOrdering(dc, sort));
     }
 
     private Graph<String, MyEdgeData> parseFile(HashMap<Integer, Integer> verts) {
@@ -107,5 +156,15 @@ public class Tester {
         }
 
         return g;
+    }
+
+    private String getOrdering(Graph<String, String> graph, List<Integer> sort)
+    {
+        StringBuffer sb = new StringBuffer();
+        for (Integer i : sort) {
+            sb.append(graph.getData(i));
+            sb.append(' ');
+        }
+        return sb.toString();
     }
 }

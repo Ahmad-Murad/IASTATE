@@ -11,22 +11,14 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
     private Graph<V, E> graph = null;
     private int start = -1;
     private boolean mustCompute = true;
-    private HashMap<Integer, V> vidToV = new HashMap<Integer, V>();
-    private Double dist[] = null;
-    private ArrayList<V> prev = null;
-
-    private class ivVertex {
-        double dist;
-        V pred;
-    }
+    private HashMap<Integer, Double> dist = null;
+    private HashMap<Integer, Integer> prev = null;
 
     @Override
     public void setGraph(Graph<V, E> graph) {
         this.graph = graph;
-        int size = graph.getVertices().size() + 1;
-        dist = new Double[size];
-        prev = new ArrayList<V>(size);
-        prev.set(0, null);
+        dist = new HashMap<Integer, Double>();
+        prev = new HashMap<Integer, Integer>();
     }
 
     @Override
@@ -61,12 +53,37 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
 
         // Do Dijkstra's
         for (Integer vert : graph.getVertices()) {
-            dist[vert] = Double.MAX_VALUE;
-            prev.set(vert, null);
+            dist.put(vert, Double.MAX_VALUE);
+            prev.put(vert, null);
         }
 
         Set<Integer> verticies = graph.getVertices();
-        dist[start] = 0.0; // TODO LEFTOFF implementing dijikstra's from wikipedia
+        dist.put(start, 0.0);
+        while (!verticies.isEmpty()) {
+            // Compute vertex with shortest distance
+            Integer shortest = null;
+            Double shortestDist = Double.MAX_VALUE;
+            for (Integer vert : dist.keySet()) {
+                if (dist.get(vert) < shortestDist) {
+                    shortestDist = dist.get(vert);
+                    shortest = vert;
+                }
+            }
+            // Remove this node from the set
+            verticies.remove(shortest);
+            // If vertex is uninitialized, discontinue this iteration
+            if (dist.get(shortest) == Double.MAX_VALUE)
+                break;
+            // Find the next closest neighbor
+            for (Integer neighborEdge : graph.getEdgesOf(shortest)) {
+                Integer neighbor = graph.getTarget(neighborEdge);
+                Double pathLen = weigher.weight(graph.getAttribute(neighborEdge)) + dist.get(shortest);
+                if (pathLen < dist.get(neighbor)) {
+                    dist.put(neighbor, pathLen);
+                    prev.put(neighbor, shortest);
+                }
+            }
+        }
     }
 
     @Override
@@ -77,14 +94,28 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
             throw new IllegalStateException("Need to set graph and start point before getting a path.");
         if (!graph.getVertices().contains(endId))
             throw new IllegalArgumentException("Did not find " + endId + " in the current graph.");
-        // TODO Auto-generated method stub
-        return null;
+
+        List<Integer> path = new ArrayList<Integer>();
+        Integer previous = prev.get(endId);
+        // While previous is defined
+        while (previous != null && previous != Double.MAX_VALUE) {
+            path.add(0, previous); // Build path, inserting at the front as we go
+            previous = prev.get(previous);
+        }
+        if (path.get(0) != start)
+            throw new RuntimeException("Path did not lead back to starting node (" + start + ").  Only got to " + path.get(0));
+
+        return path;
     }
 
     @Override
     public double getCost(int endId) throws IllegalArgumentException,
                     IllegalStateException {
-        // TODO Auto-generated method stub
-        return 0;
+        double cost = 0.0;
+        for (Integer element : getPath(endId)) {
+            cost += dist.get(element);
+        }
+
+        return cost;
     }
 }

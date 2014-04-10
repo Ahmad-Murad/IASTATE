@@ -118,6 +118,23 @@ public class Tester {
             System.out.println("Disconnected potential sort: " + getOrdering(dc, sort));
     }
 
+    @Test
+    public void testDijkstra1() {
+        Graph<Integer, MyEdgeData> g = new MyGraph<>();
+        g.addVertex(1);
+        g.addVertex(2);
+        g.addVertex(3);
+        g.addEdge(1, 2, new MyEdgeData(1.0, "Street 1"));
+        g.addEdge(2, 3, new MyEdgeData(1.0, "Street 2"));
+
+        Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
+        myDij.setGraph(g);
+        myDij.setStart(1);
+        myDij.setWeighing(new MyWeighing());
+        myDij.computeShortestPath();
+        System.out.println("Test1 dijkstra: " + myDij.getPath(3));
+    }
+
     private Graph<String, MyEdgeData> parseFile(HashMap<Integer, Integer> verts) {
         Graph<String, MyEdgeData> g = new MyGraph<String, MyEdgeData>();
 

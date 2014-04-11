@@ -52,8 +52,9 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             dij.setStart(locations.get(i)); // Set start to cur location
             dij.computeShortestPath();
             // Get path to next location, and add it to shortestPath result
+            if (shortestPath.size() > 0)
+                shortestPath.remove(shortestPath.size() - 1);
             shortestPath.addAll(dij.getPath(locations.get(i + 1)));
-
         }
         return shortestPath;
     }

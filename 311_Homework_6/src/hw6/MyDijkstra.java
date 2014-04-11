@@ -56,18 +56,18 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
         // Do Dijkstra's
         Set<Integer> verticies = new HashSet<Integer>();
         for (Integer vert : graph.getVertices()) {
-            dist.put(vert, Double.MAX_VALUE);
+            dist.put(vert, Double.POSITIVE_INFINITY);
             prev.put(vert, null);
             verticies.add(vert); // need to make a deep copy of graph verticies
         }
-
         dist.put(start, 0.0);
+
         while (!verticies.isEmpty()) {
             // Compute vertex with shortest distance
             Integer shortest = null;
-            Double shortestDist = Double.MAX_VALUE;
-            for (Integer vert : dist.keySet()) {
-                if (verticies.contains(vert) && dist.get(vert) < shortestDist) {
+            Double shortestDist = Double.POSITIVE_INFINITY;
+            for (Integer vert : verticies) {
+                if (dist.get(vert) < shortestDist) {
                     shortestDist = dist.get(vert);
                     shortest = vert;
                 }
@@ -75,7 +75,7 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
             // Remove this node from the set
             verticies.remove(shortest);
             // If vertex is uninitialized, discontinue this iteration
-            if (dist.get(shortest) == Double.MAX_VALUE)
+            if (shortest == null)//dist.get(shortest) == Double.POSITIVE_INFINITY)
                 break;
             // Find the next closest neighbor
             for (Integer neighborEdge : graph.getEdgesOf(shortest)) {

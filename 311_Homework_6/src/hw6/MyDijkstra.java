@@ -73,9 +73,11 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
                 }
             }
 
-            // If vertex is uninitialized, there are no neighbors, skip to next iteration
-            if (shortest == null)
+            // If vertex is uninitialized, there are no neighbors and this is a disconnected graph
+            if (shortest == null) {
+                System.out.println("WARNING: this is not a strongly connected graph.");
                 return;
+            }
 
             // Remove this node from the set
             verticies.remove(shortest);

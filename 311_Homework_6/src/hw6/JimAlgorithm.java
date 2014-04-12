@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
 
@@ -22,13 +23,18 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
 
     private static HashMap<Integer, Integer> fileToGraph = new HashMap<>();
     private static HashMap<Integer, Integer> graphToFile = new HashMap<>();
+    public static double mostRecentCost = 0.0; // For JUnit testing purposes
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
+
+        String file = "files/newAmes.txt";
+        if (args != null && args.length == 1)
+            file = args[0];
 
         JimAlgorithm<Integer, MyEdgeData> ja = new JimAlgorithm<>();
 
         // Construct graph of graph file
-        Graph<Integer, MyEdgeData> graph = parseFile();
+        Graph<Integer, MyEdgeData> graph = parseFile(file);
 
         // Construct a DAG of the ingredient dependencies 
         List<Integer> ingList_graphIDs = getIngredientOrdering(graph);
@@ -79,6 +85,7 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
         dij.setGraph(graph);
         dij.setWeighing(weigh);
         List<Integer> shortestPath = new ArrayList<Integer>();
+        double cost = 0.0;
         for (int i = 0; i < locations.size() - 1; i++) {
             dij.setStart(locations.get(i)); // Set start to cur location
             dij.computeShortestPath();
@@ -86,9 +93,9 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             if (shortestPath.size() > 0)
                 shortestPath.remove(shortestPath.size() - 1);
             shortestPath.addAll(dij.getPath(locations.get(i + 1)));
+            cost += dij.getCost(locations.get(i + 1));
         }
-
-        double cost = dij.getCost(locations.get(locations.size() - 1));
+        JimAlgorithm.mostRecentCost = cost;
         System.out.println("Cost for this path is: " + cost);
 
         return shortestPath;
@@ -97,6 +104,8 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
     @Override
     public Collection<List<Integer>> generateValidSortS(Graph<V, E> graph) {
         // TODO not generating every type of sort
+        TreeSet<Integer> tree = new TreeSet<>();
+
         Collection<List<Integer>> sorts = new ArrayList<List<Integer>>();
         startSeed = graph.getVertices().size();
         while (startSeed > 0) {
@@ -133,10 +142,10 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             numUnmarked--;
     }
 
-    private static Graph<Integer, MyEdgeData> parseFile() {
+    private static Graph<Integer, MyEdgeData> parseFile(String file) {
         Graph<Integer, MyEdgeData> g = new MyGraph<>();
 
-        try (Scanner s = new Scanner(new FileReader("files/ames.txt")))
+        try (Scanner s = new Scanner(new FileReader(file)))
         {
             // Parse verticies
             if (!"VERTICES:".equalsIgnoreCase(s.next()))

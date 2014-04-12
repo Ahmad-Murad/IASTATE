@@ -11,8 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 public class Tester {
 
@@ -20,6 +24,19 @@ public class Tester {
     static String[] verticies = { "A", "B", "C", "D", "E", "F", "G" };
     private static HashMap<Integer, Integer> fileToGraph = new HashMap<>();
     private static HashMap<Integer, Integer> graphToFile = new HashMap<>();
+
+    @Rule
+    public TestName tn = new TestName();
+
+    @Before
+    public void beforeEach() {
+        System.out.println("----> Starting " + tn.getMethodName());
+    }
+
+    @After
+    public void afterEach() {
+        System.out.println("<---- Ending   " + tn.getMethodName());
+    }
 
     @BeforeClass
     public static void beforeAll() {
@@ -46,10 +63,6 @@ public class Tester {
     public void testBasic() {
         if (ingredients.getVertices().size() != verticies.length)
             fail("Graph did not contain " + verticies.length + " verticies.");
-
-        for (int i = 0; i < verticies.length; i++)
-            for (Integer curEdge : ingredients.getEdgesOf(i))
-                System.out.println(verticies[i] + " -> " + verticies[ingredients.getTarget(curEdge)]);
     }
 
     @Test
@@ -61,51 +74,37 @@ public class Tester {
             fail("Expected " + verticies.length + " verticies.  Instead got " + aSort.size());
     }
 
-    //@Test
+    @Test
     public void testAllTopSorts() {
-        JimAlgorithm<String, String> ja = new JimAlgorithm<String, String>();
+        Graph<String, String> dc = new MyGraph<String, String>();
+        dc.addVertex("A");
+        dc.addVertex("B");
+        dc.addVertex("C");
+        JimAlgorithm<String, String> ja = new JimAlgorithm<>();
+
         Collection<List<Integer>> allSorts = ja.generateValidSortS(ingredients);
         for (List<Integer> aSort : allSorts) {
             System.out.println("Potential top. sort: " + aSort);
             if (aSort.size() != verticies.length)
                 fail("Expected " + verticies.length + " verticies.  Instead got " + aSort.size());
         }
+
+        if (allSorts.size() != 6)
+            fail("Expected to get 6 combinations of sorts.");
     }
 
     @Test
-    public void testJim() {
-        // Map from ames.txt ID -> graph ID
-        HashMap<Integer, Integer> vs = new HashMap<Integer, Integer>();
-        Graph<Integer, MyEdgeData> g = parseFile();
+    public void testJim1() {
+        JimAlgorithm.main("files/ames.txt");
+        if (JimAlgorithm.mostRecentCost != 25503.013)
+            fail("Expected cost to be 25503.013 but was: " + JimAlgorithm.mostRecentCost);
+    }
 
-        //                A     B    C     D     E     F     Jim   Me
-        int[] ingreds = { 1055, 371, 2874, 2351, 2956, 1171, 1208, 2893 };
-        Graph<Integer, MyEdgeData> ingredGraph = new MyGraph<>();
-        for (int i : ingreds)
-            ingredGraph.addVertex(i);
-        ingredGraph.addEdge(0, 2, new MyEdgeData(0.0, "A->C"));
-        ingredGraph.addEdge(0, 5, new MyEdgeData(0.0, "A->F"));
-        ingredGraph.addEdge(1, 2, new MyEdgeData(0.0, "B->C"));
-        ingredGraph.addEdge(1, 3, new MyEdgeData(0.0, "B->D"));
-        ingredGraph.addEdge(2, 3, new MyEdgeData(0.0, "C->D"));
-        ingredGraph.addEdge(2, 4, new MyEdgeData(0.0, "C->E"));
-        ingredGraph.addEdge(5, 2, new MyEdgeData(0.0, "F->C"));
-        ingredGraph.addEdge(5, 4, new MyEdgeData(0.0, "F->E"));
-        ingredGraph.addEdge(0, 6, new MyEdgeData(0.0, "A->Jim"));
-        ingredGraph.addEdge(1, 6, new MyEdgeData(0.0, "B->Jim"));
-        ingredGraph.addEdge(2, 6, new MyEdgeData(0.0, "C->Jim"));
-        ingredGraph.addEdge(3, 6, new MyEdgeData(0.0, "D->Jim"));
-        ingredGraph.addEdge(4, 6, new MyEdgeData(0.0, "E->Jim"));
-        ingredGraph.addEdge(5, 6, new MyEdgeData(0.0, "F->Jim"));
-        List<Integer> locs = new JimAlgorithm<String, String>().sortVertices(ingredients);
-        List<Integer> realLocs = new ArrayList<Integer>();
-        for (int i : locs)
-            realLocs.add(ingreds[i]);
-        System.out.println(" Got sorting of: " + realLocs);
-        JimAlgorithm<Integer, MyEdgeData> jim = new JimAlgorithm<>();
-        Weighing<MyEdgeData> weigh = new MyWeighing();
-        List<Integer> path = jim.shortestPath(g, realLocs, weigh);
-        System.out.println("GOT FINAL JIM PATH: " + path);
+    @Test
+    public void testJim2() {
+        JimAlgorithm.main("files/newAmes.txt");
+        if (JimAlgorithm.mostRecentCost != 25503.013)
+            fail("Expected cost to be 25503.013 but was: " + JimAlgorithm.mostRecentCost);
     }
 
     @Test
@@ -122,7 +121,9 @@ public class Tester {
         g.addEdge(3, 4, new MyEdgeData(2.0, null));
         g.addEdge(4, 5, new MyEdgeData(1.0, null));
         List<Integer> path = jim.shortestPath(g, locs, weigh);
-        System.out.println("Shortest path jim1: " + path);
+        if (7.0 != JimAlgorithm.mostRecentCost)
+            fail("Cost should be 7.0 but was: " + JimAlgorithm.mostRecentCost);
+        System.out.println("Shortest path: " + path);
     }
 
     @Test
@@ -175,13 +176,15 @@ public class Tester {
     }
 
     @Test
-    public void testDisconnected() {
+    public void testDisconnected1() {
         Graph<String, String> dc = new MyGraph<String, String>();
         dc.addVertex("A");
         dc.addVertex("B");
         dc.addVertex("C");
         JimAlgorithm<String, String> ja = new JimAlgorithm<>();
         List<Integer> sort = ja.sortVertices(dc);
+        if (sort == null || sort.size() != 3)
+            fail("Verticies not sorted correctly.");
         System.out.println("Disconnected graph: " + getOrdering(dc, sort));
     }
 

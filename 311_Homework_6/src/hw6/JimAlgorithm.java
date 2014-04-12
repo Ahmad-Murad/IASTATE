@@ -20,7 +20,7 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
     public List<Integer> sortVertices(Graph<V, E> graph) {
         g = graph;
         sorted = new ArrayList<Integer>();
-        marks = new Integer[graph.getVertices().size() + 1];
+        marks = new Integer[graph.getVertices().size()];
         for (Integer i : graph.getVertices()) {
             marks[i] = UNMARKED;
             numUnmarked++;

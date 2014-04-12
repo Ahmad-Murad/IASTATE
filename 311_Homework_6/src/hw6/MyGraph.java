@@ -9,7 +9,7 @@ public class MyGraph<V, E> implements Graph<V, E> {
     private HashMap<Integer, Vertex> vertices = new HashMap<Integer, Vertex>();
     private HashMap<Integer, Edge> edges = new HashMap<Integer, Edge>();
 
-    private int _eCount = 1;
+    private int _eCount = 0;
 
     public class Edge
     {
@@ -24,9 +24,14 @@ public class MyGraph<V, E> implements Graph<V, E> {
             this.attr = attribute;
             this.id = _eCount++;
         }
+
+        @Override
+        public String toString() {
+            return this.attr.toString();
+        }
     }
 
-    private int _vCount = 1;
+    private int _vCount = 0;
 
     public class Vertex
     {
@@ -37,6 +42,11 @@ public class MyGraph<V, E> implements Graph<V, E> {
         Vertex(V node) {
             this.vert = node;
             this.id = _vCount++;
+        }
+
+        @Override
+        public String toString() {
+            return this.vert.toString();
         }
     }
 
@@ -60,8 +70,6 @@ public class MyGraph<V, E> implements Graph<V, E> {
         // Create new edge and add to edge set
         Edge newEdge = new Edge(srcID, targetID, attr);
         edges.put(newEdge.id, newEdge);
-
-        // Give source vertex ref to new outgoing edge
         vertices.get(srcID).edges.add(newEdge.id);
 
         return newEdge.id;
@@ -127,5 +135,24 @@ public class MyGraph<V, E> implements Graph<V, E> {
     private void checkVertex(int vertexId) throws IllegalArgumentException {
         if (!vertices.containsKey(Integer.valueOf(vertexId)))
             throw new IllegalArgumentException("Vertex id " + vertexId + " was not found in this graph.");
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer("Verticies:");
+        for (int i : this.getVertices()) {
+            sb.append('\n');
+            sb.append(this.getData(i));
+            sb.append(" -> ");
+            sb.append(i);
+        }
+//        sb.append("Edges:");
+//        for (int i : this.getEdges()) {
+//            sb.append('\n');
+//            sb.append(this.getAttribute(i));
+//            sb.append(" -> ");
+//            sb.append(i);
+//        }
+        return sb.toString();
     }
 }

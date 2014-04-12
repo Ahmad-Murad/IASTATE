@@ -72,11 +72,14 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
                     shortest = vert;
                 }
             }
+
+            // If vertex is uninitialized, there are no neighbors, skip to next iteration
+            if (shortest == null)
+                return;
+
             // Remove this node from the set
             verticies.remove(shortest);
-            // If vertex is uninitialized, discontinue this iteration
-            if (shortest == null)//dist.get(shortest) == Double.POSITIVE_INFINITY)
-                break;
+
             // Find the next closest neighbor
             for (Integer neighborEdge : graph.getEdgesOf(shortest)) {
                 Integer neighbor = graph.getTarget(neighborEdge);
@@ -107,7 +110,7 @@ public class MyDijkstra<V, E> implements Dijkstra<V, E> {
             previous = prev.get(previous);
         }
         if (path.get(0) != start)
-            throw new RuntimeException("Path did not lead back to starting node (" + start + ").  Only got to " + path.get(0));
+            throw new RuntimeException("Path did not lead back to starting node (" + graph.getData(start) + ").  Only got to " + graph.getData(path.get(0)));
 
         return path;
     }

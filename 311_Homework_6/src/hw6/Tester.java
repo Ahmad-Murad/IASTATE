@@ -18,26 +18,28 @@ public class Tester {
 
     static Graph<String, String> ingredients = new MyGraph<String, String>();
     static String[] verticies = { "A", "B", "C", "D", "E", "F", "G" };
+    private static HashMap<Integer, Integer> fileToGraph = new HashMap<>();
+    private static HashMap<Integer, Integer> graphToFile = new HashMap<>();
 
     @BeforeClass
     public static void beforeAll() {
         for (String vert : verticies)
             ingredients.addVertex(vert);
 
-        ingredients.addEdge(1, 3, "A->C");
-        ingredients.addEdge(1, 6, "A->F");
-        ingredients.addEdge(2, 3, "B->C");
-        ingredients.addEdge(2, 4, "B->D");
-        ingredients.addEdge(3, 4, "C->D");
-        ingredients.addEdge(3, 5, "C->E");
-        ingredients.addEdge(6, 3, "F->C");
-        ingredients.addEdge(6, 5, "F->E");
-        ingredients.addEdge(1, 7, "A->G");
-        ingredients.addEdge(2, 7, "B->G");
-        ingredients.addEdge(3, 7, "C->G");
-        ingredients.addEdge(4, 7, "D->G");
-        ingredients.addEdge(5, 7, "E->G");
-        ingredients.addEdge(6, 7, "F->G");
+        ingredients.addEdge(0, 2, "A->C");
+        ingredients.addEdge(0, 5, "A->F");
+        ingredients.addEdge(1, 2, "B->C");
+        ingredients.addEdge(1, 3, "B->D");
+        ingredients.addEdge(2, 3, "C->D");
+        ingredients.addEdge(2, 4, "C->E");
+        ingredients.addEdge(5, 2, "F->C");
+        ingredients.addEdge(5, 4, "F->E");
+        ingredients.addEdge(0, 6, "A->G");
+        ingredients.addEdge(1, 6, "B->G");
+        ingredients.addEdge(2, 6, "C->G");
+        ingredients.addEdge(3, 6, "D->G");
+        ingredients.addEdge(4, 6, "E->G");
+        ingredients.addEdge(5, 6, "F->G");
     }
 
     @Test
@@ -45,9 +47,9 @@ public class Tester {
         if (ingredients.getVertices().size() != verticies.length)
             fail("Graph did not contain " + verticies.length + " verticies.");
 
-        for (int i = 1; i <= verticies.length; i++)
+        for (int i = 0; i < verticies.length; i++)
             for (Integer curEdge : ingredients.getEdgesOf(i))
-                System.out.println(verticies[i - 1] + " -> " + verticies[ingredients.getTarget(curEdge) - 1]);
+                System.out.println(verticies[i] + " -> " + verticies[ingredients.getTarget(curEdge)]);
     }
 
     @Test
@@ -59,7 +61,7 @@ public class Tester {
             fail("Expected " + verticies.length + " verticies.  Instead got " + aSort.size());
     }
 
-    @Test
+    //@Test
     public void testAllTopSorts() {
         JimAlgorithm<String, String> ja = new JimAlgorithm<String, String>();
         Collection<List<Integer>> allSorts = ja.generateValidSortS(ingredients);
@@ -74,60 +76,51 @@ public class Tester {
     public void testJim() {
         // Map from ames.txt ID -> graph ID
         HashMap<Integer, Integer> vs = new HashMap<Integer, Integer>();
-        Graph<String, MyEdgeData> g = parseFile(vs);
-        if (g.getEdgesOf(vs.get(2893)).size() != 1)
-            fail("Size was: " + g.getEdgesOf(2893).size());
-        for (Integer edgeID : g.getEdgesOf(vs.get(2893))) {
-            if (!String.valueOf(g.getAttribute(edgeID).wt).contains("92.919"))
-                fail("Weight was: " + g.getAttribute(edgeID).wt);
-        }
+        Graph<Integer, MyEdgeData> g = parseFile();
 
         //                A     B    C     D     E     F     Jim   Me
         int[] ingreds = { 1055, 371, 2874, 2351, 2956, 1171, 1208, 2893 };
         Graph<Integer, MyEdgeData> ingredGraph = new MyGraph<>();
         for (int i : ingreds)
             ingredGraph.addVertex(i);
-        ingredGraph.addEdge(1, 3, new MyEdgeData(0.0, "A->C"));
-        ingredGraph.addEdge(1, 6, new MyEdgeData(0.0, "A->F"));
-        ingredGraph.addEdge(2, 3, new MyEdgeData(0.0, "B->C"));
-        ingredGraph.addEdge(2, 4, new MyEdgeData(0.0, "B->D"));
-        ingredGraph.addEdge(3, 4, new MyEdgeData(0.0, "C->D"));
-        ingredGraph.addEdge(3, 5, new MyEdgeData(0.0, "C->E"));
-        ingredGraph.addEdge(6, 3, new MyEdgeData(0.0, "F->C"));
-        ingredGraph.addEdge(6, 5, new MyEdgeData(0.0, "F->E"));
-        ingredGraph.addEdge(1, 7, new MyEdgeData(0.0, "A->Jim"));
-        ingredGraph.addEdge(2, 7, new MyEdgeData(0.0, "B->Jim"));
-        ingredGraph.addEdge(3, 7, new MyEdgeData(0.0, "C->Jim"));
-        ingredGraph.addEdge(4, 7, new MyEdgeData(0.0, "D->Jim"));
-        ingredGraph.addEdge(5, 7, new MyEdgeData(0.0, "E->Jim"));
-        ingredGraph.addEdge(6, 7, new MyEdgeData(0.0, "F->Jim"));
+        ingredGraph.addEdge(0, 2, new MyEdgeData(0.0, "A->C"));
+        ingredGraph.addEdge(0, 5, new MyEdgeData(0.0, "A->F"));
+        ingredGraph.addEdge(1, 2, new MyEdgeData(0.0, "B->C"));
+        ingredGraph.addEdge(1, 3, new MyEdgeData(0.0, "B->D"));
+        ingredGraph.addEdge(2, 3, new MyEdgeData(0.0, "C->D"));
+        ingredGraph.addEdge(2, 4, new MyEdgeData(0.0, "C->E"));
+        ingredGraph.addEdge(5, 2, new MyEdgeData(0.0, "F->C"));
+        ingredGraph.addEdge(5, 4, new MyEdgeData(0.0, "F->E"));
+        ingredGraph.addEdge(0, 6, new MyEdgeData(0.0, "A->Jim"));
+        ingredGraph.addEdge(1, 6, new MyEdgeData(0.0, "B->Jim"));
+        ingredGraph.addEdge(2, 6, new MyEdgeData(0.0, "C->Jim"));
+        ingredGraph.addEdge(3, 6, new MyEdgeData(0.0, "D->Jim"));
+        ingredGraph.addEdge(4, 6, new MyEdgeData(0.0, "E->Jim"));
+        ingredGraph.addEdge(5, 6, new MyEdgeData(0.0, "F->Jim"));
         List<Integer> locs = new JimAlgorithm<String, String>().sortVertices(ingredients);
         List<Integer> realLocs = new ArrayList<Integer>();
         for (int i : locs)
-            realLocs.add(ingreds[i - 1]);
+            realLocs.add(ingreds[i]);
         System.out.println(" Got sorting of: " + realLocs);
-        JimAlgorithm<String, MyEdgeData> jim = new JimAlgorithm<>();
+        JimAlgorithm<Integer, MyEdgeData> jim = new JimAlgorithm<>();
         Weighing<MyEdgeData> weigh = new MyWeighing();
         List<Integer> path = jim.shortestPath(g, realLocs, weigh);
         System.out.println("GOT FINAL JIM PATH: " + path);
-        for (int i : path)
-            System.out.print(g.getData(i));
-        System.out.println();
     }
 
     @Test
     public void testShortestPathSimple1() {
         JimAlgorithm<Integer, MyEdgeData> jim = new JimAlgorithm<>();
         Weighing<MyEdgeData> weigh = new MyWeighing();
-        List<Integer> locs = new ArrayList<Integer>(Arrays.asList(1, 3, 6));
+        List<Integer> locs = new ArrayList<Integer>(Arrays.asList(0, 2, 5));
         Graph<Integer, MyEdgeData> g = new MyGraph<>();
-        for (int i = 1; i <= 6; i++)
+        for (int i = 0; i < 6; i++)
             g.addVertex(i);
+        g.addEdge(0, 1, new MyEdgeData(1.0, null));
         g.addEdge(1, 2, new MyEdgeData(1.0, null));
-        g.addEdge(2, 3, new MyEdgeData(1.0, null));
+        g.addEdge(2, 3, new MyEdgeData(2.0, null));
         g.addEdge(3, 4, new MyEdgeData(2.0, null));
-        g.addEdge(4, 5, new MyEdgeData(2.0, null));
-        g.addEdge(3, 6, new MyEdgeData(1.0, null));
+        g.addEdge(4, 5, new MyEdgeData(1.0, null));
         List<Integer> path = jim.shortestPath(g, locs, weigh);
         System.out.println("Shortest path jim1: " + path);
     }
@@ -136,18 +129,36 @@ public class Tester {
     public void testShortestPathSimple2() {
         JimAlgorithm<Integer, MyEdgeData> jim = new JimAlgorithm<>();
         Weighing<MyEdgeData> weigh = new MyWeighing();
-        List<Integer> locs = new ArrayList<Integer>(Arrays.asList(1, 3, 6));
+        List<Integer> locs = new ArrayList<Integer>(Arrays.asList(0, 2, 5));
         Graph<Integer, MyEdgeData> g = new MyGraph<>();
-        for (int i = 1; i <= 6; i++)
+        for (int i = 0; i < 6; i++)
             g.addVertex(i);
+        g.addEdge(0, 1, new MyEdgeData(1.0, null));
         g.addEdge(1, 2, new MyEdgeData(1.0, null));
         g.addEdge(2, 3, new MyEdgeData(1.0, null));
-        g.addEdge(3, 4, new MyEdgeData(1.0, null));
-        g.addEdge(1, 3, new MyEdgeData(50.0, null));
-        g.addEdge(4, 5, new MyEdgeData(2.0, null));
-        g.addEdge(3, 6, new MyEdgeData(50.0, null));
+        g.addEdge(0, 2, new MyEdgeData(50.0, null));
+        g.addEdge(3, 4, new MyEdgeData(2.0, null));
+        g.addEdge(2, 5, new MyEdgeData(50.0, null));
         List<Integer> path = jim.shortestPath(g, locs, weigh);
         System.out.println("Shortest path jim2: " + path);
+    }
+
+    @Test
+    public void testShortestPath1() {
+        JimAlgorithm<Integer, MyEdgeData> jim = new JimAlgorithm<>();
+        Weighing<MyEdgeData> weigh = new MyWeighing();
+        List<Integer> locs = new ArrayList<Integer>(Arrays.asList(0, 2, 5));
+        Graph<Integer, MyEdgeData> g = new MyGraph<>();
+        for (int i = 0; i < 6; i++)
+            g.addVertex(i);
+        g.addEdge(0, 1, new MyEdgeData(1.0, null));
+        g.addEdge(1, 2, new MyEdgeData(1.0, null));
+        g.addEdge(2, 3, new MyEdgeData(1.0, null));
+        g.addEdge(0, 2, new MyEdgeData(50.0, null));
+        g.addEdge(3, 4, new MyEdgeData(2.0, null));
+        g.addEdge(2, 5, new MyEdgeData(50.0, null));
+        List<Integer> path = jim.shortestPath(g, locs, weigh);
+        System.out.println("Shortest path jim3: " + path);
     }
 
     @Test
@@ -155,8 +166,8 @@ public class Tester {
         Graph<String, String> cycle = new MyGraph<String, String>();
         cycle.addVertex("A");
         cycle.addVertex("B");
-        cycle.addEdge(1, 2, "A->B");
-        cycle.addEdge(2, 1, "B->A");
+        cycle.addEdge(0, 1, "A->B");
+        cycle.addEdge(1, 0, "B->A");
         JimAlgorithm<String, String> ja = new JimAlgorithm<>();
         List<Integer> sort = ja.sortVertices(cycle);
         if (sort != null)
@@ -180,7 +191,7 @@ public class Tester {
         dc.addVertex("A");
         dc.addVertex("B");
         dc.addVertex("C");
-        dc.addEdge(1, 2, "1->2");
+        dc.addEdge(0, 1, "0->1");
         JimAlgorithm<String, String> ja = new JimAlgorithm<>();
         Collection<List<Integer>> sorts = ja.generateValidSortS(dc);
         for (List<Integer> sort : sorts)
@@ -190,17 +201,17 @@ public class Tester {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidStart() {
         Graph<Integer, MyEdgeData> g = new MyGraph<>();
-        g.addVertex(1);
+        g.addVertex(0);
 
         Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
         myDij.setGraph(g);
-        myDij.setStart(2);
+        myDij.setStart(1);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testNotSetGraph() {
         Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
-        myDij.setStart(2);
+        myDij.setStart(1);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -215,9 +226,9 @@ public class Tester {
     public void testInvalidCompute2() {
         Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
         Graph<Integer, MyEdgeData> g = new MyGraph<Integer, MyEdgeData>();
-        g.addVertex(1);
+        g.addVertex(0);
         myDij.setGraph(g);
-        myDij.setStart(1);
+        myDij.setStart(0);
         myDij.computeShortestPath();
     }
 
@@ -225,7 +236,7 @@ public class Tester {
     public void testInvalidCompute3() {
         Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
         Graph<Integer, MyEdgeData> g = new MyGraph<Integer, MyEdgeData>();
-        g.addVertex(1);
+        g.addVertex(0);
         myDij.setGraph(g);
         myDij.setWeighing(new MyWeighing());
         myDij.computeShortestPath();
@@ -234,50 +245,50 @@ public class Tester {
     @Test
     public void testDijkstra1() {
         Graph<Integer, MyEdgeData> g = new MyGraph<>();
+        g.addVertex(0);
         g.addVertex(1);
         g.addVertex(2);
         g.addVertex(3);
-        g.addVertex(4);
-        g.addEdge(1, 2, new MyEdgeData(1.0, "Street 1"));
-        g.addEdge(2, 3, new MyEdgeData(1.0, "Street 2"));
-        g.addEdge(1, 4, new MyEdgeData(0.1, "quick1"));
-        g.addEdge(4, 3, new MyEdgeData(0.1, "quick2"));
+        g.addEdge(0, 1, new MyEdgeData(1.0, "Street 1"));
+        g.addEdge(1, 2, new MyEdgeData(1.0, "Street 2"));
+        g.addEdge(0, 3, new MyEdgeData(0.1, "quick1"));
+        g.addEdge(3, 2, new MyEdgeData(0.1, "quick2"));
 
         Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
         myDij.setGraph(g);
-        myDij.setStart(1);
+        myDij.setStart(0);
         myDij.setWeighing(new MyWeighing());
         myDij.computeShortestPath();
-        List<Integer> path = myDij.getPath(3);
+        List<Integer> path = myDij.getPath(2);
         System.out.println("Test1 dijkstra: " + path);
     }
 
     @Test
     public void testDijkstra2() {
         Graph<Integer, MyEdgeData> g = new MyGraph<>();
+        g.addVertex(0);
         g.addVertex(1);
         g.addVertex(2);
         g.addVertex(3);
-        g.addVertex(4);
-        g.addEdge(1, 2, new MyEdgeData(1.0, "Street 1"));
-        g.addEdge(2, 3, new MyEdgeData(1.0, "Street 2"));
-        g.addEdge(1, 4, new MyEdgeData(0.1, "quick1"));
-        g.addEdge(4, 3, new MyEdgeData(0.1, "quick2"));
+        g.addEdge(0, 1, new MyEdgeData(1.0, "Street 1"));
+        g.addEdge(1, 2, new MyEdgeData(1.0, "Street 2"));
+        g.addEdge(0, 3, new MyEdgeData(0.1, "quick1"));
+        g.addEdge(3, 2, new MyEdgeData(0.1, "quick2"));
 
         Dijkstra<Integer, MyEdgeData> myDij = new MyDijkstra<>();
         myDij.setGraph(g);
-        myDij.setStart(1);
+        myDij.setStart(0);
         myDij.setWeighing(new MyWeighing());
         myDij.computeShortestPath();
-        double cost = myDij.getCost(3);
+        double cost = myDij.getCost(2);
         if (cost != 0.2)
             fail("Expected cost to be 0.2 but was: " + cost);
     }
 
-    private Graph<String, MyEdgeData> parseFile(HashMap<Integer, Integer> verts) {
-        Graph<String, MyEdgeData> g = new MyGraph<String, MyEdgeData>();
+    private static Graph<Integer, MyEdgeData> parseFile() {
+        Graph<Integer, MyEdgeData> g = new MyGraph<>();
 
-        try (Scanner s = new Scanner(new FileReader("files/ames.txt")))
+        try (Scanner s = new Scanner(new FileReader("files/newAmes.txt")))
         {
             // Parse verticies
             if (!"VERTICES:".equalsIgnoreCase(s.next()))
@@ -286,11 +297,12 @@ public class Tester {
             s.nextLine();
             for (int i = 0; i < numVerticies; i++) {
                 String[] line = s.nextLine().split(",");
-                int vID = Integer.valueOf(line[0]);
+                int fileID = Integer.valueOf(line[0]);
                 double lat = Double.valueOf(line[1]);
                 double lon = Double.valueOf(line[2]);
-                String data = "ID:" + vID + " LAT:" + lat + " LON:" + lon;
-                verts.put(vID, g.addVertex(String.valueOf(vID) + ' '));
+                int graphID = g.addVertex(fileID);
+                fileToGraph.put(fileID, graphID);
+                graphToFile.put(graphID, fileID);
             }
 
             // Parse edges
@@ -305,7 +317,8 @@ public class Tester {
                 double wt = Double.valueOf(line[2]);
                 String street = (line.length == 4) ? line[3] : null;
                 MyEdgeData data = new MyEdgeData(wt, street);
-                g.addEdge(verts.get(src), verts.get(tar), data);
+                g.addEdge(fileToGraph.get(src), fileToGraph.get(tar), data);
+                g.addEdge(fileToGraph.get(tar), fileToGraph.get(src), data);
             }
         } catch (IOException e) {
             e.printStackTrace();

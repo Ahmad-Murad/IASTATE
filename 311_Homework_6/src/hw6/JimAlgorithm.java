@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.TreeSet;
+import java.util.Set;
 
 public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
 
@@ -24,6 +25,39 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
     private static HashMap<Integer, Integer> fileToGraph = new HashMap<>();
     private static HashMap<Integer, Integer> graphToFile = new HashMap<>();
     public static double mostRecentCost = 0.0; // For JUnit testing purposes
+
+    private class MyTreeNode {
+        public MyTreeNode parent;
+        public int data;
+        public Set<MyTreeNode> children = new HashSet<>();
+
+        public MyTreeNode(MyTreeNode parent, int data) {
+            this.parent = parent;
+            this.data = data;
+        }
+
+        public MyTreeNode addChild(int childData) {
+            MyTreeNode newNode = new MyTreeNode(this, childData);
+            this.children.add(newNode);
+            return newNode;
+        }
+
+        public boolean isDataAbove(int data) {
+            if (this.data == data)
+                return true;
+            if (parent == null)
+                return false;
+            else
+                return parent.isDataAbove(data);
+        }
+
+        public void buildListRecursive(List<Integer> list) {
+            if (this.parent == null)
+                return;
+            list.add(0, this.data);
+            parent.buildListRecursive(list);
+        }
+    }
 
     public static void main(String... args) {
 
@@ -104,17 +138,45 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
     @Override
     public Collection<List<Integer>> generateValidSortS(Graph<V, E> graph) {
         // TODO not generating every type of sort
-        TreeSet<Integer> tree = new TreeSet<>();
+        Collection<List<Integer>> sorts = new HashSet<>();
+        MyTreeNode tree = new MyTreeNode(null, -1);
+        Set<Integer> vertices = new HashSet<>();
+        for (int vertex : graph.getVertices())
+            vertices.add(vertex);
+        for (int edgeID : graph.getEdges())
+            vertices.remove(graph.getTarget(edgeID));
+        for (int vertex : vertices)
+            tree.addChild(vertex);
+        for (MyTreeNode node : tree.children)
+            addSortsRecursive(graph, node, sorts);
 
-        Collection<List<Integer>> sorts = new ArrayList<List<Integer>>();
-        startSeed = graph.getVertices().size();
-        while (startSeed > 0) {
-            List<Integer> sort = sortVertices(graph);
-            if (!sorts.contains(sort))
-                sorts.add(sort);
-            startSeed--;
-        }
         return sorts;
+    }
+
+    // A B C D
+    // 0 1 2 3
+    // 0 2 1 3
+    // 2 0 1 3
+
+    private void addSortsRecursive(Graph<V, E> graph, MyTreeNode tree, Collection<List<Integer>> sorts) {
+        Set<Integer> vertices = new HashSet<>();
+        for (int vertex : graph.getVertices())
+            if (!tree.isDataAbove(vertex))
+                vertices.add(vertex);
+        for (int edgeID : graph.getEdges())
+            if (!tree.isDataAbove(graph.getSource(edgeID)))
+                vertices.remove(graph.getTarget(edgeID));
+        for (int vertex : vertices) {
+            MyTreeNode newNode = tree.addChild(vertex);
+            addSortsRecursive(graph, newNode, sorts);
+        }
+        // If this is a leaf node, return possible list
+        if (tree.children.size() == 0) {
+            List<Integer> sorting = new ArrayList<Integer>();
+            tree.buildListRecursive(sorting);
+            sorts.add(sorting);
+            System.out.println("Added a sorting: " + sorting);
+        }
     }
 
     private void dfs(Integer vert) {

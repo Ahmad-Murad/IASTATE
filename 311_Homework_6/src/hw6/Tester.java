@@ -75,22 +75,39 @@ public class Tester {
     }
 
     @Test
-    public void testAllTopSorts() {
+    public void testAllTopSorts1() {
+        Graph<String, String> dc = new MyGraph<String, String>();
+        dc.addVertex("A");
+        dc.addVertex("B");
+        dc.addVertex("C");
+        dc.addVertex("D");
+        dc.addEdge(0, 1, "A-B");
+        dc.addEdge(1, 3, "B->D");
+        dc.addEdge(2, 3, "C->D");
+        JimAlgorithm<String, String> ja = new JimAlgorithm<>();
+
+        Collection<List<Integer>> allSorts = ja.generateValidSortS(dc);
+        for (List<Integer> aSort : allSorts)
+            System.out.println("Potential top. sort: " + aSort);
+
+        if (allSorts.size() != 3)
+            fail("Expected to get 3 combinations of sorts.  Only got: " + allSorts.size());
+    }
+
+    @Test
+    public void testAllTopSorts2() {
         Graph<String, String> dc = new MyGraph<String, String>();
         dc.addVertex("A");
         dc.addVertex("B");
         dc.addVertex("C");
         JimAlgorithm<String, String> ja = new JimAlgorithm<>();
 
-        Collection<List<Integer>> allSorts = ja.generateValidSortS(ingredients);
-        for (List<Integer> aSort : allSorts) {
+        Collection<List<Integer>> allSorts = ja.generateValidSortS(dc);
+        for (List<Integer> aSort : allSorts)
             System.out.println("Potential top. sort: " + aSort);
-            if (aSort.size() != verticies.length)
-                fail("Expected " + verticies.length + " verticies.  Instead got " + aSort.size());
-        }
 
         if (allSorts.size() != 6)
-            fail("Expected to get 6 combinations of sorts.");
+            fail("Expected to get 3 combinations of sorts.  Only got: " + allSorts.size());
     }
 
     @Test

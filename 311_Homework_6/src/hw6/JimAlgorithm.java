@@ -89,7 +89,7 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
         /** END OF NORMAL PART **/
 
         /** START OF EXTRA CREDIT PORTION **/
-        System.out.println("\n----------------\nExtra credit portion:");
+        System.out.println("\n\n**** Extra credit portion *****");
         Graph<Integer, MyEdgeData> ingredGraph = getIngredGraph();
         Collection<List<Integer>> allSorts = ja.generateValidSortS(ingredGraph);
         // Convert sortings to what is used in the file
@@ -101,7 +101,7 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             allSorts_fileIDs.add(list_fileIDs);
         }
         double cheapestCost = Double.POSITIVE_INFINITY;
-        List<Integer> cheapestPath = null;
+        List<Integer> cheapestPath = null, cheapestTop = null;
         System.out.println("All possible topological sorts: \t\t\t distance (meters):");
         for (List<Integer> aSort : allSorts_fileIDs) {
             List<Integer> curPath = ja.shortestPath(graph, aSort, new MyWeighing());
@@ -109,8 +109,10 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             if (JimAlgorithm.mostRecentCost < cheapestCost) {
                 cheapestCost = JimAlgorithm.mostRecentCost;
                 cheapestPath = curPath;
+                cheapestTop = aSort;
             }
         }
+        System.out.println("\nThe shortest topological sort is: " + cheapestTop);
         System.out.println("The shortest path is: " + cheapestPath);
         System.out.println("The distance for this path is: " + cheapestCost + " meters.");
     }

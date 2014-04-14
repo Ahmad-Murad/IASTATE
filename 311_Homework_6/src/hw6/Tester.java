@@ -2,14 +2,10 @@ package hw6;
 
 import static org.junit.Assert.fail;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,8 +18,6 @@ public class Tester {
 
     static Graph<String, String> ingredients = new MyGraph<String, String>();
     static String[] verticies = { "A", "B", "C", "D", "E", "F", "G" };
-    private static HashMap<Integer, Integer> fileToGraph = new HashMap<>();
-    private static HashMap<Integer, Integer> graphToFile = new HashMap<>();
 
     @Rule
     public TestName tn = new TestName();
@@ -305,47 +299,47 @@ public class Tester {
             fail("Expected cost to be 0.2 but was: " + cost);
     }
 
-    private static Graph<Integer, MyEdgeData> parseFile() {
-        Graph<Integer, MyEdgeData> g = new MyGraph<>();
-
-        try (Scanner s = new Scanner(new FileReader("files/newAmes.txt")))
-        {
-            // Parse verticies
-            if (!"VERTICES:".equalsIgnoreCase(s.next()))
-                throw new RuntimeException("First line of input file must indicate number of verticies.");
-            int numVerticies = new Integer(s.nextInt());
-            s.nextLine();
-            for (int i = 0; i < numVerticies; i++) {
-                String[] line = s.nextLine().split(",");
-                int fileID = Integer.valueOf(line[0]);
-                double lat = Double.valueOf(line[1]);
-                double lon = Double.valueOf(line[2]);
-                int graphID = g.addVertex(fileID);
-                fileToGraph.put(fileID, graphID);
-                graphToFile.put(graphID, fileID);
-            }
-
-            // Parse edges
-            if (!"EDGES:".equalsIgnoreCase(s.next()))
-                throw new RuntimeException("Expected number of edges to be given in input file.");
-            int numEdges = new Integer(s.next());
-            s.nextLine();
-            for (int i = 0; i < numEdges; i++) {
-                String[] line = s.nextLine().split(",");
-                int src = Integer.valueOf(line[0]);
-                int tar = Integer.valueOf(line[1]);
-                double wt = Double.valueOf(line[2]);
-                String street = (line.length == 4) ? line[3] : null;
-                MyEdgeData data = new MyEdgeData(wt, street);
-                g.addEdge(fileToGraph.get(src), fileToGraph.get(tar), data);
-                g.addEdge(fileToGraph.get(tar), fileToGraph.get(src), data);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return g;
-    }
+//    private static Graph<Integer, MyEdgeData> parseFile() {
+//        Graph<Integer, MyEdgeData> g = new MyGraph<>();
+//
+//        try (Scanner s = new Scanner(new FileReader("files/newAmes.txt")))
+//        {
+//            // Parse verticies
+//            if (!"VERTICES:".equalsIgnoreCase(s.next()))
+//                throw new RuntimeException("First line of input file must indicate number of verticies.");
+//            int numVerticies = new Integer(s.nextInt());
+//            s.nextLine();
+//            for (int i = 0; i < numVerticies; i++) {
+//                String[] line = s.nextLine().split(",");
+//                int fileID = Integer.valueOf(line[0]);
+//                double lat = Double.valueOf(line[1]);
+//                double lon = Double.valueOf(line[2]);
+//                int graphID = g.addVertex(fileID);
+//                fileToGraph.put(fileID, graphID);
+//                graphToFile.put(graphID, fileID);
+//            }
+//
+//            // Parse edges
+//            if (!"EDGES:".equalsIgnoreCase(s.next()))
+//                throw new RuntimeException("Expected number of edges to be given in input file.");
+//            int numEdges = new Integer(s.next());
+//            s.nextLine();
+//            for (int i = 0; i < numEdges; i++) {
+//                String[] line = s.nextLine().split(",");
+//                int src = Integer.valueOf(line[0]);
+//                int tar = Integer.valueOf(line[1]);
+//                double wt = Double.valueOf(line[2]);
+//                String street = (line.length == 4) ? line[3] : null;
+//                MyEdgeData data = new MyEdgeData(wt, street);
+//                g.addEdge(fileToGraph.get(src), fileToGraph.get(tar), data);
+//                g.addEdge(fileToGraph.get(tar), fileToGraph.get(src), data);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return g;
+//    }
 
     private String getOrdering(Graph<String, String> graph, List<Integer> sort)
     {

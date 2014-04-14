@@ -22,9 +22,10 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
     private Graph<V, E> g;
     private int numUnmarked = 0, startSeed = 0;
 
-    private static HashMap<Integer, Integer> fileToGraph = new HashMap<>();
-    private static HashMap<Integer, Integer> graphToFile = new HashMap<>();
+    public static HashMap<Integer, Integer> fileToGraph = new HashMap<>();
+    public static HashMap<Integer, Integer> graphToFile = new HashMap<>();
     public static double mostRecentCost = 0.0; // For JUnit testing purposes
+    public static int[] ingreds = { 1055, 371, 2874, 2351, 2956, 1171, 1208, 2893 };
 
     private class MyTreeNode {
         public MyTreeNode parent;
@@ -69,9 +70,8 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
 
         // Construct graph of graph file
         Graph<Integer, MyEdgeData> graph = parseFile(file);
-
         // Construct a DAG of the ingredient dependencies 
-        List<Integer> ingList_graphIDs = getIngredientOrdering(graph);
+        List<Integer> ingList_graphIDs = getIngredientOrdering();
         // Convert internal graph ID's to the ames.txt ID's
         List<Integer> ingList_fileIDs = new ArrayList<>();
         for (int i : ingList_graphIDs)
@@ -84,7 +84,35 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
         for (int i : shortestPath_graphIDs)
             shortestPath_fileIDs.add(graphToFile.get(i));
 
+        System.out.println("The distance for this path is: " + JimAlgorithm.mostRecentCost + " meters.");
         System.out.println("Path taken: " + shortestPath_fileIDs);
+        /** END OF NORMAL PART **/
+
+        /** START OF EXTRA CREDIT PORTION **/
+        System.out.println("\n----------------\nExtra credit portion:");
+        Graph<Integer, MyEdgeData> ingredGraph = getIngredGraph();
+        Collection<List<Integer>> allSorts = ja.generateValidSortS(ingredGraph);
+        // Convert sortings to what is used in the file
+        Collection<List<Integer>> allSorts_fileIDs = new HashSet<>();
+        for (List<Integer> aSort : allSorts) {
+            List<Integer> list_fileIDs = new ArrayList<>();
+            for (int i : aSort)
+                list_fileIDs.add(ingreds[i]);
+            allSorts_fileIDs.add(list_fileIDs);
+        }
+        double cheapestCost = Double.POSITIVE_INFINITY;
+        List<Integer> cheapestPath = null;
+        System.out.println("All possible topological sorts: \t\t\t distance (meters):");
+        for (List<Integer> aSort : allSorts_fileIDs) {
+            List<Integer> curPath = ja.shortestPath(graph, aSort, new MyWeighing());
+            System.out.println(aSort + "\t\t " + JimAlgorithm.mostRecentCost);
+            if (JimAlgorithm.mostRecentCost < cheapestCost) {
+                cheapestCost = JimAlgorithm.mostRecentCost;
+                cheapestPath = curPath;
+            }
+        }
+        System.out.println("The shortest path is: " + cheapestPath);
+        System.out.println("The distance for this path is: " + cheapestCost + " meters.");
     }
 
     @Override
@@ -130,14 +158,12 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             cost += dij.getCost(locations.get(i + 1));
         }
         JimAlgorithm.mostRecentCost = cost;
-        System.out.println("Cost for this path is: " + cost);
 
         return shortestPath;
     }
 
     @Override
     public Collection<List<Integer>> generateValidSortS(Graph<V, E> graph) {
-        // TODO not generating every type of sort
         Collection<List<Integer>> sorts = new HashSet<>();
         MyTreeNode tree = new MyTreeNode(null, -1);
         Set<Integer> vertices = new HashSet<>();
@@ -152,11 +178,6 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
 
         return sorts;
     }
-
-    // A B C D
-    // 0 1 2 3
-    // 0 2 1 3
-    // 2 0 1 3
 
     private void addSortsRecursive(Graph<V, E> graph, MyTreeNode tree, Collection<List<Integer>> sorts) {
         Set<Integer> vertices = new HashSet<>();
@@ -175,7 +196,6 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             List<Integer> sorting = new ArrayList<Integer>();
             tree.buildListRecursive(sorting);
             sorts.add(sorting);
-            System.out.println("Added a sorting: " + sorting);
         }
     }
 
@@ -204,7 +224,7 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
             numUnmarked--;
     }
 
-    private static Graph<Integer, MyEdgeData> parseFile(String file) {
+    protected static Graph<Integer, MyEdgeData> parseFile(String file) {
         Graph<Integer, MyEdgeData> g = new MyGraph<>();
 
         try (Scanner s = new Scanner(new FileReader(file)))
@@ -246,8 +266,21 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
         return g;
     }
 
-    private static List<Integer> getIngredientOrdering(Graph<Integer, MyEdgeData> realGraph) {
-        int[] ingreds = { 1055, 371, 2874, 2351, 2956, 1171, 1208, 2893 };
+    protected static List<Integer> getIngredientOrdering() {
+        Graph<Integer, MyEdgeData> ingredGraph = getIngredGraph();
+        List<Integer> sortedIngreds = new JimAlgorithm<Integer, MyEdgeData>().sortVertices(ingredGraph);
+        List<Integer> corresponding = new ArrayList<>();
+        for (int i : sortedIngreds)
+            corresponding.add(ingreds[i]);
+        List<Integer> graphID = new ArrayList<>();
+        for (int i : corresponding) {
+            graphID.add(fileToGraph.get(i));
+        }
+
+        return graphID;
+    }
+
+    protected static Graph<Integer, MyEdgeData> getIngredGraph() {
         Graph<Integer, MyEdgeData> ingredGraph = new MyGraph<>();
         for (int i : ingreds)
             ingredGraph.addVertex(i);
@@ -273,15 +306,6 @@ public class JimAlgorithm<V, E> implements CoffeeSolver<V, E> {
         ingredGraph.addEdge(7, 4, new MyEdgeData(0.0, "E->You"));
         ingredGraph.addEdge(7, 5, new MyEdgeData(0.0, "F->You"));
         ingredGraph.addEdge(7, 6, new MyEdgeData(0.0, "G->You"));
-        List<Integer> sortedIngreds = new JimAlgorithm<Integer, MyEdgeData>().sortVertices(ingredGraph);
-        List<Integer> corresponding = new ArrayList<>();
-        for (int i : sortedIngreds)
-            corresponding.add(ingreds[i]);
-        List<Integer> graphID = new ArrayList<>();
-        for (int i : corresponding) {
-            graphID.add(fileToGraph.get(i));
-        }
-
-        return graphID;
+        return ingredGraph;
     }
 }

@@ -1,0 +1,38 @@
+mysql> show columns from events;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| EVENT_ID   | bigint(20)   |      | PRI | 0       |       |
+| EVENT_DATE | varchar(255) | YES  |     | NULL    |       |
+| title      | varchar(255) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> show columns from person_event;
++-----------+------------+------+-----+---------+-------+
+| Field     | Type       | Null | Key | Default | Extra |
++-----------+------------+------+-----+---------+-------+
+| EVENT_ID  | bigint(20) |      | PRI | 0       |       |
+| PERSON_ID | bigint(20) |      | PRI | 0       |       |
++-----------+------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> show columns from person;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| PERSON_ID | bigint(20)   |      | PRI | NULL    | auto_increment |
+| age       | int(11)      | YES  |     | NULL    |                |
+| firstname | varchar(255) | YES  |     | NULL    |                |
+| lastname  | varchar(255) | YES  |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> show columns from person_email_addr;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| PERSON_ID  | bigint(20)   |      | MUL | 0       |       |
+| EMAIL_ADDR | varchar(255) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)

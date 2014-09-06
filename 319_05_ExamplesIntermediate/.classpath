@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="01PlayingWithLayoutManagers"/>
+	<classpathentry kind="src" path="02RadioButtons"/>
+	<classpathentry kind="src" path="03PlayingWithCheckBoxes"/>
+	<classpathentry kind="src" path="04PlayingWithTimer"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

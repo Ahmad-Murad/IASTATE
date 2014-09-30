@@ -3,6 +3,9 @@ package se339.hw3;
 import java.util.HashSet;
 import java.util.Set;
 
+import se339.hw3.products.Rentable;
+import se339.hw3.products.Sellable;
+
 public class Transaction {
     private String customerName;
     private Set<Rentable> rentals = new HashSet<Rentable>();

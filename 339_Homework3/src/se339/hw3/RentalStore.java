@@ -3,6 +3,11 @@
  */
 package se339.hw3;
 
+import se339.hw3.products.Rentable;
+import se339.hw3.products.Sellable;
+import se339.hw3.products.impl.ChildrensMovie;
+import se339.hw3.products.impl.RegularMovie;
+
 /**
  * @author aguibert
  * 

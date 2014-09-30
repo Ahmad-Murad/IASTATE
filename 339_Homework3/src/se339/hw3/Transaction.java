@@ -52,6 +52,7 @@ public class Transaction {
         if (rentals.size() != 0)
             sb.append("You earned ").append(frequentRenterPoints).append(" frequent renter points");
         return sb.toString();
+
     }
 
     public String generateStatementHTML() {
@@ -59,10 +60,7 @@ public class Transaction {
         sb.append("<head>\n");
         sb.append("Sale record for " + getCustomerName() + "<br>\n");
         sb.append("</head>\n<body>\n");
-        for (Rentable rental : rentals)
-            sb.append("  <li> " + rental.toString() + " <br>\n");
-        sb.append("Amount owed is: ").append(totalCost).append("<br>\n");
-        sb.append("You earned ").append(frequentRenterPoints).append(" frequent renter points<br>\n");
+        sb.append(generateStatement().replace("\n", "<br>\n"));
         sb.append("</body>\n</head>\n");
         return sb.toString();
     }

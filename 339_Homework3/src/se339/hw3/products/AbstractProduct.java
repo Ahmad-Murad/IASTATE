@@ -59,6 +59,7 @@ public abstract class AbstractProduct implements Rentable, Sellable
 
     @Override
     public final int getFrequentRenterPoints() {
+        verifyProductRentable();
         return (isNewRelease && daysRented > 1) ? 2 : 1;
     }
 
@@ -74,12 +75,12 @@ public abstract class AbstractProduct implements Rentable, Sellable
         return ret;
     }
 
-    public final void verifyProductRentable() {
+    public void verifyProductRentable() {
         if (!isRental)
             throw new NonRentalException("Product was not rented!");
     }
 
-    public final void verifyProductSellable() {
+    public void verifyProductSellable() {
         if (isRental)
             throw new NonSellableException("Product was not rented!");
     }

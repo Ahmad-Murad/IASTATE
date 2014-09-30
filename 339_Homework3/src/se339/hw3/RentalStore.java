@@ -26,6 +26,6 @@ public class RentalStore {
         trans.addSellable(s2);
         trans.addSellable(s);
 
-        System.out.println(trans.generateStatement());
+        System.out.println(trans.generateStatementHTML());
     }
 }

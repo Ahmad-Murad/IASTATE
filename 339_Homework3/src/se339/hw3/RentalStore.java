@@ -5,8 +5,12 @@ package se339.hw3;
 
 import se339.hw3.products.Rentable;
 import se339.hw3.products.Sellable;
+import se339.hw3.products.impl.Book;
 import se339.hw3.products.impl.ChildrensMovie;
+import se339.hw3.products.impl.DVD;
+import se339.hw3.products.impl.MusicCD;
 import se339.hw3.products.impl.RegularMovie;
+import se339.hw3.products.impl.VideoGame;
 
 /**
  * @author aguibert
@@ -25,6 +29,10 @@ public class RentalStore {
         trans.addRental(r2);
         trans.addSellable(s2);
         trans.addSellable(s);
+        trans.addSellable(new DVD("Transformers", false));
+        trans.addRental(new Book("Harry Potter", false));
+        trans.addSellable(new VideoGame("Starcraft 2", false));
+        trans.addSellable(new MusicCD("NOW 299", true));
 
         System.out.println(trans.generateStatementHTML());
     }

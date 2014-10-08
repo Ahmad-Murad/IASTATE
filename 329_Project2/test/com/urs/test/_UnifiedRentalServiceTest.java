@@ -19,12 +19,4 @@ import org.junit.runners.Suite.SuiteClasses;
                PaymentTest.class,
                UITest.class
 })
-public class _UnifiedRentalServiceTest {
-//    public static void waitRand() {
-//        try {
-//            long wait = (long) (Math.rint(Math.random() * 500) % 500);
-//            Thread.sleep(wait);
-//        } catch (Exception e) {
-//        }
-//    }
-}
+public class _UnifiedRentalServiceTest {}

@@ -3,9 +3,7 @@
  */
 package com.urs.ui;
 
-import com.urs.db.Product;
 import com.urs.db.Transaction;
-import com.urs.sys.customer.Customer;
 import com.urs.sys.payment.PaymentInfo;
 
 /**
@@ -14,15 +12,11 @@ import com.urs.sys.payment.PaymentInfo;
  */
 public interface RentalController
 {
-    public void checkoutRental(PaymentInfo info, Product p);
+    public void checkoutRental(PaymentInfo info, long productID);
 
-    public void checkoutRental(Customer c, Product p);
+    public void returnRental(long productID);
 
-    public void returnRental(Product p);
+    public void extendRental(PaymentInfo info, long productID);
 
-    public void extendRental(PaymentInfo info, Product p);
-
-    public void extendRental(Customer c, Product p);
-
-    public void printTransaction(Customer c, Transaction trans);
+    public void printTransaction(long customerID, Transaction trans);
 }

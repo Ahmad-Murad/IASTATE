@@ -3,7 +3,6 @@
  */
 package com.urs.db;
 
-import com.urs.sys.customer.Customer;
 
 /**
  * @author Andrew
@@ -15,7 +14,7 @@ public abstract class Product
     private boolean isNewRelease;
     protected final int daysRented;
     private final boolean isRental;
-    private Customer currentHolder;
+    private long currentCustomerHolding;
 
     public Product(String name, boolean isNewRelease) {
         this(name, isNewRelease, -1);

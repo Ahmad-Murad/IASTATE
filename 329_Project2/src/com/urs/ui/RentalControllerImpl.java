@@ -3,9 +3,7 @@
  */
 package com.urs.ui;
 
-import com.urs.db.Product;
 import com.urs.db.Transaction;
-import com.urs.sys.customer.Customer;
 import com.urs.sys.payment.PaymentInfo;
 
 /**
@@ -13,38 +11,47 @@ import com.urs.sys.payment.PaymentInfo;
  */
 public class RentalControllerImpl implements RentalController
 {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.urs.ui.RentalController#checkoutRental(com.urs.sys.payment.PaymentInfo, long)
+     */
     @Override
-    public void checkoutRental(PaymentInfo info, Product p) {
+    public void checkoutRental(PaymentInfo info, long productID) {
         // TODO Auto-generated method stub
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.urs.ui.RentalController#returnRental(long)
+     */
     @Override
-    public void checkoutRental(Customer c, Product p) {
+    public void returnRental(long productID) {
         // TODO Auto-generated method stub
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.urs.ui.RentalController#extendRental(com.urs.sys.payment.PaymentInfo, long)
+     */
     @Override
-    public void returnRental(Product p) {
+    public void extendRental(PaymentInfo info, long productID) {
         // TODO Auto-generated method stub
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.urs.ui.RentalController#printTransaction(long, com.urs.db.Transaction)
+     */
     @Override
-    public void extendRental(PaymentInfo info, Product p) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void extendRental(Customer c, Product p) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void printTransaction(Customer c, Transaction trans) {
+    public void printTransaction(long customerID, Transaction trans) {
         // TODO Auto-generated method stub
 
     }

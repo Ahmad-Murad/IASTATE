@@ -8,15 +8,27 @@ import com.urs.sys.payment.PaymentInfo;
 
 /**
  * @author Andrew
- * 
  */
-public interface RentalController
+public class RentalController
 {
-    public void checkoutRental(PaymentInfo info, long productID);
 
-    public void returnRental(long productID);
+    public void checkoutRental(PaymentInfo info, long productID) {
+        // TODO Auto-generated method stub
 
-    public void extendRental(PaymentInfo info, long productID);
+    }
 
-    public void printTransaction(long customerID, Transaction trans);
+    public void returnRental(long productID) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void extendRental(PaymentInfo info, long productID) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void printTransaction(long customerID, Transaction trans) {
+        // TODO Auto-generated method stub
+
+    }
 }

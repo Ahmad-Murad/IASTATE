@@ -3,13 +3,24 @@
  */
 package com.urs.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
+
+import com.urs.db.DatabaseSupport;
+import com.urs.db.Product;
+import com.urs.sys.customer.Customer;
+import com.urs.sys.inventory.InventoryController;
 
 /**
  * @author Andrew
- * 
  */
 public class InventoryTest {
+
+    InventoryController ic = InventoryController.instance();
+    DatabaseSupport db = DatabaseSupport.getConnection();
 
     /**
      * Staff member adds a new product to the inventory.
@@ -17,8 +28,12 @@ public class InventoryTest {
      */
     @Test
     public void testAddProduct() {
-        // placeholder test until further implementation is complete
-        // see design document for test overview.
+        Product p = _UnifiedRentalServiceTest.newProd();
+        ic.addProduct(p);
+        Customer c = _UnifiedRentalServiceTest.newCust();
+        c.addCreditCard(_UnifiedRentalServiceTest.newCC(c.getName()));
+        ic.rentProduct(p, c);
+        assertFalse(db.getProduct(p.getID()).isAvailable());
     }
 
     /**
@@ -27,8 +42,11 @@ public class InventoryTest {
      */
     @Test
     public void testRemoveProduct() {
-        // placeholder test until further implementation is complete
-        // see design document for test overview.
+        Product p = _UnifiedRentalServiceTest.newProd();
+        ic.addProduct(p);
+        assertEquals(db.getProduct(p.getID()), p);
+        ic.removeProduct(p.getID());
+        assertNull(db.getProduct(p.getID()));
     }
 
     /**

@@ -6,12 +6,12 @@ import java.util.Set;
 
 public class Transaction {
     private final long transactionTimestamp = new Random().nextLong();
-    private String customerName;
+    private long customerID;
     private Set<Product> products = new HashSet<Product>();
     private double totalCost = 0.0;
 
-    public Transaction(String customerName) {
-        this.customerName = customerName;
+    public Transaction(long customerID) {
+        this.customerID = customerID;
     }
 
     public void addRental(Product arg) {
@@ -19,12 +19,12 @@ public class Transaction {
             totalCost += arg.getRentalCost();
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public long getCustomer() {
+        return customerID;
     }
 
     public String generateStatement() {
-        StringBuffer sb = new StringBuffer("Statement record for " + getCustomerName() + "\n");
+        StringBuffer sb = new StringBuffer("Statement record for customer " + getCustomer() + "\n");
 
         if (products.size() != 0) {
             sb.append("Products rented:\n");
@@ -40,7 +40,7 @@ public class Transaction {
     public String generateStatementHTML() {
         StringBuffer sb = new StringBuffer("<html>\n");
         sb.append("<head>\n");
-        sb.append("Sale record for " + getCustomerName() + "<br>\n");
+        sb.append("Sale record for customer " + getCustomer() + "<br>\n");
         sb.append("</head>\n<body>\n");
         for (Product p : products)
             sb.append("  <li> " + p.toString() + " <br>\n");

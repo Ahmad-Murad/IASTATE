@@ -12,11 +12,11 @@ public class CreditCard implements PaymentInfo
 {
     private final Date expirationDate;
     private final long cardNumber;
-    private final short CVVCode;
+    private final int CVVCode;
     private final String cardHolderName;
     private double balance = 1000.0; // TODO for testing, everyone starts with $1000
 
-    public CreditCard(long cardNumber, short CVVCode, Date exp, String custName) {
+    public CreditCard(long cardNumber, int CVVCode, Date exp, String custName) {
         this.cardHolderName = custName;
         this.expirationDate = exp;
         this.CVVCode = CVVCode;
@@ -24,7 +24,7 @@ public class CreditCard implements PaymentInfo
     }
 
     @Override
-    public double processPayment(double amount) throws Exception {
+    public double processPayment(double amount) {
         postTransaction(amount);
         return 0.0; // no cash back for credit card transactions
     }
@@ -42,6 +42,9 @@ public class CreditCard implements PaymentInfo
         // TODO this should post a transaction to the bank to have the amount validated 
         if (balance > amount)
             return true;
+
+        // take the money out of the account
+        balance -= amount;
 
         return false;
     }

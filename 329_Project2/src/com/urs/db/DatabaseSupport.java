@@ -42,4 +42,13 @@ public class DatabaseSupport
     public void putProduct(Product p) {
         prodcuts.put(p.getID(), p);
     }
+
+    public void remove(Object o) {
+        if (o instanceof Product)
+            prodcuts.remove(o);
+        else if (o instanceof Customer)
+            customers.remove(o);
+        else if (o instanceof Transaction)
+            transactions.remove(o);
+    }
 }

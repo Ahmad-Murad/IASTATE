@@ -3,23 +3,50 @@
  */
 package com.urs.sys.inventory;
 
+import com.urs.db.DatabaseSupport;
 import com.urs.db.Product;
+import com.urs.sys.customer.Customer;
 import com.urs.sys.payment.PaymentInfo;
 
 /**
  * @author Andrew
  */
-public interface InventoryController
+public class InventoryController
 {
-    public void addProduct(Product p);
+    private static InventoryController _instance = new InventoryController();
+    private DatabaseSupport db = DatabaseSupport.getConnection();
 
-    public void removeProduct(long id);
+    private InventoryController() {} // Private constructor
 
-    public void updateProduct(Product p);
+    public static InventoryController instance() {
+        return _instance; // returns a singleton
+    }
 
-    public void sellProduct(Product p, PaymentInfo info);
+    public void addProduct(Product p) {
+        db.putProduct(p);
+    }
 
-    public void rentProduct(Product p, PaymentInfo info);
+    public void removeProduct(long id) {
+        db.remove(db.getProduct(id));
+    }
 
-    public void returnProduct(Product p);
+    public void updateProduct(Product p) {
+        db.putProduct(p);
+    }
+
+    public void sellProduct(Product p, PaymentInfo info) {
+        info.processPayment(p.getSellCost());
+        db.remove(p);
+    }
+
+    public void rentProduct(Product p, Customer c) {
+        c.processPayment(p.getRentalCost());
+        p.markRented(c.getID());
+        db.putProduct(p);
+    }
+
+    public void returnProduct(Product p) {
+        p.returnProduct();
+        db.putProduct(p);
+    }
 }

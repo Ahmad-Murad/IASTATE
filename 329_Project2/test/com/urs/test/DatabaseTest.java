@@ -54,9 +54,9 @@ public class DatabaseTest {
      */
     @Test
     public void testDatabaseCustomer() {
-        Customer c1 = new Customer();
-        Customer c2 = new Customer();
-        Customer c3 = new Customer();
+        Customer c1 = new Customer("C1", "email1@email.com", "11111");
+        Customer c2 = new Customer("C2", "email2@email.com", "22222");
+        Customer c3 = new Customer("C3", "email3@email.com", "33333");
 
         long id1 = c1.getID(), id2 = c2.getID(), id3 = c3.getID();
 
@@ -82,9 +82,9 @@ public class DatabaseTest {
      */
     @Test
     public void testDatabaseTransaction() {
-        Transaction t1 = new Transaction("Cust1");
-        Transaction t2 = new Transaction("Cust2");
-        Transaction t3 = new Transaction("Cust3");
+        Transaction t1 = new Transaction(1L);
+        Transaction t2 = new Transaction(2L);
+        Transaction t3 = new Transaction(3L);
 
         long id1 = t1.getID(), id2 = t2.getID(), id3 = t3.getID();
 

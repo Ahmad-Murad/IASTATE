@@ -15,6 +15,7 @@ public class Product
     private boolean isNewRelease;
     protected final int daysRented;
     private final boolean isRental;
+    private boolean isAvailable; // to be rented
     /** The ID of the customer who currently is renting this product */
     private long currentCustomerHolding;
 
@@ -38,6 +39,10 @@ public class Product
         return this.daysRented + (isNewRelease ? 1.5 : 1.0);
     }
 
+    public double getSellCost() {
+        return isNewRelease ? 25.0 : 15.0;
+    }
+
     public boolean isNewRelease() {
         return this.isNewRelease;
     }
@@ -48,6 +53,20 @@ public class Product
 
     public int getDaysRented() {
         return this.daysRented;
+    }
+
+    public void markRented(long customerID) {
+        this.currentCustomerHolding = customerID;
+        this.isAvailable = false;
+    }
+
+    public void returnProduct() {
+        this.currentCustomerHolding = 0;
+        this.isAvailable = true;
+    }
+
+    public boolean isAvailable() {
+        return this.isAvailable;
     }
 
     @Override

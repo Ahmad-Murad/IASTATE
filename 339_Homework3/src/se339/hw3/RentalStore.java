@@ -30,7 +30,7 @@ public class RentalStore {
         trans.addSellable(s2);
         trans.addSellable(s);
         trans.addSellable(new DVD("Transformers", false));
-        trans.addRental(new Book("Harry Potter", false));
+        trans.addRental(new Book("Harry Potter", false, 3));
         trans.addSellable(new VideoGame("Starcraft 2", false));
         trans.addSellable(new MusicCD("NOW 299", true));
 

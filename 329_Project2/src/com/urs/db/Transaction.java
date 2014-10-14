@@ -4,27 +4,39 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import com.urs.sys.customer.Customer;
+import com.urs.sys.payment.PaymentInfo;
+
 public class Transaction {
     private final long transactionTimestamp = new Random().nextLong();
-    private long customerID;
+    private String customerName;
+    private PaymentInfo paymentInfo;
     private Set<Product> products = new HashSet<Product>();
     private double totalCost = 0.0;
 
-    public Transaction(long customerID) {
-        this.customerID = customerID;
+    public Transaction(PaymentInfo info) {
+        if (info instanceof Customer)
+            customerName = ((Customer) info).getName();
+        this.paymentInfo = info;
     }
 
-    public void addRental(Product arg) {
+    public void addProduct(Product arg) {
         if (products.add(arg))
             totalCost += arg.getRentalCost();
     }
 
-    public long getCustomer() {
-        return customerID;
+    public void complete() {
+        double change = paymentInfo.processPayment(totalCost);
+        if (change > 0.0)
+            System.out.println("Returning change: " + change);
+    }
+
+    public double getTotal() {
+        return totalCost;
     }
 
     public String generateStatement() {
-        StringBuffer sb = new StringBuffer("Statement record for customer " + getCustomer() + "\n");
+        StringBuffer sb = new StringBuffer("Statement record " + (customerName == null ? ("for customer " + customerName) : String.valueOf(transactionTimestamp)) + "\n");
 
         if (products.size() != 0) {
             sb.append("Products rented:\n");
@@ -40,7 +52,7 @@ public class Transaction {
     public String generateStatementHTML() {
         StringBuffer sb = new StringBuffer("<html>\n");
         sb.append("<head>\n");
-        sb.append("Sale record for customer " + getCustomer() + "<br>\n");
+        sb.append("Sale record for customer " + (customerName == null ? ("for customer " + customerName) : String.valueOf(transactionTimestamp)) + "<br>\n");
         sb.append("</head>\n<body>\n");
         for (Product p : products)
             sb.append("  <li> " + p.toString() + " <br>\n");

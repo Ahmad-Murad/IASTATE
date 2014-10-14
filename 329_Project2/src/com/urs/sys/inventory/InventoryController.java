@@ -23,11 +23,13 @@ public class InventoryController
     }
 
     public void addProduct(Product p) {
+        p.returnProduct();
         db.putProduct(p);
     }
 
     public void removeProduct(long id) {
-        db.remove(db.getProduct(id));
+        Product toRemove = db.getProduct(id);
+        db.remove(toRemove);
     }
 
     public void updateProduct(Product p) {

@@ -36,7 +36,7 @@ public class Product
     }
 
     public double getRentalCost() {
-        return this.daysRented + (isNewRelease ? 1.5 : 1.0);
+        return this.daysRented + (isNewRelease ? 1.5 : 1.0) + daysOverdue();
     }
 
     public double getSellCost() {

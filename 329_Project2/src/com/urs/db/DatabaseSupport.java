@@ -9,7 +9,7 @@ public class DatabaseSupport
 {
     private Map<Long, Customer> customers = new HashMap<Long, Customer>();
     private Map<Long, Transaction> transactions = new HashMap<Long, Transaction>();
-    private Map<Long, Product> prodcuts = new HashMap<Long, Product>();
+    private Map<Long, Product> products = new HashMap<Long, Product>();
 
     private static DatabaseSupport _instance = new DatabaseSupport();
 
@@ -36,19 +36,19 @@ public class DatabaseSupport
     }
 
     public Product getProduct(long id) {
-        return prodcuts.get(id);
+        return products.get(id);
     }
 
     public void putProduct(Product p) {
-        prodcuts.put(p.getID(), p);
+        products.put(p.getID(), p);
     }
 
     public void remove(Object o) {
         if (o instanceof Product)
-            prodcuts.remove(o);
+            products.remove(((Product) o).getID());
         else if (o instanceof Customer)
-            customers.remove(o);
+            customers.remove(((Customer) o).getID());
         else if (o instanceof Transaction)
-            transactions.remove(o);
+            transactions.remove(((Transaction) o).getID());
     }
 }

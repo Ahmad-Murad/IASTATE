@@ -71,7 +71,7 @@ public class Customer implements Serializable, PaymentInfo
     }
 
     public Transaction createTransaction() {
-        Transaction t = new Transaction(this.getID());
+        Transaction t = new Transaction(this);
         transactionHistory.put(t.getID(), t);
         return t;
     }

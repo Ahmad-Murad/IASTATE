@@ -10,10 +10,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import com.urs.db.Product;
 import com.urs.db.Transaction;
+import com.urs.sys.payment.CreditCard;
 import com.urs.sys.payment.PaymentInfo;
 
 /**
@@ -22,11 +24,12 @@ import com.urs.sys.payment.PaymentInfo;
 public class Customer implements Serializable, PaymentInfo
 {
     private static final long serialVersionUID = -567768441247469162L;
-    private final long customerID = System.currentTimeMillis();
+    private final long customerID = new Random().nextLong();
     private String name;
     private String email;
     private String phone;
-    private Set<PaymentInfo> paymentInfo = new HashSet<>();
+    private Set<CreditCard> creditCards = new HashSet<>();
+    private CreditCard preferredCard;
     private Map<Long, Transaction> transactionHistory = new HashMap<>();
     private Map<Long, Product> outstandingRentals = new HashMap<>();
 
@@ -44,9 +47,14 @@ public class Customer implements Serializable, PaymentInfo
         return this.customerID;
     }
 
+    public void addCreditCard(CreditCard newCard) {
+        creditCards.add(newCard);
+        if (creditCards.size() == 1)
+            preferredCard = newCard;
+    }
+
     @Override
-    public boolean processPayment(double amount) {
-        // TODO Auto-generated method stub
-        return false;
+    public double processPayment(double amount) {
+
     }
 }

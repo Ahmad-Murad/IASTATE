@@ -3,17 +3,19 @@
  */
 package com.urs.db;
 
+import java.util.Random;
 
 /**
  * @author Andrew
  */
-public abstract class Product
+public class Product
 {
-    private final long productTimestamp = System.currentTimeMillis();
+    private final long productTimestamp;
     private final String name;
     private boolean isNewRelease;
     protected final int daysRented;
     private final boolean isRental;
+    /** The ID of the customer who currently is renting this product */
     private long currentCustomerHolding;
 
     public Product(String name, boolean isNewRelease) {
@@ -21,6 +23,7 @@ public abstract class Product
     }
 
     public Product(String name, boolean isNewRelease, int daysRented) {
+        this.productTimestamp = new Random().nextLong();
         this.name = name;
         this.isNewRelease = isNewRelease;
         this.daysRented = daysRented;
@@ -31,13 +34,17 @@ public abstract class Product
         return name;
     }
 
-    public abstract double getRentalCost();
+    public double getRentalCost() {
+        return this.daysRented + (isNewRelease ? 1.5 : 1.0);
+    }
 
     public boolean isNewRelease() {
         return this.isNewRelease;
     }
 
-    public abstract int daysOverdue();
+    public int daysOverdue() {
+        return (this.daysRented > 3) ? (this.daysRented - 3) : 0;
+    }
 
     public int getDaysRented() {
         return this.daysRented;

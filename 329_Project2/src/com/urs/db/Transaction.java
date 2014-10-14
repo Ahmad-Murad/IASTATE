@@ -1,10 +1,11 @@
 package com.urs.db;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class Transaction {
-    private final long transactionTimestamp = System.currentTimeMillis();
+    private final long transactionTimestamp = new Random().nextLong();
     private String customerName;
     private Set<Product> products = new HashSet<Product>();
     private double totalCost = 0.0;

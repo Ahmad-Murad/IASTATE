@@ -7,7 +7,6 @@ import org.junit.Test;
 
 /**
  * @author Andrew
- * 
  */
 public class CustomerTest {
 
@@ -17,8 +16,7 @@ public class CustomerTest {
      */
     @Test
     public void testUpdatePaymentInfo() {
-        // placeholder test until further implementation is complete
-        // see design document for test overview.
+
     }
 
     /**
@@ -26,10 +24,7 @@ public class CustomerTest {
      * All transactions for a given customer are reflected when the history is queried.
      */
     @Test
-    public void testGetTransactionHistory() {
-        // placeholder test until further implementation is complete
-        // see design document for test overview.
-    }
+    public void testGetTransactionHistory() {}
 
     /**
      * Modify notification preferences
@@ -37,8 +32,5 @@ public class CustomerTest {
      * to no longer receive email updates. Instead, they will receive SMS updates.
      */
     @Test
-    public void testModifyNotificationPrefs() {
-        // placeholder test until further implementation is complete
-        // see design document for test overview.
-    }
+    public void testModifyNotificationPrefs() {}
 }

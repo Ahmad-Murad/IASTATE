@@ -91,6 +91,32 @@ public class TestCalculator
 
     @Test(expected = IllegalStateException.class)
     public void test15() {
-        ctx.computeExpression("9 + 10 + + 10 - 23 -");
+        ctx.computeExpression("9 * 10 + 10 - 23 -");
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void test16() {
+        ctx.computeExpression("* + 10 + 10 - 23 -");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void test17() {
+        ctx.computeExpression("9 + 10 + 10 - 23 *");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void test18() {
+        ctx.computeExpression("9 + 10 * * 10 - 23");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void test19() {
+        ctx.computeExpression("9 + 10 * 10 - 23 &");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void test20() {
+        ctx.computeExpression("9 + 10 * 10 - &");
+    }
+
 }

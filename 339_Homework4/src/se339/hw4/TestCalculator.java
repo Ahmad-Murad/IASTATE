@@ -119,4 +119,8 @@ public class TestCalculator
         ctx.computeExpression("9 + 10 * 10 - &");
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void test21() {
+        ctx.computeExpression("9 + 10.1 * 10");
+    }
 }

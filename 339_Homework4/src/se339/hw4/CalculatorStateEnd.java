@@ -5,7 +5,6 @@ package se339.hw4;
 
 /**
  * @author Andrew
- * 
  */
 public class CalculatorStateEnd extends CalculatorState
 {

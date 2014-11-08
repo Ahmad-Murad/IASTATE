@@ -5,6 +5,10 @@ import java.util.Set;
 
 import se339.hw6.products.Rentable;
 import se339.hw6.products.Sellable;
+import se339.hw6.products.discounts.CostContext;
+import se339.hw6.products.discounts.DefaultCostStrategy;
+import se339.hw6.products.discounts.Tier1DiscountStrategy;
+import se339.hw6.products.discounts.Tier2DiscountStrategy;
 import se339.hw6.products.impl.AbstractMovie;
 import se339.hw6.products.renterpoints.DefaultRenterPointStrategy;
 import se339.hw6.products.renterpoints.MultiTypeRenterPointStrategy;
@@ -17,6 +21,7 @@ public class Transaction {
     private Set<Sellable> sales = new HashSet<Sellable>();
     private double totalCost = 0.0;
     private RenterPointContext renterPointCtx = new RenterPointContext();
+    private CostContext costCtx = new CostContext();
 
     public Transaction(Customer c) {
         this.customer = c;
@@ -25,24 +30,30 @@ public class Transaction {
     public void addRental(Rentable newRental) {
         rentals.add(newRental);
 
-        totalCost += newRental.getRentalCost();
+        // Products after 5 rentals are 50% off
+        if (rentals.size() > 5)
+            costCtx.setCostStrategy(new Tier2DiscountStrategy());
+        // Products for 3-5 rentals are 20% off
+        else if (rentals.size() >= 3)
+            costCtx.setCostStrategy(new Tier1DiscountStrategy());
+        else
+            costCtx.setCostStrategy(new DefaultCostStrategy());
+
+        totalCost += costCtx.getRentalCost(newRental);
     }
 
     public void addSellable(Sellable newSellable) {
-        if (sales.add(newSellable))
-            totalCost += newSellable.getSellCost();
+        sales.add(newSellable);
+        totalCost += costCtx.getSellCost(newSellable);
     }
 
     public String getCustomerName() {
         return customer.name;
     }
 
-//    public double getTotalCost() {
-//        // Determine which strategy to use
-//        
-//        // Calculate cost using strategy
-//
-//    }
+    public double getTotalCost() {
+        return totalCost;
+    }
 
     public int getTotalRenterPoints() {
         // Determine which strategy to use

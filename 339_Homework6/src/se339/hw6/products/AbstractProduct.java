@@ -75,4 +75,8 @@ public abstract class AbstractProduct implements Rentable, Sellable
         if (isRental)
             throw new NonSellableException("Product was not rented!");
     }
+
+    public boolean isRental() {
+        return isRental;
+    }
 }

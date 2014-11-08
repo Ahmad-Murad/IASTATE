@@ -10,7 +10,7 @@ import se339.hw6.products.Rentable;
  */
 public class RenterPointContext
 {
-    private RenterPointStrategy strategy;
+    private RenterPointStrategy strategy = new DefaultRenterPointStrategy();
 
     public void setRenterPointStrategy(RenterPointStrategy strat) {
         strategy = strat;

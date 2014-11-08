@@ -3,13 +3,10 @@
  */
 package se339.hw6.products.impl;
 
-import se339.hw6.products.AbstractProduct;
-
-
 /**
  * @author aguibert
  */
-public class ChildrensMovie extends AbstractProduct
+public class ChildrensMovie extends AbstractMovie
 {
     public ChildrensMovie(String name, boolean isNewRelease) {
         super(name, isNewRelease);

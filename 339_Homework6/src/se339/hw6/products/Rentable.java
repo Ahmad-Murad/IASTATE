@@ -18,6 +18,4 @@ public interface Rentable
     public abstract int daysOverdue();
 
     public int getDaysRented();
-
-    public int getFrequentRenterPoints();
 }

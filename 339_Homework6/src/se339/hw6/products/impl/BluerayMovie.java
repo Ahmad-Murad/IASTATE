@@ -3,13 +3,10 @@
  */
 package se339.hw6.products.impl;
 
-import se339.hw6.products.AbstractProduct;
-
-
 /**
  * @author Andrew
  */
-public class BluerayMovie extends AbstractProduct
+public class BluerayMovie extends AbstractMovie
 {
     public BluerayMovie(String name, boolean isNewRelease) {
         super(name, isNewRelease);

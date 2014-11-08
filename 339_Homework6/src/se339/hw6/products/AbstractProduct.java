@@ -3,9 +3,6 @@
  */
 package se339.hw6.products;
 
-import se339.hw6.NonRentalException;
-import se339.hw6.NonSellableException;
-
 /**
  * @author Andrew
  */
@@ -55,12 +52,6 @@ public abstract class AbstractProduct implements Rentable, Sellable
     public final int getDaysRented() {
         verifyProductRentable();
         return this.daysRented;
-    }
-
-    @Override
-    public final int getFrequentRenterPoints() {
-        verifyProductRentable();
-        return (isNewRelease && daysRented > 1) ? 2 : 1;
     }
 
     private double getCost() {

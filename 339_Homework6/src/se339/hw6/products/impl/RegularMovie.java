@@ -3,19 +3,17 @@
  */
 package se339.hw6.products.impl;
 
-import se339.hw6.products.AbstractProduct;
-
 
 /**
  * @author aguibert
  */
-public class RegularMovie extends AbstractProduct
+public class RegularMovie extends AbstractMovie
 {
     public RegularMovie(String name, boolean isNewRelease) {
         super(name, isNewRelease);
     }
 
-    public RegularMovie(String name, int daysRented, boolean isNewRelease) {
+    public RegularMovie(String name, boolean isNewRelease, int daysRented) {
         super(name, isNewRelease, daysRented, 2);
     }
 

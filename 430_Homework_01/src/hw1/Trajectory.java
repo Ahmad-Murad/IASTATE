@@ -1,28 +1,35 @@
 package hw1;
 import java.awt.Point;
+import java.util.Arrays;
 
-
-
+/**
+ * To make this class thread-safe, we needed to protect the internal state
+ * against any reference leaks. This was done by creating a copy of the incoming
+ * array in the constructor, and also returning a copy of the outgoing array for
+ * the getValues() method. The individual getValue() method had to be updated to
+ * return a copy of the point. Finally, all of the methods were synchronized to
+ * ensure all access to the data obeys the same lock.
+ */
 public class Trajectory
 {
-  private Point[] data;
+  private final Point[] data;
   public Trajectory(Point[] data)
   {
-    this.data = data;
+	  this.data = Arrays.copyOf(data, data.length);
   }
-  public Point[] getValues()
+  public synchronized Point[] getValues()
   {
-    return data;
-  }
-  
-  public Point getValue(int index)
-  {
-    return data[index];
+	  return Arrays.copyOf(data, data.length);
   }
   
-  public void update(int i, Point p)
+  public synchronized Point getValue(int index)
   {
-    data[i] = p;
+    return new Point(data[index]);
+  }
+  
+  public synchronized void update(int i, Point p)
+  {
+	  data[i] = p;
   }
 }
 

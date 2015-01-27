@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<project default="main" basedir=".">
+
+<!-- <property file="cxf_client.properties"/> -->
+	
+<target name="main" >
+	<mkdir dir="${basedir}/out"/>
+	<jar destfile="${basedir}/out/Lab02.jar" basedir="${basedir}/bin"/>
+</target>
+  
+</project>

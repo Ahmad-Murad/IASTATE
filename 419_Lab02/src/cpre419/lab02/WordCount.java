@@ -129,9 +129,7 @@ public class WordCount extends Configured implements Tool {
             StringTokenizer tokens = new StringTokenizer(line);
 
             while (tokens.hasMoreTokens()) {
-
                 word.set(tokens.nextToken());
-
                 context.write(word, one);
             }
         }
@@ -149,15 +147,10 @@ public class WordCount extends Configured implements Tool {
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {
             int sum = 0;
-
             for (IntWritable val : values) {
-
                 sum += val.get();
             }
-
             context.write(key, new IntWritable(sum));
         }
-
     }
-
 }

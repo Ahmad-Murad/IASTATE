@@ -35,15 +35,15 @@ public class Driver extends Configured implements Tool {
 
         int res = ToolRunner.run(new Configuration(), new Driver(), args);
         System.exit(res);
+    }
 
-    } // End main
-
+    @SuppressWarnings("deprecation")
     @Override
     public int run(String[] args) throws Exception {
 
         String input = "/class/se14419x/lab2/shakespeare"; // Change this accordingly
-        String temp = "/scr/<your id>/lab2/exp2/temp"; // Change this accordingly
-        String output = "/scr/<your id>/lab2/exp2/output/"; // Change this accordingly
+        String temp = "/scr/aguibert/lab2/exp2/temp";
+        String output = "/scr/aguibert/lab2/exp2/output/";
 
         int reduce_tasks = 2; // The number of reduce tasks that will be assigned to the job
         Configuration conf = new Configuration();
@@ -125,13 +125,8 @@ public class Driver extends Configured implements Tool {
         job_two.waitForCompletion(true);
 
         /**
-         * **************************************
-         * **************************************
-         * FILL IN CODE FOR MORE JOBS IF YOU NEED
-         * **************************************
-         * **************************************
+         * FILL IN CODE FOR MORE JOBS IF YOU NEED TODO
          */
-
         return 0;
 
     } // End run
@@ -159,29 +154,16 @@ public class Driver extends Configured implements Tool {
             StringTokenizer tokens = new StringTokenizer(line);
 
             while (tokens.hasMoreTokens()) {
-
                 /**
-                 * ***********************************
-                 * ***********************************
-                 * FILL IN CODE FOR THE MAP FUNCTION
-                 * ***********************************
-                 * ***********************************
+                 * FILL IN CODE FOR THE MAP FUNCTION TODO
                  */
-
-            } // End while
+            }
 
             /**
-             * ***********************************
-             * ***********************************
-             * FILL IN CODE FOR THE MAP FUNCTION
-             * ***********************************
-             * ***********************************
+             * FILL IN CODE FOR THE MAP FUNCTION TODO
              */
-
             // Use context.write to emit values
-
         } // End method "map"
-
     } // End Class Map_One
 
     // The reduce class
@@ -201,26 +183,15 @@ public class Driver extends Configured implements Tool {
                 int value = val.get();
 
                 /**
-                 * **************************************
-                 * **************************************
-                 * YOUR CODE HERE FOR THE REDUCE FUNCTION
-                 * **************************************
-                 * **************************************
+                 * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
                  */
             }
 
             /**
-             * **************************************
-             * **************************************
-             * YOUR CODE HERE FOR THE REDUCE FUNCTION
-             * **************************************
-             * **************************************
+             * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
              */
-
             // Use context.write to emit values
-
         } // End method "reduce"
-
     } // End Class Reduce_One
 
     // The second Map Class
@@ -231,15 +202,9 @@ public class Driver extends Configured implements Tool {
                         throws IOException, InterruptedException {
 
             /**
-             * ***********************************
-             * ***********************************
-             * FILL IN CODE FOR THE MAP FUNCTION
-             * ***********************************
-             * ***********************************
+             * FILL IN CODE FOR THE MAP FUNCTION TODO
              */
-
         } // End method "map"
-
     } // End Class Map_Two
 
     // The second Reduce class
@@ -250,23 +215,12 @@ public class Driver extends Configured implements Tool {
                         throws IOException, InterruptedException {
 
             /**
-             * **************************************
-             * **************************************
-             * YOUR CODE HERE FOR THE REDUCE FUNCTION
-             * **************************************
-             * **************************************
+             * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
              */
-
         } // End method "reduce"
-
     } // End Class Reduce_Two
 
     /**
-     * ******************************************************
-     * ******************************************************
-     * YOUR CODE HERE FOR MORE MAP / REDUCE CLASSES IF NEEDED
-     * ******************************************************
-     * ******************************************************
+     * YOUR CODE HERE FOR MORE MAP / REDUCE CLASSES IF NEEDED TODO
      */
-
 }

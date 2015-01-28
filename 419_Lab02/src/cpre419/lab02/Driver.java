@@ -11,6 +11,7 @@ package cpre419.lab02;
  */
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
@@ -41,7 +42,7 @@ public class Driver extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
 
-        String input = "/class/se14419x/lab2/shakespeare"; // Change this accordingly
+        String input = "/class/s15419x/lab2/shakespeare";
         String temp = "/scr/aguibert/lab2/exp2/temp";
         String output = "/scr/aguibert/lab2/exp2/output/";
 
@@ -91,7 +92,7 @@ public class Driver extends Configured implements Tool {
         // The output HDFS path for this job
         // The output path must be one and only one
         // This must not be shared with other running jobs in the system
-        FileOutputFormat.setOutputPath(job_one, new Path(temp));
+        FileOutputFormat.setOutputPath(job_one, new Path(output)); // TODO used to be temp
         // FileOutputFormat.setOutputPath(job_one, new Path(another_output_path)); // This is not allowed
 
         // Run the job
@@ -101,28 +102,28 @@ public class Driver extends Configured implements Tool {
         // The output of the previous job can be passed as the input to the next
         // The steps are as in job 1
 
-        Job job_two = new Job(conf, "Driver Program Round Two");
-        job_two.setJarByClass(Driver.class);
-        job_two.setNumReduceTasks(reduce_tasks);
-
-        job_two.setOutputKeyClass(Text.class);
-        job_two.setOutputValueClass(IntWritable.class);
-
-        // If required the same Map / Reduce classes can also be used
-        // Will depend on logic if separate Map / Reduce classes are needed
-        // Here we show separate ones
-        job_two.setMapperClass(Map_Two.class);
-        job_two.setReducerClass(Reduce_Two.class);
-
-        job_two.setInputFormatClass(TextInputFormat.class);
-        job_two.setOutputFormatClass(TextOutputFormat.class);
-
-        // The output of previous job set as input of the next
-        FileInputFormat.addInputPath(job_two, new Path(temp));
-        FileOutputFormat.setOutputPath(job_two, new Path(output));
-
-        // Run the job
-        job_two.waitForCompletion(true);
+//        Job job_two = new Job(conf, "Driver Program Round Two");
+//        job_two.setJarByClass(Driver.class);
+//        job_two.setNumReduceTasks(reduce_tasks);
+//
+//        job_two.setOutputKeyClass(Text.class);
+//        job_two.setOutputValueClass(IntWritable.class);
+//
+//        // If required the same Map / Reduce classes can also be used
+//        // Will depend on logic if separate Map / Reduce classes are needed
+//        // Here we show separate ones
+//        job_two.setMapperClass(Map_Two.class);
+//        job_two.setReducerClass(Reduce_Two.class);
+//
+//        job_two.setInputFormatClass(TextInputFormat.class);
+//        job_two.setOutputFormatClass(TextOutputFormat.class);
+//
+//        // The output of previous job set as input of the next
+//        FileInputFormat.addInputPath(job_two, new Path(temp));
+//        FileOutputFormat.setOutputPath(job_two, new Path(output));
+//
+//        // Run the job
+//        job_two.waitForCompletion(true);
 
         /**
          * FILL IN CODE FOR MORE JOBS IF YOU NEED TODO
@@ -141,6 +142,9 @@ public class Driver extends Configured implements Tool {
     // However, to match the class declaration, it must emit Text as key and IntWribale as value
     public static class Map_One extends Mapper<LongWritable, Text, Text, IntWritable> {
 
+        private IntWritable one = new IntWritable(1);
+        private Text bigram = new Text();
+
         // The map method
         @Override
         public void map(LongWritable key, Text value, Context context)
@@ -148,20 +152,26 @@ public class Driver extends Configured implements Tool {
 
             // The TextInputFormat splits the data line by line.
             // So each map method receives one line from the input
-            String line = value.toString();
+            String[] lines = value.toString().toLowerCase().split(",.!?");
 
             // Tokenize to get the individual words
-            StringTokenizer tokens = new StringTokenizer(line);
+            for (String line : lines) {
+                StringTokenizer tokens = new StringTokenizer(line);
 
-            while (tokens.hasMoreTokens()) {
-                /**
-                 * FILL IN CODE FOR THE MAP FUNCTION TODO
-                 */
+                try {
+                    String first = tokens.nextToken();
+                    while (tokens.hasMoreTokens()) {
+                        String second = tokens.nextToken();
+                        bigram.set(">>>" + first + "===" + second + "<<<");
+                        context.write(bigram, one);
+                        first = second;
+                    }
+                } catch (NoSuchElementException e) {
+                    // expected at the end of input
+                }
             }
 
-            /**
-             * FILL IN CODE FOR THE MAP FUNCTION TODO
-             */
+            // TODO
             // Use context.write to emit values
         } // End method "map"
     } // End Class Map_One
@@ -178,18 +188,24 @@ public class Driver extends Configured implements Tool {
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {
 
+            int sum = 0;
             for (IntWritable val : values) {
-
-                int value = val.get();
-
-                /**
-                 * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
-                 */
+                sum += val.get();
             }
+            context.write(key, new IntWritable(sum));
 
-            /**
-             * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
-             */
+//            for (IntWritable val : values) {
+//
+//                int value = val.get();
+//
+//                /**
+//                 * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
+//                 */
+//            }
+//
+//            /**
+//             * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
+//             */
             // Use context.write to emit values
         } // End method "reduce"
     } // End Class Reduce_One

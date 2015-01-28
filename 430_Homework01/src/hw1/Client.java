@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Client
@@ -15,7 +16,7 @@ public class Client
   /**
    * Local cache of key/value pairs we've already looked up.
    */
-  private ArrayList<Record> cache;
+  private ConcurrentHashMap<Integer, Record> cache;
   
   /**
    * Scanner for console input.
@@ -38,7 +39,7 @@ public class Client
   
   public Client()
   {
-    cache = new ArrayList<Record>();
+    cache = new ConcurrentHashMap<Integer, Record>();
     scanner = new Scanner(System.in);
   }
   
@@ -52,7 +53,6 @@ public class Client
       String response = getResponse();
       parseResponse(response);
     }
-    
   }
   
   /**
@@ -77,8 +77,7 @@ public class Client
     if (isNumeric(s))
     {
       int key = Integer.parseInt(s);
-      String result = doLookup(key);
-      System.out.println("Value for id " + key + ": " + result);
+      doLookupAndPrint(key);
     }
     else
     {
@@ -104,59 +103,33 @@ public class Client
    * @param key
    * @return
    */
-  private String doLookup(int key)
+  private void doLookupAndPrint(int key)
   {
     String value = getLocalValue(key);
-    if (value == null)
-    {
-      getValueFromDB(key);
-      value = getLocalValue(key);
+    if (value == null) {
+    	new Thread(new DBTask(key)).start();
+    } else{
+    	printResponse(key, value);
     }
-    return value;
   }
   
   /**
-   * Look up given key in the slow database and add it to the local list.
+   * Returns the value for given key, or null if not present in the list.
    * @param key
+   * @return
    */
-  private void getValueFromDB(int key)
+  private String getLocalValue(int key)
   {
-    Socket s = null;
-    try
+    for (Record r : cache.values())
     {
-      // open a connection to the server
-      s = new Socket(HOST, PORT);
-
-      // for line-oriented output we use a PrintWriter
-      PrintWriter pw = new PrintWriter(s.getOutputStream());
-      pw.println("" + key);
-      pw.flush();  // don't forget to flush...    
-      
-      // read response, which we expect to be line-oriented text
-      Scanner scanner = new Scanner(s.getInputStream());
-      String result = scanner.nextLine();
-      if (getLocalValue(key) == null)
+      if (r.key() == key)
       {
-        cache.add(new Record(key, result));
-        Collections.sort(cache);
+        return r.value();
       }
     }
-    catch (IOException e)
-    {
-      System.out.println(e);
-    }
-    finally
-    {
-      // be sure streams are closed
-      try
-      {
-        s.close();
-      }
-      catch (IOException ignore){}
-    }
-
+    return null;
   }
-
+  
   /**
    * Returns true if the given string represents a positive integer.
    * @param s
@@ -179,30 +152,67 @@ public class Client
    */
   private void display()
   {
-    for (int i =  0; i < cache.size(); ++i)
+    for (Integer i : cache.keySet())
     {
       Record r = cache.get(i);     
       System.out.println(r.key() + " " + r.value());
     }
   }
   
-  /**
-   * Returns the value for given key, or null if not present in the list.
-   * @param key
-   * @return
-   */
-  private String getLocalValue(int key)
-  {
-    for (Record r : cache)
-    {
-      if (r.key() == key)
-      {
-        return r.value();
-      }
-    }
-    return null;
-  }
-  
+	private class DBTask implements Runnable {
+		private final int key;
+
+		public DBTask(int k) {
+			this.key = k;
+		}
+
+		@Override
+		public void run() {
+			getValueFromDB(key);
+			String value = getLocalValue(key);
+			printResponse(key, value);
+		}
+
+		/**
+		 * Look up given key in the slow database and add it to the local list.
+		 * 
+		 * @param key
+		 */
+		private void getValueFromDB(int key) {
+			Socket s = null;
+			try {
+				// open a connection to the server
+				s = new Socket(HOST, PORT);
+
+				// for line-oriented output we use a PrintWriter
+				PrintWriter pw = new PrintWriter(s.getOutputStream());
+				pw.println("" + key);
+				pw.flush(); // don't forget to flush...
+
+				// read response, which we expect to be line-oriented text
+				Scanner scanner = new Scanner(s.getInputStream());
+				String result = scanner.nextLine();
+				if (getLocalValue(key) == null) {
+					cache.put(key, new Record(key, result));
+					//Collections.sort(cache.keySet()); TODO 
+				}
+				scanner.close();
+			} catch (IOException e) {
+				System.out.println(e);
+			} finally {
+				// be sure streams are closed
+				try {
+					s.close();
+				} catch (IOException ignore) {
+				}
+			}
+		}
+	}
+	
+	private synchronized void printResponse(int key, String value){
+		System.out.println("\nValue for id " + key + ": " + value);
+	}
+    
   /**
    * Key/value pair.
    */

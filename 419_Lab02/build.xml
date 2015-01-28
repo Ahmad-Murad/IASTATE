@@ -5,7 +5,7 @@
 	
 <target name="main" >
 	<mkdir dir="${basedir}/out"/>
-	<jar destfile="${basedir}/out/Lab02.jar" basedir="${basedir}/bin" update="true"/>
+	<jar destfile="${basedir}/out/WordCount.jar" basedir="${basedir}/bin" update="true"/>
 </target>
   
 </project>

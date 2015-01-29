@@ -116,7 +116,6 @@ public class WordCount extends Configured implements Tool {
         private IntWritable one = new IntWritable(1);
         private Text word = new Text();
 
-        // The map method
         @Override
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
@@ -135,14 +134,12 @@ public class WordCount extends Configured implements Tool {
         }
     }
 
-    // The reduce class
-    // The key is Text and must match the datatype of the output key of the map method
-    // The value is IntWritable and also must match the datatype of the output value of the map method
+    // The key is Text and must match the data type of the output key of the map method
+    // The value is IntWritable and also must match the data type of the output value of the map method
     public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 
-        // The reduce method
         // For key, we have an Iterable over all values associated with this key
-        // The values come in a sorted fasion.
+        // The values come in a sorted fashion.
         @Override
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {

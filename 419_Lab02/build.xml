@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<project default="main" basedir=".">
+<project name="Lab02" default="main" basedir=".">
 
 <!-- <property file="cxf_client.properties"/> -->
 	
 <target name="main" >
 	<mkdir dir="${basedir}/out"/>
-	<jar destfile="${basedir}/out/WordCount.jar" basedir="${basedir}/bin" update="true"/>
+	<jar destfile="${basedir}/out/${ant.project.name}.jar" basedir="${basedir}/bin" update="true"/>
 </target>
   
 </project>

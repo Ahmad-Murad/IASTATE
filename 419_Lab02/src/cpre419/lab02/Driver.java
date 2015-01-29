@@ -92,7 +92,7 @@ public class Driver extends Configured implements Tool {
         // The output HDFS path for this job
         // The output path must be one and only one
         // This must not be shared with other running jobs in the system
-        FileOutputFormat.setOutputPath(job_one, new Path(output)); // TODO used to be temp
+        FileOutputFormat.setOutputPath(job_one, new Path(temp));
         // FileOutputFormat.setOutputPath(job_one, new Path(another_output_path)); // This is not allowed
 
         // Run the job
@@ -102,37 +102,32 @@ public class Driver extends Configured implements Tool {
         // The output of the previous job can be passed as the input to the next
         // The steps are as in job 1
 
-//        Job job_two = new Job(conf, "Driver Program Round Two");
-//        job_two.setJarByClass(Driver.class);
-//        job_two.setNumReduceTasks(reduce_tasks);
-//
-//        job_two.setOutputKeyClass(Text.class);
-//        job_two.setOutputValueClass(IntWritable.class);
-//
-//        // If required the same Map / Reduce classes can also be used
-//        // Will depend on logic if separate Map / Reduce classes are needed
-//        // Here we show separate ones
-//        job_two.setMapperClass(Map_Two.class);
-//        job_two.setReducerClass(Reduce_Two.class);
-//
-//        job_two.setInputFormatClass(TextInputFormat.class);
-//        job_two.setOutputFormatClass(TextOutputFormat.class);
-//
-//        // The output of previous job set as input of the next
-//        FileInputFormat.addInputPath(job_two, new Path(temp));
-//        FileOutputFormat.setOutputPath(job_two, new Path(output));
-//
-//        // Run the job
-//        job_two.waitForCompletion(true);
+        Job job_two = new Job(conf, "Driver Program Round Two");
+        job_two.setJarByClass(Driver.class);
+        job_two.setNumReduceTasks(reduce_tasks);
 
-        /**
-         * FILL IN CODE FOR MORE JOBS IF YOU NEED TODO
-         */
+        job_two.setOutputKeyClass(Text.class);
+        job_two.setOutputValueClass(IntWritable.class);
+
+        // If required the same Map / Reduce classes can also be used
+        // Will depend on logic if separate Map / Reduce classes are needed
+        // Here we show separate ones
+        job_two.setMapperClass(Map_Two.class);
+        job_two.setReducerClass(Reduce_Two.class);
+
+        job_two.setInputFormatClass(TextInputFormat.class);
+        job_two.setOutputFormatClass(TextOutputFormat.class);
+
+        // The output of previous job set as input of the next
+        FileInputFormat.addInputPath(job_two, new Path(temp));
+        FileOutputFormat.setOutputPath(job_two, new Path(output));
+
+        // Run the job
+        job_two.waitForCompletion(true);
+
         return 0;
+    }
 
-    } // End run
-
-    // The Map Class
     // The input to the map method would be a LongWritable (long) key and Text (String) value
     // Notice the class declaration is done with LongWritable key and Text value
     // The TextInputFormat splits the data line by line.
@@ -152,7 +147,7 @@ public class Driver extends Configured implements Tool {
 
             // The TextInputFormat splits the data line by line.
             // So each map method receives one line from the input
-            String[] lines = value.toString().toLowerCase().split(",.!?");
+            String[] lines = value.toString().toLowerCase().split("(,|\\.|!|\\?)");
 
             // Tokenize to get the individual words
             for (String line : lines) {
@@ -162,7 +157,7 @@ public class Driver extends Configured implements Tool {
                     String first = tokens.nextToken();
                     while (tokens.hasMoreTokens()) {
                         String second = tokens.nextToken();
-                        bigram.set(">>>" + first + "===" + second + "<<<");
+                        bigram.set(first + ' ' + second);
                         context.write(bigram, one);
                         first = second;
                     }
@@ -170,20 +165,15 @@ public class Driver extends Configured implements Tool {
                     // expected at the end of input
                 }
             }
+        }
+    }
 
-            // TODO
-            // Use context.write to emit values
-        } // End method "map"
-    } // End Class Map_One
-
-    // The reduce class
     // The key is Text and must match the datatype of the output key of the map method
     // The value is IntWritable and also must match the datatype of the output value of the map method
     public static class Reduce_One extends Reducer<Text, IntWritable, Text, IntWritable> {
 
-        // The reduce method
         // For key, we have an Iterable over all values associated with this key
-        // The values come in a sorted fasion.
+        // The values come in a sorted fashion.
         @Override
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {
@@ -193,50 +183,31 @@ public class Driver extends Configured implements Tool {
                 sum += val.get();
             }
             context.write(key, new IntWritable(sum));
+        }
+    }
 
-//            for (IntWritable val : values) {
-//
-//                int value = val.get();
-//
-//                /**
-//                 * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
-//                 */
-//            }
-//
-//            /**
-//             * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
-//             */
-            // Use context.write to emit values
-        } // End method "reduce"
-    } // End Class Reduce_One
-
-    // The second Map Class
     public static class Map_Two extends Mapper<LongWritable, Text, Text, Text> {
 
         @Override
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
 
-            /**
-             * FILL IN CODE FOR THE MAP FUNCTION TODO
-             */
-        } // End method "map"
-    } // End Class Map_Two
+            context.write(new Text("" + value.charAt(0)), value);
+        }
+    }
 
-    // The second Reduce class
     public static class Reduce_Two extends Reducer<Text, Text, Text, IntWritable> {
 
         @Override
         public void reduce(Text key, Iterable<Text> values, Context context)
                         throws IOException, InterruptedException {
 
-            /**
-             * YOUR CODE HERE FOR THE REDUCE FUNCTION TODO
-             */
-        } // End method "reduce"
-    } // End Class Reduce_Two
-
-    /**
-     * YOUR CODE HERE FOR MORE MAP / REDUCE CLASSES IF NEEDED TODO
-     */
+            // TODO LEFTOFF, just need to implement reduce 2
+            int sum = 0;
+            for (Text val : values) {
+                val.charAt(0);
+            }
+            context.write(key, new IntWritable(sum));
+        }
+    }
 }

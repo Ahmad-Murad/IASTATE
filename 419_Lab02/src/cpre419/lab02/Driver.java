@@ -42,9 +42,9 @@ public class Driver extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
 
-        String input = "/class/s15419x/lab2/shakespeare";
-        String temp = "/scr/aguibert/lab2/exp2/temp";
-        String output = "/scr/aguibert/lab2/exp2/output/";
+        String input = args[0]; // "/class/s15419x/lab2/gutenberg";
+        String temp = "/scr/aguibert/lab2/temp";
+        String output = args[1]; // "/scr/aguibert/lab2/exp2/output/";
 
         int reduce_tasks = 2; // The number of reduce tasks that will be assigned to the job
         Configuration conf = new Configuration();
@@ -107,7 +107,7 @@ public class Driver extends Configured implements Tool {
         job_two.setNumReduceTasks(reduce_tasks);
 
         job_two.setOutputKeyClass(Text.class);
-        job_two.setOutputValueClass(IntWritable.class);
+        job_two.setOutputValueClass(Text.class);
 
         // If required the same Map / Reduce classes can also be used
         // Will depend on logic if separate Map / Reduce classes are needed
@@ -178,6 +178,8 @@ public class Driver extends Configured implements Tool {
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {
 
+            context.progress(); // update job so it doesn't die
+
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
@@ -192,22 +194,34 @@ public class Driver extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
 
-            context.write(new Text("" + value.charAt(0)), value);
+            char first = (char) value.charAt(0);
+            // only write bigrams beginning with a-z
+            if (first >= 'a' && first <= 'z')
+                context.write(new Text("" + first), value);
         }
     }
 
-    public static class Reduce_Two extends Reducer<Text, Text, Text, IntWritable> {
+    public static class Reduce_Two extends Reducer<Text, Text, Text, Text> {
 
         @Override
         public void reduce(Text key, Iterable<Text> values, Context context)
                         throws IOException, InterruptedException {
 
-            // TODO LEFTOFF, just need to implement reduce 2
-            int sum = 0;
+            context.progress(); // update job so it doesn't die
+
+            int mostFreqNum = -1;
+            Text mostFreqText = null;
             for (Text val : values) {
-                val.charAt(0);
+                StringTokenizer line = new StringTokenizer(val.toString());
+                String bigram = line.nextToken() + ' ' + line.nextToken();
+                int freq = Integer.parseInt(line.nextToken()); // look at the frequency value
+                if (mostFreqNum < freq) {
+                    mostFreqNum = freq;
+                    mostFreqText = new Text(bigram);
+                }
             }
-            context.write(key, new IntWritable(sum));
+            context.write(key, new Text(String.format("%-16s", "'" + mostFreqText.toString() + "'")
+                                        + " appears " + mostFreqNum + " times."));
         }
     }
 }

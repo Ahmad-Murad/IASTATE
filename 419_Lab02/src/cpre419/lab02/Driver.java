@@ -154,15 +154,20 @@ public class Driver extends Configured implements Tool {
                 StringTokenizer tokens = new StringTokenizer(line);
 
                 try {
+                    // A bigram is comprised of two words (first and second)
                     String first = tokens.nextToken();
                     while (tokens.hasMoreTokens()) {
                         String second = tokens.nextToken();
                         bigram.set(first + ' ' + second);
+                        // Write in the format "<first> <second>     1"
+                        // to indicate the bigram, and how many times to count the bigram
                         context.write(bigram, one);
                         first = second;
                     }
                 } catch (NoSuchElementException e) {
-                    // expected at the end of input
+                    // expected at the end of input, more efficient to
+                    // just catch an exception instead of constantly checking
+                    // if there is more elements
                 }
             }
         }
@@ -180,6 +185,8 @@ public class Driver extends Configured implements Tool {
 
             context.progress(); // update job so it doesn't die
 
+            // Total up how many times the given bigram occurs, and write to context in the format:
+            // "<bigram>     <numOccurrances>"
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
@@ -194,6 +201,8 @@ public class Driver extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
 
+            // Map bigram counts to their corresponding starting letter in the format:
+            // "<startLetter>    <bigram>"
             char first = (char) value.charAt(0);
             // only write bigrams beginning with a-z
             if (first >= 'a' && first <= 'z')
@@ -209,6 +218,8 @@ public class Driver extends Configured implements Tool {
 
             context.progress(); // update job so it doesn't die
 
+            // Iterate over all bigrams for a given starting char to
+            // check which one has the highest frequency
             int mostFreqNum = -1;
             Text mostFreqText = null;
             for (Text val : values) {
@@ -220,6 +231,8 @@ public class Driver extends Configured implements Tool {
                     mostFreqText = new Text(bigram);
                 }
             }
+            // Write to context in the format:
+            // "<startLetter>     <bigram> appears <num> times."
             context.write(key, new Text(String.format("%-16s", "'" + mostFreqText.toString() + "'")
                                         + " appears " + mostFreqNum + " times."));
         }

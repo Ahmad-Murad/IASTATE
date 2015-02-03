@@ -162,6 +162,10 @@ public class QueueTest
         }
     }
 
+    /**
+     * Expected output:<br>
+     *
+     */
     @Test
     public void testLowCapacity() {
         QueueFaulty qf = new QueueFaulty();
@@ -172,19 +176,56 @@ public class QueueTest
         assertTrue("Queue should be full with 10 elements.", qf.isFull());
 
         qf.setCapacity(5);
-        assertTrue("Queue should be full with 5 elements.", qf.isFull());
-        qf.dequeue();
-        assertFalse("Queue should not be full with 4 elements.", qf.isFull());
+        assertTrue("Queue capacity should be unchanged.", qf.isFull());
+
+        // There should be 10 elements on the queue still
+        for (int i = 0; i < 10; i++)
+            qf.dequeue();
+
+        assertTrue("Queue should be empty.", qf.isEmpty());
     }
 
     @Test
     public void testToString() {
         QueueFaulty qf = new QueueFaulty();
+        qf.setCapacity(2);
         assertEquals("[]", qf.toString());
 
-        Object obj = new Object();
-        qf.enqueue(obj);
-        // Fault : calling toString on a non-empty queue causes a NPE
+        qf.enqueue(new Object());
+        // Fault : calling toString on a queue of length 1
+        // where dequeue has never been called causes a NPE
         System.out.println(qf.toString());
+    }
+
+    @Test
+    public void testTwoQueues1() {
+        QueueFaulty qf1 = new QueueFaulty();
+        QueueFaulty qf2 = new QueueFaulty();
+
+        while (!qf1.isFull())
+            qf1.enqueue(new Object());
+
+        qf2.setCapacity(10);
+
+        try {
+            // Fault : queue capacities should be independent of one another
+            qf1.enqueue(new Object());
+            fail("Queue capacities should be independent of each other.");
+        } catch (IllegalStateException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testTwoQueues2() {
+        QueueFaulty qf1 = new QueueFaulty();
+        qf1.setCapacity(2);
+        QueueFaulty qf2 = new QueueFaulty();
+
+        qf1.enqueue(new Object());
+        qf1.enqueue(new Object());
+
+        assertTrue(qf2.isEmpty());
+        assertEquals("[]", qf2.toString());
     }
 }

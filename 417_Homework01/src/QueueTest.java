@@ -164,7 +164,10 @@ public class QueueTest
 
     /**
      * Expected output:<br>
-     *
+     * When capacity is set to 10, and the queue is filled with 10 elements.
+     * Then, when the queue has the capacity reduced to 5 (while holding 10
+     * elements) the command should be ignored, and it should still contain
+     * the 10 original elements.
      */
     @Test
     public void testLowCapacity() {
@@ -185,6 +188,10 @@ public class QueueTest
         assertTrue("Queue should be empty.", qf.isEmpty());
     }
 
+    /**
+     * Expected output:<br>
+     * Verify toString provides a human readable representation of the queue
+     */
     @Test
     public void testToString() {
         QueueFaulty qf = new QueueFaulty();
@@ -197,6 +204,11 @@ public class QueueTest
         System.out.println(qf.toString());
     }
 
+    /**
+     * Expected output:<br>
+     * Verify that altering the capacity of one queue does not alter
+     * the capacity of another queue instance.
+     */
     @Test
     public void testTwoQueues1() {
         QueueFaulty qf1 = new QueueFaulty();
@@ -216,6 +228,10 @@ public class QueueTest
         }
     }
 
+    /**
+     * Expected output:<br>
+     * Verify that items appended to queue objects are independent of each other.
+     */
     @Test
     public void testTwoQueues2() {
         QueueFaulty qf1 = new QueueFaulty();

@@ -11,7 +11,7 @@ import org.junit.Test;
  */
 public class FileLoggerTest {
 
-    @Test
+    //@Test
     public void test() throws Exception {
         FileLogger log = new FileLogger("myfile1");
         log.log("Message 1");
@@ -27,4 +27,38 @@ public class FileLoggerTest {
         Thread.sleep(10000);
     }
 
+    @Test
+    public void test1() throws Exception {
+        MyCountdownLatch l = new MyCountdownLatch(1);
+
+        new WaiterThread(l);
+        new WaiterThread(l);
+        new WaiterThread(l);
+        System.out.println("Starting to wait...");
+        Thread.sleep(3000);
+        System.out.println("Watiing some more...");
+        l.countDown();
+        Thread.sleep(3000);
+        System.out.println("Done waiting in test.");
+        l.countDown();
+    }
+
+    private class WaiterThread extends Thread {
+
+        private final MyCountdownLatch l;
+
+        public WaiterThread(MyCountdownLatch latch) {
+            l = latch;
+            this.start();
+        }
+
+        @Override
+        public void run() {
+            try {
+                l.await();
+            } catch (InterruptedException e) {
+            }
+            System.out.println("DONE WAITING IN THREAD");
+        }
+    }
 }

@@ -4,9 +4,8 @@
 bin/
 bin/*
 *.class
-311_Homework_3/bin
-311_Homework_3/bin/*
 output/
+*/out/
 RemoteSystemsTempFiles/
 clientdb.xml
 

@@ -1,8 +1,8 @@
 package cpre419.lab03;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
@@ -24,7 +24,7 @@ import org.apache.hadoop.util.ToolRunner;
 
 public class Lab3Exp2 extends Configured implements Tool {
 
-    static final String input = "/home/aguibert/sample.txt";
+    static final String input = "/user/aguibert/sample.txt";
     static final String temp0 = "/scr/aguibert/temp0";
     static final String temp1 = "/scr/aguibert/temp1";
     static final String output = "/scr/aguibert/lab3/exp2";
@@ -46,7 +46,7 @@ public class Lab3Exp2 extends Configured implements Tool {
             // Job 1
             Job job_one = new Job(conf, "Driver Program Round 1");
             job_one.setJarByClass(Lab3Exp2.class);
-            job_one.setNumReduceTasks(4);
+            job_one.setNumReduceTasks(1);
             job_one.setOutputKeyClass(IntWritable.class);
             job_one.setOutputValueClass(IntWritable.class);
             job_one.setMapperClass(Map_One.class);
@@ -104,17 +104,21 @@ public class Lab3Exp2 extends Configured implements Tool {
                         throws IOException, InterruptedException {
 
             // Build a set of neighboring edges
-            List<IntWritable> l = new ArrayList<>();
-            for (IntWritable t : values)
-                l.add(t);
-            IntWritable[] arr = (IntWritable[]) l.toArray();
+            System.out.println("*** STARTING REDUCE for " + key + " ***");
+            IntWritable[] arr = new IntWritable[10];
+            Iterator<IntWritable> iter = values.iterator();
+            for (int i = 0; iter.hasNext(); i++)
+                arr[i] = iter.next();
+//            Arrays.sort(arr);
+            System.out.println("ARR:" + Arrays.toString(arr));
 
             // Print all possible close triplets
             for (int i = 0; i < arr.length - 1; i++)
                 for (int j = i + 1; j < arr.length; j++) {
                     context.write(key, new Text(arr[i].toString() + ' ' + arr[j].toString()));
-                    System.out.println(key.toString() + new Text(arr[i].toString() + ' ' + arr[j].toString()));
+                    System.out.println(key.toString() + ' ' + new Text(arr[i].toString() + ' ' + arr[j].toString()));
                 }
+            System.out.println("*** ENDING REDUCE  ***");
         }
     }
 

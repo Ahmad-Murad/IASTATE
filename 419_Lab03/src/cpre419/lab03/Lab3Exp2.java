@@ -1,8 +1,9 @@
 package cpre419.lab03;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
@@ -24,10 +25,13 @@ import org.apache.hadoop.util.ToolRunner;
 
 public class Lab3Exp2 extends Configured implements Tool {
 
-    static final String input = "/user/aguibert/sample.txt";
+    static final String input = "/class/s15419x/lab3/patents.txt";
     static final String temp0 = "/scr/aguibert/temp0";
     static final String temp1 = "/scr/aguibert/temp1";
     static final String output = "/scr/aguibert/lab3/exp2";
+
+    volatile static int triplets = 0;
+    volatile static int triangles = 0;
 
     public static void main(String[] args) throws Exception {
         int res = ToolRunner.run(new Configuration(), new Lab3Exp2(), args);
@@ -46,7 +50,7 @@ public class Lab3Exp2 extends Configured implements Tool {
             // Job 1
             Job job_one = new Job(conf, "Driver Program Round 1");
             job_one.setJarByClass(Lab3Exp2.class);
-            job_one.setNumReduceTasks(1);
+            job_one.setNumReduceTasks(4);
             job_one.setOutputKeyClass(IntWritable.class);
             job_one.setOutputValueClass(IntWritable.class);
             job_one.setMapperClass(Map_One.class);
@@ -55,26 +59,29 @@ public class Lab3Exp2 extends Configured implements Tool {
             job_one.setOutputFormatClass(TextOutputFormat.class);
 
             FileInputFormat.addInputPath(job_one, new Path(input));
-            FileOutputFormat.setOutputPath(job_one, new Path(output));
+            FileOutputFormat.setOutputPath(job_one, new Path(temp0));
 
             job_one.waitForCompletion(true);
 
-//            // Job 2
-//            Job job_two = new Job(conf, "Driver Program Round 2");
-//            job_two.setJarByClass(Lab3Exp2.class);
-//            job_two.setNumReduceTasks(4);
-//            job_two.setOutputKeyClass(Text.class);
-//            job_two.setOutputValueClass(Text.class);
-//            job_two.setMapperClass(Map_Two.class);
-//            job_two.setReducerClass(Reduce_Two.class);
-//            job_two.setInputFormatClass(TextInputFormat.class);
-//            job_two.setOutputFormatClass(TextOutputFormat.class);
-//
-//            FileInputFormat.addInputPath(job_two, new Path(temp0));
-//            FileOutputFormat.setOutputPath(job_two, new Path(output));
-//
-//            job_two.waitForCompletion(true);
+            // Job 2
+            Job job_two = new Job(conf, "Driver Program Round 2");
+            job_two.setJarByClass(Lab3Exp2.class);
+            job_two.setNumReduceTasks(4);
+            job_two.setOutputKeyClass(Text.class);
+            job_two.setOutputValueClass(Text.class);
+            job_two.setMapperClass(Map_Two.class);
+            job_two.setReducerClass(Reduce_Two.class);
+            job_two.setInputFormatClass(TextInputFormat.class);
+            job_two.setOutputFormatClass(TextOutputFormat.class);
 
+            FileInputFormat.addInputPath(job_two, new Path(temp0));
+            FileOutputFormat.setOutputPath(job_two, new Path(output));
+
+            job_two.waitForCompletion(true);
+
+            System.out.println("Triples:" + triplets);
+            System.out.println("Triangles:" + triangles);
+            System.out.println("Ratio: " + (triangles * 3.0) / triplets);
         } finally {
             FileSystem.get(conf).delete(new Path(temp0), true);
         }
@@ -97,62 +104,56 @@ public class Lab3Exp2 extends Configured implements Tool {
         }
     }
 
-    public static class Reduce_One extends Reducer<IntWritable, IntWritable, IntWritable, Text> {
+    static final IntWritable one = new IntWritable(1);
+
+    public static class Reduce_One extends Reducer<IntWritable, IntWritable, Text, IntWritable> {
 
         @Override
         public void reduce(IntWritable key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {
 
             // Build a set of neighboring edges
-            System.out.println("*** STARTING REDUCE for " + key + " ***");
-            IntWritable[] arr = new IntWritable[10];
-            Iterator<IntWritable> iter = values.iterator();
-            for (int i = 0; iter.hasNext(); i++)
-                arr[i] = iter.next();
-//            Arrays.sort(arr);
-            System.out.println("ARR:" + Arrays.toString(arr));
+            List<IntWritable> list = new ArrayList<>();
+            for (IntWritable i : values)
+                list.add(new IntWritable(i.get()));
+            IntWritable[] arr = list.toArray(new IntWritable[list.size()]);
+            Arrays.sort(arr);
 
             // Print all possible close triplets
             for (int i = 0; i < arr.length - 1; i++)
-                for (int j = i + 1; j < arr.length; j++) {
-                    context.write(key, new Text(arr[i].toString() + ' ' + arr[j].toString()));
-                    System.out.println(key.toString() + ' ' + new Text(arr[i].toString() + ' ' + arr[j].toString()));
-                }
-            System.out.println("*** ENDING REDUCE  ***");
+                for (int j = i + 1; j < arr.length; j++)
+                    context.write(new Text(key.toString() + ' ' + arr[i].toString() + ' ' + arr[j].toString()), one);
         }
     }
 
-//    public static class Map_Two extends Mapper<LongWritable, Text, Text, Text> {
-//
-//        @Override
-//        public void map(LongWritable key, Text value, Context context)
-//                        throws IOException, InterruptedException {
-//
-//            StringTokenizer line = new StringTokenizer(value.toString());
-//            Text t0 = new Text(line.nextToken());
-//            Text t1 = new Text(line.nextToken());
-//            context.write(t0, t1);
-//        }
-//    }
-//
-//    public static class Reduce_Two extends Reducer<Text, Text, Text, IntWritable> {
-//
-//        @Override
-//        public void reduce(Text key, Iterable<Text> values, Context context)
-//                        throws IOException, InterruptedException {
-//
-//            Set<Text> deps = new HashSet<Text>();
-//            for (Text val : values)
-//                deps.add(val);
-//
-//            int significance = deps.size();
-//            if (topTen[0].significance < significance) {
-//                topTen[0] = new PatentCount((Integer.parseInt(key.toString())), significance);
-//                context.write(key, new IntWritable(significance));
-//                Arrays.sort(topTen);
-//                System.out.println("Sorted array:  " + topTen);
-//            }
-//            //context.write(key, new IntWritable(significance));
-//        }
-//    }
+    public static class Map_Two extends Mapper<LongWritable, Text, Text, Text> {
+
+        @Override
+        public void map(LongWritable key, Text value, Context context)
+                        throws IOException, InterruptedException {
+
+            StringTokenizer line = new StringTokenizer(value.toString());
+            Text t0 = new Text(line.nextToken());
+            Text t1 = new Text(line.nextToken());
+            context.write(t0, t1);
+        }
+    }
+
+    public static class Reduce_Two extends Reducer<Text, Text, Text, IntWritable> {
+
+        @Override
+        public void reduce(Text key, Iterable<Text> values, Context context)
+                        throws IOException, InterruptedException {
+
+            int count = 0;
+            for (Text t : values)
+                count++;
+            if (count == 3)
+                triangles++;
+            if (count > 3)
+                throw new RuntimeException("Got too many triples for key" + key);
+            triplets += count;
+            context.write(key, new IntWritable(count));
+        }
+    }
 }

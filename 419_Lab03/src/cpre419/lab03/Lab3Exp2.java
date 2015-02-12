@@ -26,6 +26,7 @@ import org.apache.hadoop.util.ToolRunner;
 public class Lab3Exp2 extends Configured implements Tool {
 
     static final String input = "/class/s15419x/lab3/patents.txt";
+//    static final String input = "/user/aguibert/sample.txt";
     static final String temp0 = "/scr/aguibert/temp0";
     static final String temp1 = "/scr/aguibert/temp1";
     static final String output = "/scr/aguibert/lab3/exp2";
@@ -113,16 +114,34 @@ public class Lab3Exp2 extends Configured implements Tool {
                         throws IOException, InterruptedException {
 
             // Build a set of neighboring edges
-            List<IntWritable> list = new ArrayList<>();
+            Integer iKey = key.get();
+            List<Integer> list = new ArrayList<>();
             for (IntWritable i : values)
-                list.add(new IntWritable(i.get()));
-            IntWritable[] arr = list.toArray(new IntWritable[list.size()]);
+                list.add(i.get());
+            Integer[] arr = list.toArray(new Integer[list.size()]);
             Arrays.sort(arr);
 
-            // Print all possible close triplets
+            // Print all triplets using the center point and neighborhood set
             for (int i = 0; i < arr.length - 1; i++)
-                for (int j = i + 1; j < arr.length; j++)
-                    context.write(new Text(key.toString() + ' ' + arr[i].toString() + ' ' + arr[j].toString()), one);
+                for (int j = i + 1; j < arr.length; j++) {
+                    // Using integer comparisons here will be much faster than building and sorting an array
+                    if (iKey < arr[i] && iKey < arr[j]) { // A B C    A C B
+                        if (arr[i] < arr[j])
+                            context.write(new Text(iKey.toString() + '-' + arr[i] + '-' + arr[j]), one);
+                        else
+                            context.write(new Text(iKey.toString() + '-' + arr[j] + '-' + arr[i]), one);
+                    } else if (arr[i] < arr[j]) { // B A C  B C A
+                        if (iKey < arr[j])
+                            context.write(new Text(arr[i].toString() + '-' + iKey + '-' + arr[j]), one);
+                        else
+                            context.write(new Text(arr[i].toString() + '-' + arr[j] + '-' + iKey), one);
+                    } else { // C A B    C B A
+                        if (iKey < arr[i])
+                            context.write(new Text(arr[j].toString() + '-' + iKey + '-' + arr[i]), one);
+                        else
+                            context.write(new Text(arr[j].toString() + '-' + arr[i] + '-' + iKey), one);
+                    }
+                }
         }
     }
 

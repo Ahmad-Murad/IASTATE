@@ -1,6 +1,7 @@
 package cpre419.lab03;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -28,20 +29,43 @@ public class Lab3Exp1 extends Configured implements Tool {
     static final String temp0 = "/scr/aguibert/lab3/temp";
     static final String temp1 = "/scr/aguibert/lab3/temp1";
     static final String output = "/scr/aguibert/lab3/exp1/output";
+    volatile static PatentCount[] topTen = new PatentCount[10];
 
     public static void main(String[] args) throws Exception {
         int res = ToolRunner.run(new Configuration(), new Lab3Exp1(), args);
         System.exit(res);
     }
 
+    private static class PatentCount implements Comparable<PatentCount> {
+        private final int patentNo;
+        private final int significance;
+
+        public PatentCount(int pat, int sig) {
+            patentNo = pat;
+            significance = sig;
+        }
+
+        @Override
+        public int compareTo(PatentCount arg0) {
+            return (this.significance - arg0.significance);
+        }
+
+        @Override
+        public String toString() {
+            return "Patent:" + patentNo + "     Significance:" + significance;
+        }
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public int run(String[] args) throws Exception {
 
+        for (int i = 0; i < 10; i++)
+            topTen[i] = new PatentCount(-1, -1);
+
         Configuration conf = new Configuration();
 
-        if (FileSystem.get(conf).delete(new Path(output), true))
-            System.out.println("Old output files have been deleted.");
+        FileSystem.get(conf).delete(new Path(output), true);
 
         try {
             // Job 1
@@ -76,39 +100,17 @@ public class Lab3Exp1 extends Configured implements Tool {
 
             job_two.waitForCompletion(true);
 
-//            // Job 3
-//            Job job_three = new Job(conf, "Driver Program Round 3");
-//            job_three.setJarByClass(Lab3Exp1.class);
-//            job_three.setNumReduceTasks(1);
-//            job_three.setOutputKeyClass(Text.class);
-//            job_three.setOutputValueClass(Text.class);
-//            job_three.setMapperClass(Map_Three.class);
-//            job_three.setReducerClass(Reduce_Three.class);
-//            job_three.setInputFormatClass(TextInputFormat.class);
-//            job_three.setOutputFormatClass(TextOutputFormat.class);
-//
-//            FileInputFormat.addInputPath(job_three, new Path(temp0));
-//            FileOutputFormat.setOutputPath(job_three, new Path(output));
-//
-//            job_three.waitForCompletion(true);
+            System.out.println("*** TOP 10 PATENTS ***");
+            for (PatentCount p : topTen)
+                System.out.println(p);
 
         } finally {
-            if (FileSystem.get(conf).delete(new Path(temp0), true))
-                System.out.println("Temp files have been deleted.");
-            if (FileSystem.get(conf).delete(new Path(temp1), true))
-                System.out.println("Temp files have been deleted.");
+            FileSystem.get(conf).delete(new Path(temp0), true);
         }
 
         return 0;
     }
 
-    // The input to the map method would be a LongWritable (long) key and Text (String) value
-    // Notice the class declaration is done with LongWritable key and Text value
-    // The TextInputFormat splits the data line by line.
-    // The key for TextInputFormat is nothing but the line number and hence can be ignored
-    // The value for the TextInputFormat is a line of text from the input
-    // The map method can emit data using context.write() method
-    // However, to match the class declaration, it must emit Text as key and IntWribale as value
     public static class Map_One extends Mapper<LongWritable, Text, Text, Text> {
 
         @Override
@@ -158,7 +160,7 @@ public class Lab3Exp1 extends Configured implements Tool {
         }
     }
 
-    public static class Reduce_Two extends Reducer<Text, Text, IntWritable, Text> {
+    public static class Reduce_Two extends Reducer<Text, Text, Text, IntWritable> {
 
         @Override
         public void reduce(Text key, Iterable<Text> values, Context context)
@@ -169,31 +171,13 @@ public class Lab3Exp1 extends Configured implements Tool {
                 deps.add(val);
 
             int significance = deps.size();
-            context.write(new IntWritable(significance), key);
+            if (topTen[0].significance < significance) {
+                topTen[0] = new PatentCount((Integer.parseInt(key.toString())), significance);
+                context.write(key, new IntWritable(significance));
+                Arrays.sort(topTen);
+                System.out.println("Sorted array:  " + topTen);
+            }
+            //context.write(key, new IntWritable(significance));
         }
     }
-
-//    public static class Map_Three extends Mapper<LongWritable, Text, Text, Text> {
-//
-//        @Override
-//        public void map(LongWritable key, Text value, Context context)
-//                        throws IOException, InterruptedException {
-//
-//            StringTokenizer line = new StringTokenizer(value.toString());
-//            Text t0 = new Text(line.nextToken());
-//            Text t1 = new Text(line.nextToken());
-//            context.write(t1, t0);
-//        }
-//    }
-//
-//    public static class Reduce_Three extends Reducer<Text, Text, Text, Text> {
-//
-//        @Override
-//        public void reduce(Text key, Iterable<Text> values, Context context)
-//                        throws IOException, InterruptedException {
-//
-//            for (Text val : values)
-//                context.write(val, key);
-//        }
-//    }
 }

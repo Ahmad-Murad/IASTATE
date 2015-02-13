@@ -25,14 +25,13 @@ import org.apache.hadoop.util.ToolRunner;
 
 public class Lab3Exp2 extends Configured implements Tool {
 
+    static volatile int triangles = 0;
+    static volatile int triplets = 0;
     static final String input = "/class/s15419x/lab3/patents.txt";
 //    static final String input = "/user/aguibert/sample.txt";
     static final String temp0 = "/scr/aguibert/temp0";
     static final String temp1 = "/scr/aguibert/temp1";
     static final String output = "/scr/aguibert/lab3/exp2";
-
-    volatile static int triplets = 0;
-    volatile static int triangles = 0;
 
     public static void main(String[] args) throws Exception {
         int res = ToolRunner.run(new Configuration(), new Lab3Exp2(), args);
@@ -67,7 +66,7 @@ public class Lab3Exp2 extends Configured implements Tool {
             // Job 2
             Job job_two = new Job(conf, "Driver Program Round 2");
             job_two.setJarByClass(Lab3Exp2.class);
-            job_two.setNumReduceTasks(4);
+            job_two.setNumReduceTasks(1);
             job_two.setOutputKeyClass(Text.class);
             job_two.setOutputValueClass(Text.class);
             job_two.setMapperClass(Map_Two.class);
@@ -142,6 +141,8 @@ public class Lab3Exp2 extends Configured implements Tool {
                             context.write(new Text(arr[j].toString() + '-' + arr[i] + '-' + iKey), one);
                     }
                 }
+
+            context.progress();
         }
     }
 
@@ -170,9 +171,11 @@ public class Lab3Exp2 extends Configured implements Tool {
             if (count == 3)
                 triangles++;
             if (count > 3)
-                throw new RuntimeException("Got too many triples for key" + key);
+                throw new RuntimeException("Got too many triples for key " + key);
             triplets += count;
             context.write(key, new IntWritable(count));
+
+            context.progress();
         }
     }
 }

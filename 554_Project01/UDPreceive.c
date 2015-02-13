@@ -6,13 +6,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include "Project1Types.h"
 
 struct hostent *gethostbyname() ;
 void printSA(struct sockaddr_in sa) ;
 void receiver() ;
 void sender(char *message1, char *message2,char *machine, int port);
-
-#define SIZE 1000
 
 void main(int argc,char **argv)
 {

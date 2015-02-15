@@ -36,6 +36,11 @@ public class Lab3Exp1 extends Configured implements Tool {
         System.exit(res);
     }
 
+    /**
+     * Inner class for pairing patent numbers with their significance.
+     * This class implements the Comparable interface so arrays of this object
+     * can be sorted automatically, and also provides a toString().
+     */
     private static class PatentCount implements Comparable<PatentCount> {
         private final int patentNo;
         private final int significance;
@@ -60,6 +65,7 @@ public class Lab3Exp1 extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
 
+        // Initialize top ten results with negative significances.
         for (int i = 0; i < 10; i++)
             topTen[i] = new PatentCount(-1, -1);
 
@@ -111,6 +117,11 @@ public class Lab3Exp1 extends Configured implements Tool {
         return 0;
     }
 
+    /**
+     * For each line of input, echo the graph back. Also, for each line of input
+     * revere each edge and give an identifier to the key value to be used in a
+     * later reduce step.
+     */
     public static class Map_One extends Mapper<LongWritable, Text, Text, Text> {
 
         @Override
@@ -126,6 +137,9 @@ public class Lab3Exp1 extends Configured implements Tool {
         }
     }
 
+    /**
+     * Build a set of one and two-hop neighbors of each edge.
+     */
     public static class Reduce_One extends Reducer<Text, Text, Text, Text> {
 
         @Override
@@ -147,6 +161,10 @@ public class Lab3Exp1 extends Configured implements Tool {
         }
     }
 
+    /**
+     * Do nothing here (just echo the file back out). Not sure if there is a way
+     * to skip this entirely if you don't need a map step, but that could be done here.
+     */
     public static class Map_Two extends Mapper<LongWritable, Text, Text, Text> {
 
         @Override
@@ -160,6 +178,11 @@ public class Lab3Exp1 extends Configured implements Tool {
         }
     }
 
+    /**
+     * Build a Set (to avoid duplicates) of each one and two-hop neighbors for each node.
+     * The significance of a node is the size of it's neighbor Set. When the significance
+     * is found, check if its in the top 10 most significant patents.
+     */
     public static class Reduce_Two extends Reducer<Text, Text, Text, IntWritable> {
 
         @Override
@@ -174,10 +197,10 @@ public class Lab3Exp1 extends Configured implements Tool {
             if (topTen[0].significance < significance) {
                 topTen[0] = new PatentCount((Integer.parseInt(key.toString())), significance);
                 context.write(key, new IntWritable(significance));
+                // Keep the topTen array sorted, so only the 0th element must be compared
                 Arrays.sort(topTen);
                 System.out.println("Sorted array:  " + topTen);
             }
-            //context.write(key, new IntWritable(significance));
         }
     }
 }

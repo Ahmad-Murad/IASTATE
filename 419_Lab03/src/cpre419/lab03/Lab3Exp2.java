@@ -28,7 +28,7 @@ public class Lab3Exp2 extends Configured implements Tool {
     static volatile int triangles = 0;
     static volatile int triplets = 0;
     static final String input = "/class/s15419x/lab3/patents.txt";
-//    static final String input = "/user/aguibert/sample.txt";
+//    static final String input = "/user/aguibert/sample.txt"; // for testing on small data
     static final String temp0 = "/scr/aguibert/temp0";
     static final String temp1 = "/scr/aguibert/temp1";
     static final String output = "/scr/aguibert/lab3/exp2";
@@ -152,6 +152,7 @@ public class Lab3Exp2 extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
 
+            // Just echo the data back so it can be fed into another reducer
             StringTokenizer line = new StringTokenizer(value.toString());
             Text t0 = new Text(line.nextToken());
             Text t1 = new Text(line.nextToken());
@@ -166,12 +167,20 @@ public class Lab3Exp2 extends Configured implements Tool {
                         throws IOException, InterruptedException {
 
             int count = 0;
+            // Count up the number of triplets covering the same 3 points
             for (Text t : values)
                 count++;
+
+            // If 3 triplets cover 3 points, we have a triangle
             if (count == 3)
                 triangles++;
+
+            // If we found more than 3 triplets for 3 points, there is an
+            // error in our algorithm
             if (count > 3)
                 throw new RuntimeException("Got too many triples for key " + key);
+
+            // Add the number of new triplets to the total count
             triplets += count;
             context.write(key, new IntWritable(count));
 

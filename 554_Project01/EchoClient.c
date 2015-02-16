@@ -27,8 +27,9 @@ void main(int argc,char **argv)
 		perror("socket failed");
 		return;
 	}
-
-	makeReceiverSA(&clientAddr, RECIPIENT_PORT);
+	// used to be locals
+	makeLocalSA(&clientAddr);
+	//makeReceiverSA(&clientAddr, RECIPIENT_PORT);
 	if( bind(s, (struct sockaddr *)&clientAddr, sizeof(struct sockaddr_in))!= 0){
 		perror("Bind failed\n");
 		close (s);

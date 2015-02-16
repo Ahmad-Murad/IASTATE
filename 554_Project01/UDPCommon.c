@@ -50,14 +50,14 @@ void makeDestSA(struct sockaddr_in * sa, char *hostname, int port)
 	sa->sin_port = htons(port);
 }
 
-// /* make a socket address using any of the addressses of this computer
-// for a local socket on any port */
-// void makeLocalSA(struct sockaddr_in *sa)
-// {
-// 	sa->sin_family = AF_INET;
-// 	sa->sin_port = htons(0);
-// 	sa-> sin_addr.s_addr = htonl(INADDR_ANY);
-// }
+/* make a socket address using any of the addressses of this computer
+for a local socket on any port */
+void makeLocalSA(struct sockaddr_in *sa)
+{
+	sa->sin_family = AF_INET;
+	sa->sin_port = htons(0);
+	sa-> sin_addr.s_addr = htonl(INADDR_ANY);
+}
 
 /* make a socket address using any of the addressses of this computer
 for a local socket on given port */

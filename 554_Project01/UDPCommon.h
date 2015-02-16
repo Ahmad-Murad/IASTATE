@@ -13,7 +13,7 @@
 
 void makeReceiverSA(struct sockaddr_in *sa, int port);
 void makeDestSA(struct sockaddr_in * sa, char *hostname, int port);
-// void makeLocalSA(struct sockaddr_in *sa);
+void makeLocalSA(struct sockaddr_in *sa);
 void printSA(struct sockaddr_in sa);
 Status UDPreceive(int s, Message *m, SocketAddress *origin);
 Status UDPsend(int s, Message *m, SocketAddress destination);

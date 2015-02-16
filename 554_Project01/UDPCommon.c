@@ -9,21 +9,22 @@
 #include "UDPCommon.h"
 
 Status UDPreceive(int s, Message *m, SocketAddress *origin){
-	memset(m, 0, sizeof(m));
-	int len, addrLen = sizeof(origin);
-	if((len = recvfrom(s, (void *)m->data,  SIZE, 0, (struct sockaddr *)&origin, &addrLen))<0){
+	struct sockaddr_in fromAddr;
+	fromAddr.sin_family = AF_INET;
+	int len, addrLen = sizeof(fromAddr);
+	if((len = recvfrom(s, m->data,  SIZE, 0, (struct sockaddr *)&fromAddr, &addrLen)) < 0){
 		perror("Error receiving message.") ;
 		return Bad;
 	} else {
 		m->data[len] = 0;
+		memcpy(origin, &fromAddr, sizeof(fromAddr));
 		return Ok;
 	}
 }
 
 Status UDPsend(int s, Message *m, SocketAddress destination){
-
-	int n;
-	if((n = sendto(s, m->data, m->length, 0, (struct sockaddr *)&destination, sizeof(struct sockaddr_in))) < 0){
+	int n, destLen = sizeof(SocketAddress);
+	if((n = sendto(s, m->data, m->length, 0, (const struct sockaddr *)&destination, destLen)) < 0){
 		perror("Send failed");
 		return Bad;
 	}
@@ -49,14 +50,14 @@ void makeDestSA(struct sockaddr_in * sa, char *hostname, int port)
 	sa->sin_port = htons(port);
 }
 
-/* make a socket address using any of the addressses of this computer
-for a local socket on any port */
-void makeLocalSA(struct sockaddr_in *sa)
-{
-	sa->sin_family = AF_INET;
-	sa->sin_port = htons(0);
-	sa-> sin_addr.s_addr = htonl(INADDR_ANY);
-}
+// /* make a socket address using any of the addressses of this computer
+// for a local socket on any port */
+// void makeLocalSA(struct sockaddr_in *sa)
+// {
+// 	sa->sin_family = AF_INET;
+// 	sa->sin_port = htons(0);
+// 	sa-> sin_addr.s_addr = htonl(INADDR_ANY);
+// }
 
 /* make a socket address using any of the addressses of this computer
 for a local socket on given port */
@@ -64,7 +65,7 @@ void makeReceiverSA(struct sockaddr_in *sa, int port)
 {
 	sa->sin_family = AF_INET;
 	sa->sin_port = htons(port);
-	sa-> sin_addr.s_addr = htonl(INADDR_ANY);
+	sa->sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
 void printSA(struct sockaddr_in sa)

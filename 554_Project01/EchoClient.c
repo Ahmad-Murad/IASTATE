@@ -19,15 +19,16 @@ void main(int argc,char **argv)
 	}
 
 	int s, n;
-	char *machine = argv[1];
+	char *machine = argv[1], hostn[80];
 	struct sockaddr_in clientAddr, serverAddr;
+	gethostname(hostn, 80);
 
 	if(( s = socket(AF_INET, SOCK_DGRAM, 0))<0) {
 		perror("socket failed");
 		return;
 	}
 
-	makeLocalSA(&clientAddr);
+	makeReceiverSA(&clientAddr, RECIPIENT_PORT);
 	if( bind(s, (struct sockaddr *)&clientAddr, sizeof(struct sockaddr_in))!= 0){
 		perror("Bind failed\n");
 		close (s);
@@ -63,6 +64,12 @@ Status DoOperation (Message *message, Message *reply, int s, SocketAddress serve
 		return status;
 	}
 	printf("Sent message: %s\n", message->data);
+	status = UDPreceive(s, reply, &serverSA);
+	if(Ok != status){
+		perror("Listening for reply failed");
+		return status;
+	}
+	printf("\tGot response (%s) from the server\n", reply->data);
 
 	return Ok;
 }

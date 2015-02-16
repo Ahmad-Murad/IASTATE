@@ -6,9 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include "Project1Types.h"
+#include "UDPCommon.h"
 
-Status UDPreceive(int s, Message *m, SocketAddress *origin);
 Status GetRequest(Message *callMessage, int s, SocketAddress *clientSA);
 Status SendReply(Message *replyMessage, int s, SocketAddress clientSA);
 
@@ -16,7 +15,7 @@ void main(int argc,char **argv)
 {
 	int aPort = IPPORT_RESERVED + 3612;
 	struct sockaddr_in mySocketAddress, aSocketAddress;
-	int s,aLength, n, i;
+	int s, n, i;
 
 	if((s = socket(AF_INET, SOCK_DGRAM, 0))<0) {
 		perror("socket failed");
@@ -31,37 +30,36 @@ void main(int argc,char **argv)
 	}
 	printf("Connected to:  ");
 	printSA(mySocketAddress);
-	aLength = sizeof(aSocketAddress);
 	aSocketAddress.sin_family = AF_INET;
 	
 	printf("Listening for messages...\n");
-	Message *curMessage;
+	Message *curMessage = malloc(sizeof(*curMessage)), *reply = malloc(sizeof(*reply));
 	do{
-		Status stat = UDPreceive(s, curMessage, (SocketAddress *)&aSocketAddress);
+		Status stat = GetRequest(curMessage, s, (SocketAddress *)&aSocketAddress);
 		printf("Got message: %s\n", curMessage->data);
-		printf("Status is: %d\n", stat);
+
+		if(stat == Ok)
+			sprintf(reply->data, "Ok");
+		else if(stat == Bad)
+			sprintf(reply->data, "Bad");
+		else 
+			sprintf(reply->data, "Wronglength");
+		reply->length = strlen(reply->data);
+		char addrBuff[80];
+		inet_ntop(AF_INET, &aSocketAddress.sin_addr, addrBuff, 80);
+		Status replyStatus = SendReply(reply, s, aSocketAddress);
+		printf("\tSent reply (%s) with status: %d\n", reply->data, replyStatus);
 	} while (strcmp("q", curMessage->data) != 0);
+	free(curMessage);
+	free(reply);
 
 	close(s);
 }
 
-Status UDPreceive(int s, Message *m, SocketAddress *origin){
-
-}
-
 Status GetRequest(Message *callMessage, int s, SocketAddress *clientSA){
-	memset(callMessage, 0, sizeof(callMessage));
-	int len;
-	if((len = recvfrom(s, callMessage,  SIZE, 0, (struct sockaddr *)&clientSA, &callMessage))<0){
-		perror("Error receiving message.") ;
-		return Status.Bad;
-	} else{
-		printf("\n Received Message:(%s)length = %d \n", callMessage,len);
-		return Status.Ok;
-	}
+	return UDPreceive(s, callMessage, clientSA);
 }
 
 Status SendReply(Message *replyMessage, int s, SocketAddress clientSA){
-	printf("Sending reply...\n");
-	return Status.Ok;
+	return UDPsend(s, replyMessage, clientSA);
 }

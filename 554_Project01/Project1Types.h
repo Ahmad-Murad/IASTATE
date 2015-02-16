@@ -6,7 +6,7 @@ typedef struct {
 	unsigned int length;
 	unsigned char data[SIZE];
 } Message;
-typedef enum {
+typedef enum Status {
 	Ok,          /* operation successful */
 	Bad,         /* unrecoverable error  */
 	Wronglength  /* bad message length   */

@@ -26,9 +26,25 @@ void unMarshal(RPCMessage *rm, Message *message){
 
 void printRPCMessage(RPCMessage *rm){
 	if(rm->messageType)
-		printf("Request, ");
+		printf("Request,");
 	else
-		printf("Reply, ");
-	printf(" ID=%u, ProcID=%u, arg1=%d, arg2=%d\n",
-		rm->RPCId, rm->procedureId, rm->arg1, rm->arg2);
+		printf("Reply,  ");
+
+	switch(rm->procedureId){
+		case STOP:
+			printf("ProcID=STOP,"); 	break;
+		case ADD:
+			printf("ProcID=ADD, ");		break;
+		case SUB:
+			printf("ProcID=SUB, ");		break;
+		case MULT:
+			printf("ProcID=MULT,");		break;
+		case DIV:
+			printf("ProcID=DIV, ");		break;
+		case PING:
+			printf("ProcID=PING,");		break;
+		default:
+			printf("ProcID=???UNKNOWN???");
+	}
+	printf(" ID=%03u, arg1=%03d, arg2=%03d\n", rm->RPCId, rm->arg1, rm->arg2);
 }

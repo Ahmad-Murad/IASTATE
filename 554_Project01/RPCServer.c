@@ -33,12 +33,12 @@ void main(int argc,char **argv)
 		printRPCMessage(curRPC);
 
 		stat = processRequest(curRPC, replyRPC);
-		printf("Created reply: ");
+		printf("Created reply:   ");
 		printRPCMessage(replyRPC);
 
 		marshal(replyRPC, reply);
 		Status replyStatus = SendReply(reply, s, clientAddr);
-		printf("\t Sent reply (%s) with status %d\n", reply->data, replyStatus);
+		printf("\tSent reply with status %d\n", replyStatus);
 	} while (curRPC->procedureId != STOP);
 	free(curRPC);
 	free(curMessage);
@@ -49,13 +49,23 @@ void main(int argc,char **argv)
 
 Status processRequest(RPCMessage *request, RPCMessage *response){
 	int result = 0;
-	Status opStatus = dispatch(request->procedureId, request->arg1, request->arg2, &result);
+	Status opStatus;
+	memset(response, 0, sizeof(RPCMessage));
 	response->messageType = Reply;
 	response->RPCId = request->RPCId;
 	response->procedureId = request->procedureId;
-	response->arg1 = result;
-	response->arg2 = 0;
-	return opStatus;
+
+	switch(request->procedureId){
+		case STOP:
+			return Ok;
+		case PING:
+			return Ok;
+		default:
+			opStatus = dispatch(request->procedureId, request->arg1, request->arg2, &result);
+			response->arg1 = result;
+			response->arg2 = 0;
+			return opStatus;
+	}
 }
 
 Status GetRequest(Message *callMessage, int s, SocketAddress *clientSA){

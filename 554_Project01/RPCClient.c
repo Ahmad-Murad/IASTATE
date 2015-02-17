@@ -56,15 +56,18 @@ void main(int argc,char **argv)
 	printSA(serverAddr);
 	
 	Message *msg = malloc(sizeof(Message)), *reply = malloc(sizeof(Message));
-	RPCMessage *rpcMsg = malloc(sizeof(RPCMessage));
+	RPCMessage *rpcMsg = malloc(sizeof(RPCMessage)), *rpcReply = malloc(sizeof(RPCMessage));
 	do{
 		getMessage(rpcMsg);
 		printf("Sending RPC msg: ");
 		printRPCMessage(rpcMsg);
 		marshal(rpcMsg, msg);
 		DoOperation(msg, reply, s, serverAddr);
-		printf("proc id: %d\n", rpcMsg->procedureId);
+		unMarshal(rpcReply, reply);
+		printf("\tGot result: %03d from the server\n", rpcReply->arg1);
 	}while(rpcMsg->procedureId != STOP);
+	free(rpcMsg);
+	free(rpcReply);
 	free(msg);
 	free(reply);
 	close(s);
@@ -92,7 +95,6 @@ char *nextOp(char *buf, unsigned int *next){
 		*next = MULT;
 	else if(*buf == '/')
 		*next = DIV;
-
 	return ++buf;
 }
 
@@ -103,16 +105,15 @@ void getMessage(RPCMessage *newMsg){
 	input[strlen(input)-1] = 0; // remove newline char
 	newMsg->messageType = Request;
 	newMsg->RPCId       = nextRPCId++;
-	if(strcmp("Stop", input) == 0){
+	if(strcasecmp("Stop", input) == 0){
 		newMsg->procedureId = STOP;
-	} else if(strcmp("Ping", input) == 0){
+	} else if(strcasecmp("Ping", input) == 0){
 		newMsg->procedureId = PING;
 	} else {
 		curPtr = nextInt(curPtr, &(newMsg->arg1));
 		curPtr = nextOp(curPtr, &(newMsg->procedureId));
 		curPtr = nextInt(curPtr, &(newMsg->arg2));
 	}
-	return;
 }
 
 Status DoOperation (Message *message, Message *reply, int s, SocketAddress serverSA){
@@ -127,7 +128,5 @@ Status DoOperation (Message *message, Message *reply, int s, SocketAddress serve
 		perror("Listening for reply failed");
 		return status;
 	}
-	printf("\tGot response (%s) from the server\n", reply->data);
-
 	return Ok;
 }

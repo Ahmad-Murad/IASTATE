@@ -1,3 +1,4 @@
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -6,8 +7,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
+#define UDPCOMMON
 
-#include "Project1Types.h"
+#ifndef PROJECT1TYPES
+	#define PROJECT1TYPES
+	#include "Project1Types.h"
+#endif
 
 #define RECIPIENT_PORT 4636
 

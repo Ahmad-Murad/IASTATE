@@ -29,7 +29,7 @@ Status UDPsend(int s, Message *m, SocketAddress destination){
 		return Bad;
 	}
 	if(n != m->length) {
-		printf("Only sent %d chars, but should have sent %d.\n",n, m->length);
+		printf("Sent %d chars, but should have sent %d.\n",n, m->length);
 		return Wronglength;
 	}
 	return Ok;

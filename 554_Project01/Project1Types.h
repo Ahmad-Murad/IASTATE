@@ -1,5 +1,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
+#define PROJECT1TYPES
 
 #define SIZE 1000
 typedef struct {
@@ -9,6 +10,8 @@ typedef struct {
 typedef enum Status {
 	Ok,          /* operation successful */
 	Bad,         /* unrecoverable error  */
-	Wronglength  /* bad message length   */
+	Wronglength, /* bad message length   */
+	DivZero,
+	Overflow
 }Status;
  typedef struct sockaddr_in SocketAddress ;

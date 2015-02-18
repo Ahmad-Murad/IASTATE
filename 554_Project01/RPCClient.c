@@ -1,36 +1,14 @@
+#include <sys/time.h>
 #include "RPCCommon.h"
 
 unsigned int nextRPCId = 1;
 
 Status DoOperation (Message *message, Message *reply, int s, SocketAddress serverSA);
 void   getMessage(RPCMessage *newMsg);
+Status waitForReply(int s, int seconds, int nanos);
 
 void main(int argc,char **argv)
 {
-	// use to debug marshal and unmarshalling
-	if(1 != 1){
-		RPCMessage *rm = malloc(sizeof(RPCMessage));
-		memset(rm, '?', sizeof(RPCMessage));
-		rm->messageType = Reply;
-		rm->RPCId = 12345;
-		rm->procedureId = 3;
-		rm->arg1 = 2222;
-		rm->arg2 = 3333;
-		Message *mes  = malloc(sizeof(Message));
-		memset(mes, '?', sizeof(Message));
-		marshal(rm, mes);
-		RPCMessage *result = malloc(sizeof(RPCMessage));
-		memset(result, 0, 20);
-		unMarshal(result, mes);
-		printf("type: %d\n",result->messageType);
-		printf("PRCID: %d\n",result->RPCId);
-		printf("procid: %d\n",result->procedureId);
-		printf("arg1: %d\n",result->arg1);
-		printf("arg2: %d\n",result->arg2);
-		return;
-	}
-
-
 	if(argc != 2){
 		printf("Usage: <serverIP>\n");
 		return;
@@ -59,12 +37,13 @@ void main(int argc,char **argv)
 	RPCMessage *rpcMsg = malloc(sizeof(RPCMessage)), *rpcReply = malloc(sizeof(RPCMessage));
 	do{
 		getMessage(rpcMsg);
-		printf("Sending RPC msg: ");
+		printf("\tSending RPC msg: ");
 		printRPCMessage(rpcMsg);
 		marshal(rpcMsg, msg);
-		DoOperation(msg, reply, s, serverAddr);
+		Status opStatus = DoOperation(msg, reply, s, serverAddr);
 		unMarshal(rpcReply, reply);
-		printf("\tGot result: %03d from the server\n", rpcReply->arg1);
+		if(opStatus == Ok)
+			printf("\tResult of message %03d is: %d\n", rpcReply->RPCId, rpcReply->arg1);
 	}while(rpcMsg->procedureId != STOP);
 	free(rpcMsg);
 	free(rpcReply);
@@ -117,16 +96,44 @@ void getMessage(RPCMessage *newMsg){
 }
 
 Status DoOperation (Message *message, Message *reply, int s, SocketAddress serverSA){
-	int status = UDPsend(s, message, serverSA);
-	if(Ok != status){
-		printf("Send failed with code: %d\n", status);
-		perror("Send failed");
-		return status;
-	}
+	int status, maxRetries = 5, retries = 0;
+
+	do {
+		status = UDPsend(s, message, serverSA);
+		if (Ok != status){
+			printf("Send failed with code: %d\n", status);
+			perror("Send failed");
+			return status;
+		}
+		status = waitForReply(s, 3, 0);
+		retries++;
+		if(status == TimedOut && retries <= maxRetries)
+			printf("\tSending message timed out -- resending message.\n");
+		if(retries > maxRetries){
+			printf("\tMax retries have been reached -- aborting.\n");
+			return TimedOut;
+		}
+	} while (status != Ok);
+
 	status = UDPreceive(s, reply, &serverSA);
 	if(Ok != status){
 		perror("Listening for reply failed");
 		return status;
 	}
 	return Ok;
+}
+
+Status waitForReply(int s, int seconds, int nanos)
+{
+	unsigned long read_mask = (1<<s);
+	struct timeval timeout;
+	int n, maxRetries = 3, numRetries = 0;
+
+	timeout.tv_sec  = seconds; 
+	timeout.tv_usec = nanos; 
+
+	if((n = select(32, (fd_set *)&read_mask, 0, 0, &timeout)) < 0)
+		perror("Select failed");
+
+	return (n == 1) ? Ok : TimedOut;
 }

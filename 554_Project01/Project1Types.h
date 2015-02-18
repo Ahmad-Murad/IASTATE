@@ -12,6 +12,7 @@ typedef enum Status {
 	Bad,         /* unrecoverable error  */
 	Wronglength, /* bad message length   */
 	DivZero,
-	Overflow
+	Overflow,
+	TimedOut
 }Status;
  typedef struct sockaddr_in SocketAddress ;

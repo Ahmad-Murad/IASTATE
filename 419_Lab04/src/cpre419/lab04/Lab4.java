@@ -29,7 +29,7 @@ public class Lab4 extends Configured implements Tool {
     public static void main(String[] args) throws Exception
     {
         if (args.length != 2) {
-            System.out.println("Requires 2 arguments (input and output) but only " + args.length + " were specified.");
+            System.out.println("Requires 2 arguments arg0=inputPath and arg1=outputPath.  Only " + args.length + " were specified.");
             System.exit(-1);
         }
 
@@ -93,16 +93,13 @@ public class Lab4 extends Configured implements Tool {
 
     public static class Lab4Partitioner extends Partitioner<Text, Text> {
 
+        // input keys are hash codes from the range 0x20 to 0x7F
+        // Bucket0 = 0x20 to 0x3F
+        // Bucket1 = 0x40 to 0x5F
+        // Bucket2 = 0x70 to 0x7F
+
         @Override
         public int getPartition(Text key, Text value, int numPartitions) {
-//            byte c = key.getBytes()[0];
-//            int part = (c >> 5) - 1;
-
-//            // this should never happen, if it does capture the data so we can rework logic
-//            if (part >= numPartitions || part < 0)
-//                throw new RuntimeException("**ERROR** c=" + c + "  part=" + part + "  num=" + numPartitions);
-
-//            return part;
             return (key.charAt(0) >> 5) - 1;
         }
     }

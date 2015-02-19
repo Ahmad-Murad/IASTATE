@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?><TestSessionContainer xmlns="http://www.codecover.org/xml/testsession-container" Date="1424313508463" TestSessionContainerId="10a720d3-245b-4120-bd3c-43758a7d3ae4" version="1.0">
+<SrcFileList>
+<SrcFile Content="package Queue;&#13;&#10;&#13;&#10;/**&#13;&#10; * Overview: a Queue is a mutable, bounded FIFO data structure of fixed capacity&#13;&#10; * A typical Queue is [], [o1], or [o1, o2], where neither o1 nor o2 are ever&#13;&#10; * null. Older elements are listed before newer ones.&#13;&#10; *&#13;&#10; * @author kstolee&#13;&#10; *&#13;&#10; */&#13;&#10;public class QueueFaulty {&#13;&#10;    // Overview: a Queue is a mutable, bounded FIFO data structure&#13;&#10;    // of fixed size.&#13;&#10;    // A typical Queue is [], [o1], or [o1, o2], where neither o1 nor o2&#13;&#10;    // are ever null. Older elements are listed before newer ones.&#13;&#10;    private Object[] elements;&#13;&#10;    private int size, front, back;&#13;&#10;    private static int capacity = 3;&#13;&#10;&#13;&#10;    /**&#13;&#10;     * Creates a QueueFaulty object. Initial capacity is 2.&#13;&#10;     */&#13;&#10;    public QueueFaulty() {&#13;&#10;        elements = new Object[capacity];&#13;&#10;        size = 0;&#13;&#10;        front = 1;&#13;&#10;        back = 0;&#13;&#10;    }&#13;&#10;&#13;&#10;    /**&#13;&#10;     * Adds an object to the back of the queue&#13;&#10;     * &#13;&#10;     * @param an&#13;&#10;     *            object&#13;&#10;     * @throws NullPointerException&#13;&#10;     *             when the object is null; error message: Queue.enqueue&#13;&#10;     * @throws IllegalStateException&#13;&#10;     *             when the queue is full; error message: Queue.enqueue&#13;&#10;     */&#13;&#10;    public void enqueue(Object o) throws NullPointerException,&#13;&#10;                    IllegalStateException {&#13;&#10;&#13;&#10;        if (o == null || o instanceof Integer)&#13;&#10;            throw new NullPointerException(&quot;Queue.enqueue&quot;);&#13;&#10;        else if (size == capacity)&#13;&#10;            throw new IllegalStateException(&quot;Queue.enqueue&quot;);&#13;&#10;        else {&#13;&#10;            size++;&#13;&#10;            elements[back] = o;&#13;&#10;            back = (back + 1) % capacity;&#13;&#10;        }&#13;&#10;&#13;&#10;    }&#13;&#10;&#13;&#10;    /**&#13;&#10;     * Removes and returns the oldest (front) element of the queue&#13;&#10;     * &#13;&#10;     * @return the dequeued object&#13;&#10;     * @throws IllegalStateException&#13;&#10;     *             when the queue is empty; error message: Queue.dequeue&#13;&#10;     */&#13;&#10;    public Object dequeue() throws IllegalStateException {&#13;&#10;&#13;&#10;        if (size == 0)&#13;&#10;            throw new IllegalStateException(&quot;Queue.dequeue&quot;);&#13;&#10;        else {&#13;&#10;            size--;&#13;&#10;            Object o = elements[(front % capacity)];&#13;&#10;            elements[front] = null;&#13;&#10;            front = (front + 1) % capacity;&#13;&#10;            return o;&#13;&#10;        }&#13;&#10;    }&#13;&#10;&#13;&#10;    /**&#13;&#10;     * @return true if the size of the queue is empty, false otherwise&#13;&#10;     */&#13;&#10;    public boolean isEmpty() {&#13;&#10;        return (size == 0);&#13;&#10;    }&#13;&#10;&#13;&#10;    /**&#13;&#10;     * @return true if the size of the queue is at capacity, false otherwise&#13;&#10;     */&#13;&#10;    public boolean isFull() {&#13;&#10;        return (size == capacity);&#13;&#10;    }&#13;&#10;&#13;&#10;    /**&#13;&#10;     * Sets the size of the queue, maximum 25&#13;&#10;     * &#13;&#10;     * If the queue is non-empty, the capacity must be at least the size of the queue.&#13;&#10;     * &#13;&#10;     * Default queue size is 2.&#13;&#10;     * &#13;&#10;     * @param capacity&#13;&#10;     */&#13;&#10;    public void setCapacity(int capacity) {&#13;&#10;        if (size &gt; 0) { //non-empty queue&#13;&#10;&#13;&#10;            if (capacity &gt;= size) {&#13;&#10;                if (capacity &lt; 25) {&#13;&#10;                    this.capacity = capacity;&#13;&#10;                } else {&#13;&#10;                    this.capacity = 25;&#13;&#10;                }&#13;&#10;                elements = new Object[this.capacity];&#13;&#10;            }&#13;&#10;&#13;&#10;        } else { //empty queue&#13;&#10;            if (capacity &lt;= 25 &amp;&amp; capacity &gt; 0) {&#13;&#10;                this.capacity = capacity;&#13;&#10;            } else {&#13;&#10;                this.capacity = 2;&#13;&#10;            }&#13;&#10;            elements = new Object[this.capacity];&#13;&#10;        }&#13;&#10;&#13;&#10;    }&#13;&#10;&#13;&#10;    @Override&#13;&#10;    public String toString() {&#13;&#10;        String result = &quot;[&quot;;&#13;&#10;        for (int i = 0; i &lt; size; i++) {&#13;&#10;            result += elements[(front + i) % capacity].toString();&#13;&#10;            if (i &lt; size - 1) {&#13;&#10;                result += &quot;, &quot;;&#13;&#10;            }&#13;&#10;        }&#13;&#10;        result += &quot;]&quot;;&#13;&#10;        return result;&#13;&#10;    }&#13;&#10;&#13;&#10;}" Filename="QueueFaulty.java" Intrnl_Id="1"/>
+</SrcFileList>
+<CritList>
+<CritListEntry Name="org.codecover.model.utils.criteria.LoopCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.QMOCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.ConditionCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.BranchCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.SynchronizedStatementCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.StatementCoverage" PluginName="org.codecover"/>
+</CritList>
+<BoolOpList>
+<BoolOp Arity="2" Intrnl_Id="2" Name="conditional and (&amp;&amp;)">
+<BoolAssgnmntBoolMapList>
+<MapEntry BoolAssgnmnt="02" Value="false"/>
+<MapEntry BoolAssgnmnt="10" Value="false"/>
+<MapEntry BoolAssgnmnt="11" Value="true"/>
+</BoolAssgnmntBoolMapList>
+</BoolOp>
+<BoolOp Arity="2" Intrnl_Id="3" Name="conditional or (||)">
+<BoolAssgnmntBoolMapList>
+<MapEntry BoolAssgnmnt="00" Value="false"/>
+<MapEntry BoolAssgnmnt="01" Value="true"/>
+<MapEntry BoolAssgnmnt="12" Value="true"/>
+</BoolAssgnmntBoolMapList>
+</BoolOp>
+</BoolOpList>
+<HierarchyLvlTypeList>
+<HierarchyLvlType EnglishName="package" IntrnlName="package" Intrnl_Id="4"/>
+<HierarchyLvlType EnglishName="method" IntrnlName="method" Intrnl_Id="5"/>
+<HierarchyLvlType EnglishName="class" IntrnlName="class" Intrnl_Id="6"/>
+<HierarchyLvlType EnglishName="default package" IntrnlName="default package" Intrnl_Id="7"/>
+</HierarchyLvlTypeList>
+<MASTRoot>
+<HierarchyLvl HierarchyLvlId="14" HierarchyLvlTypeId="7" Intrnl_Id="8" Name="default package">
+<Header/>
+<LocList/>
+<HierarchyLvl HierarchyLvlId="13" HierarchyLvlTypeId="4" Intrnl_Id="9" Name="Queue">
+<Header/>
+<LocList/>
+<HierarchyLvl HierarchyLvlId="12" HierarchyLvlTypeId="6" Intrnl_Id="10" Name="QueueFaulty">
+<Header>
+<Loc EndOffset="296" SrcFileId="1" StartOffset="272"/>
+</Header>
+<LocList>
+<Loc EndOffset="3809" SrcFileId="1" StartOffset="272"/>
+</LocList>
+<StmntSeq Intrnl_Id="11">
+<LocList>
+<Loc EndOffset="637" SrcFileId="1" StartOffset="605"/>
+</LocList>
+<BasicStmnt CovItemId="S1" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="12">
+<LocList>
+<Loc EndOffset="637" SrcFileId="1" StartOffset="605"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+<HierarchyLvl HierarchyLvlId="5" HierarchyLvlTypeId="5" Intrnl_Id="13" Name="QueueFaulty">
+<Header>
+<Loc EndOffset="744" SrcFileId="1" StartOffset="724"/>
+</Header>
+<LocList>
+<Loc EndOffset="853" SrcFileId="1" StartOffset="724"/>
+</LocList>
+<StmntSeq Intrnl_Id="14">
+<LocList>
+<Loc EndOffset="788" SrcFileId="1" StartOffset="756"/>
+<Loc EndOffset="807" SrcFileId="1" StartOffset="798"/>
+<Loc EndOffset="827" SrcFileId="1" StartOffset="817"/>
+<Loc EndOffset="846" SrcFileId="1" StartOffset="837"/>
+</LocList>
+<BasicStmnt CovItemId="S2" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="15">
+<LocList>
+<Loc EndOffset="788" SrcFileId="1" StartOffset="756"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S3" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="16">
+<LocList>
+<Loc EndOffset="807" SrcFileId="1" StartOffset="798"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S4" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="17">
+<LocList>
+<Loc EndOffset="827" SrcFileId="1" StartOffset="817"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S5" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="18">
+<LocList>
+<Loc EndOffset="846" SrcFileId="1" StartOffset="837"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="6" HierarchyLvlTypeId="5" Intrnl_Id="19" Name="enqueue">
+<Header>
+<Loc EndOffset="1303" SrcFileId="1" StartOffset="1202"/>
+</Header>
+<LocList>
+<Loc EndOffset="1649" SrcFileId="1" StartOffset="1202"/>
+</LocList>
+<StmntSeq Intrnl_Id="20">
+<LocList>
+<Loc EndOffset="1640" SrcFileId="1" StartOffset="1317"/>
+</LocList>
+<CondStmnt CovItemId="S6" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="21">
+<Branch CovItemId="B1" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="22">
+<Cond/>
+<LocList>
+<Loc EndOffset="1417" SrcFileId="1" StartOffset="1369"/>
+</LocList>
+<StmntSeq Intrnl_Id="23">
+<LocList>
+<Loc EndOffset="1417" SrcFileId="1" StartOffset="1369"/>
+</LocList>
+<BasicStmnt CovItemId="S7" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="24">
+<LocList>
+<Loc EndOffset="1417" SrcFileId="1" StartOffset="1369"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B2" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="25">
+<Cond>
+<Loc EndOffset="1431" SrcFileId="1" StartOffset="1427"/>
+</Cond>
+<LocList>
+<Loc EndOffset="1640" SrcFileId="1" StartOffset="1432"/>
+</LocList>
+<StmntSeq Intrnl_Id="26">
+<LocList>
+<Loc EndOffset="1640" SrcFileId="1" StartOffset="1432"/>
+</LocList>
+<CondStmnt CovItemId="S8" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="27">
+<Branch CovItemId="B3" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="28">
+<Cond/>
+<LocList>
+<Loc EndOffset="1516" SrcFileId="1" StartOffset="1467"/>
+</LocList>
+<StmntSeq Intrnl_Id="29">
+<LocList>
+<Loc EndOffset="1516" SrcFileId="1" StartOffset="1467"/>
+</LocList>
+<BasicStmnt CovItemId="S9" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="30">
+<LocList>
+<Loc EndOffset="1516" SrcFileId="1" StartOffset="1467"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B4" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="31">
+<Cond>
+<Loc EndOffset="1530" SrcFileId="1" StartOffset="1526"/>
+</Cond>
+<LocList>
+<Loc EndOffset="1640" SrcFileId="1" StartOffset="1531"/>
+</LocList>
+<StmntSeq Intrnl_Id="32">
+<LocList>
+<Loc EndOffset="1553" SrcFileId="1" StartOffset="1546"/>
+<Loc EndOffset="1586" SrcFileId="1" StartOffset="1567"/>
+<Loc EndOffset="1629" SrcFileId="1" StartOffset="1600"/>
+</LocList>
+<BasicStmnt CovItemId="S10" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="33">
+<LocList>
+<Loc EndOffset="1553" SrcFileId="1" StartOffset="1546"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S11" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="34">
+<LocList>
+<Loc EndOffset="1586" SrcFileId="1" StartOffset="1567"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S12" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="35">
+<LocList>
+<Loc EndOffset="1629" SrcFileId="1" StartOffset="1600"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1434" SrcFileId="1" StartOffset="1432"/>
+<LocList>
+<Loc EndOffset="1640" SrcFileId="1" StartOffset="1432"/>
+</LocList>
+<RootTerm CovItemId="C2" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="36">
+<BasicBoolTerm Intrnl_Id="37">
+<LocList>
+<Loc EndOffset="1452" SrcFileId="1" StartOffset="1436"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1319" SrcFileId="1" StartOffset="1317"/>
+<LocList>
+<Loc EndOffset="1640" SrcFileId="1" StartOffset="1317"/>
+</LocList>
+<RootTerm CovItemId="C1" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="38">
+<OpTerm BooleanOpId="3" Intrnl_Id="39">
+<BasicBoolTerm Intrnl_Id="40">
+<LocList>
+<Loc EndOffset="1330" SrcFileId="1" StartOffset="1321"/>
+</LocList>
+</BasicBoolTerm>
+<BasicBoolTerm Intrnl_Id="41">
+<LocList>
+<Loc EndOffset="1354" SrcFileId="1" StartOffset="1334"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="1333" SrcFileId="1" StartOffset="1331"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="7" HierarchyLvlTypeId="5" Intrnl_Id="42" Name="dequeue">
+<Header>
+<Loc EndOffset="1952" SrcFileId="1" StartOffset="1900"/>
+</Header>
+<LocList>
+<Loc EndOffset="2257" SrcFileId="1" StartOffset="1900"/>
+</LocList>
+<StmntSeq Intrnl_Id="43">
+<LocList>
+<Loc EndOffset="2250" SrcFileId="1" StartOffset="1966"/>
+</LocList>
+<CondStmnt CovItemId="S13" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="44">
+<Branch CovItemId="B5" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="45">
+<Cond/>
+<LocList>
+<Loc EndOffset="2043" SrcFileId="1" StartOffset="1994"/>
+</LocList>
+<StmntSeq Intrnl_Id="46">
+<LocList>
+<Loc EndOffset="2043" SrcFileId="1" StartOffset="1994"/>
+</LocList>
+<BasicStmnt CovItemId="S14" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="47">
+<LocList>
+<Loc EndOffset="2043" SrcFileId="1" StartOffset="1994"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B6" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="48">
+<Cond>
+<Loc EndOffset="2057" SrcFileId="1" StartOffset="2053"/>
+</Cond>
+<LocList>
+<Loc EndOffset="2250" SrcFileId="1" StartOffset="2058"/>
+</LocList>
+<StmntSeq Intrnl_Id="49">
+<LocList>
+<Loc EndOffset="2080" SrcFileId="1" StartOffset="2073"/>
+<Loc EndOffset="2134" SrcFileId="1" StartOffset="2094"/>
+<Loc EndOffset="2171" SrcFileId="1" StartOffset="2148"/>
+<Loc EndOffset="2216" SrcFileId="1" StartOffset="2185"/>
+<Loc EndOffset="2239" SrcFileId="1" StartOffset="2230"/>
+</LocList>
+<BasicStmnt CovItemId="S15" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="50">
+<LocList>
+<Loc EndOffset="2080" SrcFileId="1" StartOffset="2073"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S16" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="51">
+<LocList>
+<Loc EndOffset="2134" SrcFileId="1" StartOffset="2094"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S17" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="52">
+<LocList>
+<Loc EndOffset="2171" SrcFileId="1" StartOffset="2148"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S18" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="53">
+<LocList>
+<Loc EndOffset="2216" SrcFileId="1" StartOffset="2185"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S19" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="54">
+<LocList>
+<Loc EndOffset="2239" SrcFileId="1" StartOffset="2230"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1968" SrcFileId="1" StartOffset="1966"/>
+<LocList>
+<Loc EndOffset="2250" SrcFileId="1" StartOffset="1966"/>
+</LocList>
+<RootTerm CovItemId="C3" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="55">
+<BasicBoolTerm Intrnl_Id="56">
+<LocList>
+<Loc EndOffset="1979" SrcFileId="1" StartOffset="1970"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="8" HierarchyLvlTypeId="5" Intrnl_Id="57" Name="isEmpty">
+<Header>
+<Loc EndOffset="2379" SrcFileId="1" StartOffset="2355"/>
+</Header>
+<LocList>
+<Loc EndOffset="2417" SrcFileId="1" StartOffset="2355"/>
+</LocList>
+<StmntSeq Intrnl_Id="58">
+<LocList>
+<Loc EndOffset="2410" SrcFileId="1" StartOffset="2391"/>
+</LocList>
+<BasicStmnt CovItemId="S20" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="59">
+<LocList>
+<Loc EndOffset="2410" SrcFileId="1" StartOffset="2391"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="9" HierarchyLvlTypeId="5" Intrnl_Id="60" Name="isFull">
+<Header>
+<Loc EndOffset="2544" SrcFileId="1" StartOffset="2521"/>
+</Header>
+<LocList>
+<Loc EndOffset="2589" SrcFileId="1" StartOffset="2521"/>
+</LocList>
+<StmntSeq Intrnl_Id="61">
+<LocList>
+<Loc EndOffset="2582" SrcFileId="1" StartOffset="2556"/>
+</LocList>
+<BasicStmnt CovItemId="S21" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="62">
+<LocList>
+<Loc EndOffset="2582" SrcFileId="1" StartOffset="2556"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="10" HierarchyLvlTypeId="5" Intrnl_Id="63" Name="setCapacity">
+<Header>
+<Loc EndOffset="2871" SrcFileId="1" StartOffset="2834"/>
+</Header>
+<LocList>
+<Loc EndOffset="3468" SrcFileId="1" StartOffset="2834"/>
+</LocList>
+<StmntSeq Intrnl_Id="64">
+<LocList>
+<Loc EndOffset="3459" SrcFileId="1" StartOffset="2883"/>
+</LocList>
+<CondStmnt CovItemId="S22" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="65">
+<Branch CovItemId="B7" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="66">
+<Cond/>
+<LocList>
+<Loc EndOffset="3209" SrcFileId="1" StartOffset="2897"/>
+</LocList>
+<StmntSeq Intrnl_Id="67">
+<LocList>
+<Loc EndOffset="3196" SrcFileId="1" StartOffset="2932"/>
+</LocList>
+<CondStmnt CovItemId="S23" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="68">
+<Branch CovItemId="B9" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="69">
+<Cond/>
+<LocList>
+<Loc EndOffset="3196" SrcFileId="1" StartOffset="2954"/>
+</LocList>
+<StmntSeq Intrnl_Id="70">
+<LocList>
+<Loc EndOffset="3126" SrcFileId="1" StartOffset="2973"/>
+<Loc EndOffset="3181" SrcFileId="1" StartOffset="3144"/>
+</LocList>
+<CondStmnt CovItemId="S24" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="71">
+<Branch CovItemId="B11" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="72">
+<Cond/>
+<LocList>
+<Loc EndOffset="3059" SrcFileId="1" StartOffset="2992"/>
+</LocList>
+<StmntSeq Intrnl_Id="73">
+<LocList>
+<Loc EndOffset="3040" SrcFileId="1" StartOffset="3015"/>
+</LocList>
+<BasicStmnt CovItemId="S25" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="74">
+<LocList>
+<Loc EndOffset="3040" SrcFileId="1" StartOffset="3015"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B12" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="75">
+<Cond>
+<Loc EndOffset="3064" SrcFileId="1" StartOffset="3060"/>
+</Cond>
+<LocList>
+<Loc EndOffset="3126" SrcFileId="1" StartOffset="3065"/>
+</LocList>
+<StmntSeq Intrnl_Id="76">
+<LocList>
+<Loc EndOffset="3107" SrcFileId="1" StartOffset="3088"/>
+</LocList>
+<BasicStmnt CovItemId="S26" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="77">
+<LocList>
+<Loc EndOffset="3107" SrcFileId="1" StartOffset="3088"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="2975" SrcFileId="1" StartOffset="2973"/>
+<LocList>
+<Loc EndOffset="3126" SrcFileId="1" StartOffset="2973"/>
+</LocList>
+<RootTerm CovItemId="C6" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="78">
+<BasicBoolTerm Intrnl_Id="79">
+<LocList>
+<Loc EndOffset="2990" SrcFileId="1" StartOffset="2977"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S27" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="80">
+<LocList>
+<Loc EndOffset="3181" SrcFileId="1" StartOffset="3144"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B10" CovItemPrefix="Queue.QueueFaulty.java" Implct="true" Intrnl_Id="81">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="82">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="2934" SrcFileId="1" StartOffset="2932"/>
+<LocList>
+<Loc EndOffset="3196" SrcFileId="1" StartOffset="2932"/>
+</LocList>
+<RootTerm CovItemId="C5" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="83">
+<BasicBoolTerm Intrnl_Id="84">
+<LocList>
+<Loc EndOffset="2952" SrcFileId="1" StartOffset="2936"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B8" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="85">
+<Cond>
+<Loc EndOffset="3214" SrcFileId="1" StartOffset="3210"/>
+</Cond>
+<LocList>
+<Loc EndOffset="3459" SrcFileId="1" StartOffset="3215"/>
+</LocList>
+<StmntSeq Intrnl_Id="86">
+<LocList>
+<Loc EndOffset="3397" SrcFileId="1" StartOffset="3244"/>
+<Loc EndOffset="3448" SrcFileId="1" StartOffset="3411"/>
+</LocList>
+<CondStmnt CovItemId="S28" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="87">
+<Branch CovItemId="B13" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="88">
+<Cond/>
+<LocList>
+<Loc EndOffset="3339" SrcFileId="1" StartOffset="3280"/>
+</LocList>
+<StmntSeq Intrnl_Id="89">
+<LocList>
+<Loc EndOffset="3324" SrcFileId="1" StartOffset="3299"/>
+</LocList>
+<BasicStmnt CovItemId="S29" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="90">
+<LocList>
+<Loc EndOffset="3324" SrcFileId="1" StartOffset="3299"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B14" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="91">
+<Cond>
+<Loc EndOffset="3344" SrcFileId="1" StartOffset="3340"/>
+</Cond>
+<LocList>
+<Loc EndOffset="3397" SrcFileId="1" StartOffset="3345"/>
+</LocList>
+<StmntSeq Intrnl_Id="92">
+<LocList>
+<Loc EndOffset="3382" SrcFileId="1" StartOffset="3364"/>
+</LocList>
+<BasicStmnt CovItemId="S30" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="93">
+<LocList>
+<Loc EndOffset="3382" SrcFileId="1" StartOffset="3364"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="3246" SrcFileId="1" StartOffset="3244"/>
+<LocList>
+<Loc EndOffset="3397" SrcFileId="1" StartOffset="3244"/>
+</LocList>
+<RootTerm CovItemId="C7" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="94">
+<OpTerm BooleanOpId="2" Intrnl_Id="95">
+<BasicBoolTerm Intrnl_Id="96">
+<LocList>
+<Loc EndOffset="3262" SrcFileId="1" StartOffset="3248"/>
+</LocList>
+</BasicBoolTerm>
+<BasicBoolTerm Intrnl_Id="97">
+<LocList>
+<Loc EndOffset="3278" SrcFileId="1" StartOffset="3266"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="3265" SrcFileId="1" StartOffset="3263"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S31" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="98">
+<LocList>
+<Loc EndOffset="3448" SrcFileId="1" StartOffset="3411"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="2885" SrcFileId="1" StartOffset="2883"/>
+<LocList>
+<Loc EndOffset="3459" SrcFileId="1" StartOffset="2883"/>
+</LocList>
+<RootTerm CovItemId="C4" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="99">
+<BasicBoolTerm Intrnl_Id="100">
+<LocList>
+<Loc EndOffset="2895" SrcFileId="1" StartOffset="2887"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="11" HierarchyLvlTypeId="5" Intrnl_Id="101" Name="toString">
+<Header>
+<Loc EndOffset="3515" SrcFileId="1" StartOffset="3476"/>
+</Header>
+<LocList>
+<Loc EndOffset="3804" SrcFileId="1" StartOffset="3476"/>
+</LocList>
+<StmntSeq Intrnl_Id="102">
+<LocList>
+<Loc EndOffset="3547" SrcFileId="1" StartOffset="3527"/>
+<Loc EndOffset="3749" SrcFileId="1" StartOffset="3557"/>
+<Loc EndOffset="3773" SrcFileId="1" StartOffset="3759"/>
+<Loc EndOffset="3797" SrcFileId="1" StartOffset="3783"/>
+</LocList>
+<BasicStmnt CovItemId="S32" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="103">
+<LocList>
+<Loc EndOffset="3547" SrcFileId="1" StartOffset="3527"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S33" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="104" MltplExecId="L1-2" MltplExecPrefix="Queue.QueueFaulty.java" NvrExecId="L1-0" NvrExecPrefix="Queue.QueueFaulty.java" OnceExecutedId="L1-1" OnceExecutedPrefix="Queue.QueueFaulty.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="105">
+<LocList>
+<Loc EndOffset="3657" SrcFileId="1" StartOffset="3603"/>
+<Loc EndOffset="3738" SrcFileId="1" StartOffset="3671"/>
+</LocList>
+<BasicStmnt CovItemId="S34" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="106">
+<LocList>
+<Loc EndOffset="3657" SrcFileId="1" StartOffset="3603"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S35" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="107">
+<Branch CovItemId="B15" CovItemPrefix="Queue.QueueFaulty.java" Implct="false" Intrnl_Id="108">
+<Cond/>
+<LocList>
+<Loc EndOffset="3738" SrcFileId="1" StartOffset="3689"/>
+</LocList>
+<StmntSeq Intrnl_Id="109">
+<LocList>
+<Loc EndOffset="3723" SrcFileId="1" StartOffset="3708"/>
+</LocList>
+<BasicStmnt CovItemId="S36" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="110">
+<LocList>
+<Loc EndOffset="3723" SrcFileId="1" StartOffset="3708"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B16" CovItemPrefix="Queue.QueueFaulty.java" Implct="true" Intrnl_Id="111">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="112">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="3673" SrcFileId="1" StartOffset="3671"/>
+<LocList>
+<Loc EndOffset="3738" SrcFileId="1" StartOffset="3671"/>
+</LocList>
+<RootTerm CovItemId="C9" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="113">
+<BasicBoolTerm Intrnl_Id="114">
+<LocList>
+<Loc EndOffset="3687" SrcFileId="1" StartOffset="3675"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+<Keyword EndOffset="3560" SrcFileId="1" StartOffset="3557"/>
+<LocList>
+<Loc EndOffset="3749" SrcFileId="1" StartOffset="3557"/>
+</LocList>
+<RootTerm CovItemId="C8" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="115">
+<BasicBoolTerm Intrnl_Id="116">
+<LocList>
+<Loc EndOffset="3581" SrcFileId="1" StartOffset="3573"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</LoopStmnt>
+<BasicStmnt CovItemId="S37" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="117">
+<LocList>
+<Loc EndOffset="3773" SrcFileId="1" StartOffset="3759"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S38" CovItemPrefix="Queue.QueueFaulty.java" Intrnl_Id="118">
+<LocList>
+<Loc EndOffset="3797" SrcFileId="1" StartOffset="3783"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+</HierarchyLvl>
+</HierarchyLvl>
+</HierarchyLvl>
+</MASTRoot>
+</TestSessionContainer>

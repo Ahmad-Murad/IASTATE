@@ -89,17 +89,21 @@ public class Lab4 extends Configured implements Tool {
             for (Text val : values)
                 context.write(key, val);
         }
-    } // -du -h /
+    }
 
     public static class Lab4Partitioner extends Partitioner<Text, Text> {
 
         @Override
         public int getPartition(Text key, Text value, int numPartitions) {
-            char c = key.toString().charAt(0);
-            int part = ((c * numPartitions) / 0x7F);
-            if (part >= numPartitions || part < 0)
-                throw new RuntimeException("**ERROR** c=" + c + "  part=" + part + "  num=" + numPartitions);
-            return part;
+//            byte c = key.getBytes()[0];
+//            int part = (c >> 5) - 1;
+
+//            // this should never happen, if it does capture the data so we can rework logic
+//            if (part >= numPartitions || part < 0)
+//                throw new RuntimeException("**ERROR** c=" + c + "  part=" + part + "  num=" + numPartitions);
+
+//            return part;
+            return (key.charAt(0) >> 5) - 1;
         }
     }
 }

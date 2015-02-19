@@ -7,7 +7,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import Queue.QueueFaulty;
+import Queue.QueueFixed;
 
 public class QueueTest
 {
@@ -18,7 +18,7 @@ public class QueueTest
      */
     @Test
     public void testIsEmpty() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
 
         assertTrue("Queue should be empty when initially createed.", qf.isEmpty());
 
@@ -35,7 +35,7 @@ public class QueueTest
      */
     @Test(expected = NullPointerException.class)
     public void testNullEnqueue() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
         qf.enqueue(null);
     }
 
@@ -46,7 +46,7 @@ public class QueueTest
      */
     @Test
     public void testInitialCapacity() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
 
         int capacity;
         for (capacity = 0; !qf.isFull(); capacity++)
@@ -62,7 +62,7 @@ public class QueueTest
      */
     @Test
     public void testFullEnqueue() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
 
         while (!qf.isFull())
             qf.enqueue(new Object());
@@ -82,7 +82,7 @@ public class QueueTest
      */
     @Test
     public void testAddObjectSubtype() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
         // Fault : adding a subclass of java.lang.Object results in a NPE
         qf.enqueue(new Integer(1));
     }
@@ -94,7 +94,7 @@ public class QueueTest
      */
     @Test
     public void testDequeue() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
 
         Object expected = new Object();
         qf.enqueue(expected);
@@ -111,7 +111,7 @@ public class QueueTest
      */
     @Test(expected = IllegalStateException.class)
     public void testEmptyDequeue() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
         qf.dequeue();
     }
 
@@ -122,7 +122,7 @@ public class QueueTest
      */
     @Test
     public void testSetCapacityNegative() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
         qf.setCapacity(-1);
 
 //        System.out.println(qf.isEmpty());
@@ -147,7 +147,7 @@ public class QueueTest
      */
     @Test
     public void testSetMaxCapacity() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
         qf.setCapacity(25);
 
         for (int i = 0; i < 25; i++)
@@ -175,7 +175,7 @@ public class QueueTest
      */
     @Test
     public void testLowCapacity() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
         qf.setCapacity(10);
 
         for (int i = 0; i < 10; i++)
@@ -198,7 +198,7 @@ public class QueueTest
      */
     @Test
     public void testToString() {
-        QueueFaulty qf = new QueueFaulty();
+        QueueFixed qf = new QueueFixed();
         qf.setCapacity(2);
         assertEquals("[]", qf.toString());
 
@@ -215,8 +215,8 @@ public class QueueTest
      */
     @Test
     public void testTwoQueues1() {
-        QueueFaulty qf1 = new QueueFaulty();
-        QueueFaulty qf2 = new QueueFaulty();
+        QueueFixed qf1 = new QueueFixed();
+        QueueFixed qf2 = new QueueFixed();
 
         while (!qf1.isFull())
             qf1.enqueue(new Object());
@@ -238,14 +238,30 @@ public class QueueTest
      */
     @Test
     public void testTwoQueues2() {
-        QueueFaulty qf1 = new QueueFaulty();
+        QueueFixed qf1 = new QueueFixed();
         qf1.setCapacity(2);
-        QueueFaulty qf2 = new QueueFaulty();
+        QueueFixed qf2 = new QueueFixed();
 
         qf1.enqueue(new Object());
         qf1.enqueue(new Object());
 
         assertTrue(qf2.isEmpty());
         assertEquals("[]", qf2.toString());
+    }
+
+    @Test
+    public void testSetCapacityHigher() {
+        QueueFixed qf1 = new QueueFixed();
+        qf1.enqueue(new Integer(1));
+        qf1.enqueue(new Integer(2));
+
+        qf1.setCapacity(5);
+        qf1.enqueue(new Integer(3));
+        qf1.enqueue(new Integer(4));
+        qf1.enqueue(new Integer(5));
+
+        assertTrue(qf1.isFull());
+        System.out.println(qf1);
+        assertEquals("[1, 2, 3, 4, 5]", qf1.toString());
     }
 }

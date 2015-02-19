@@ -4,9 +4,9 @@ package Queue;
  * Overview: a Queue is a mutable, bounded FIFO data structure of fixed capacity
  * A typical Queue is [], [o1], or [o1, o2], where neither o1 nor o2 are ever
  * null. Older elements are listed before newer ones.
- *
+ * 
  * @author kstolee
- *
+ * 
  */
 public class QueueFixed {
     // Overview: a Queue is a mutable, bounded FIFO data structure
@@ -15,7 +15,7 @@ public class QueueFixed {
     // are ever null. Older elements are listed before newer ones.
     private Object[] elements;
     private int size, front, back;
-    private int capacity = 2;
+    private int capacity = 2; //// FIXED: changed from static to instance, initialize to 2
 
     /**
      * Creates a QueueFaulty object. Initial capacity is 2.
@@ -23,13 +23,13 @@ public class QueueFixed {
     public QueueFixed() {
         elements = new Object[capacity];
         size = 0;
-        front = 0;
+        front = 0; //// FIXED: initialize front and back to 0 when size is 0
         back = 0;
     }
 
     /**
      * Adds an object to the back of the queue
-     *
+     * 
      * @param an
      *            object
      * @throws NullPointerException
@@ -40,7 +40,7 @@ public class QueueFixed {
     public void enqueue(Object o) throws NullPointerException,
                     IllegalStateException {
 
-        if (o == null)
+        if (o == null) //// FIXED : Don't thow NPE if instanceof java.lang.Integer
             throw new NullPointerException("Queue.enqueue");
         else if (size == capacity)
             throw new IllegalStateException("Queue.enqueue");
@@ -54,7 +54,7 @@ public class QueueFixed {
 
     /**
      * Removes and returns the oldest (front) element of the queue
-     *
+     * 
      * @return the dequeued object
      * @throws IllegalStateException
      *             when the queue is empty; error message: Queue.dequeue
@@ -88,11 +88,11 @@ public class QueueFixed {
 
     /**
      * Sets the size of the queue, maximum 25
-     *
+     * 
      * If the queue is non-empty, the capacity must be at least the size of the queue.
-     *
+     * 
      * Default queue size is 2.
-     *
+     * 
      * @param capacity
      */
     public void setCapacity(int capacity) {
@@ -105,6 +105,8 @@ public class QueueFixed {
                 } else {
                     this.capacity = 25;
                 }
+                //// FIXED : copy existing elements into new array when
+                ////         a new array must be created
                 Object[] newArr = new Object[this.capacity];
                 for (int i = 0; i < this.capacity; i++)
                     newArr[i] = elements[(front + i) % oldCapacity];

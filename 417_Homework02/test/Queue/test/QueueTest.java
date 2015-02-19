@@ -249,6 +249,11 @@ public class QueueTest
         assertEquals("[]", qf2.toString());
     }
 
+    /**
+     * Verify that increasing the capacity on a queue which
+     * already contains elements works properly (i.e. capacity is
+     * increased, and the toString() returns all elements in order)
+     */
     @Test
     public void testSetCapacityHigher() {
         QueueFixed qf1 = new QueueFixed();

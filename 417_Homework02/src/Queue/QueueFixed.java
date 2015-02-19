@@ -4,9 +4,9 @@ package Queue;
  * Overview: a Queue is a mutable, bounded FIFO data structure of fixed capacity
  * A typical Queue is [], [o1], or [o1, o2], where neither o1 nor o2 are ever
  * null. Older elements are listed before newer ones.
- * 
+ *
  * @author kstolee
- * 
+ *
  */
 public class QueueFixed {
     // Overview: a Queue is a mutable, bounded FIFO data structure
@@ -29,7 +29,7 @@ public class QueueFixed {
 
     /**
      * Adds an object to the back of the queue
-     * 
+     *
      * @param an
      *            object
      * @throws NullPointerException
@@ -54,7 +54,7 @@ public class QueueFixed {
 
     /**
      * Removes and returns the oldest (front) element of the queue
-     * 
+     *
      * @return the dequeued object
      * @throws IllegalStateException
      *             when the queue is empty; error message: Queue.dequeue
@@ -88,24 +88,26 @@ public class QueueFixed {
 
     /**
      * Sets the size of the queue, maximum 25
-     * 
+     *
      * If the queue is non-empty, the capacity must be at least the size of the queue.
-     * 
+     *
      * Default queue size is 2.
-     * 
+     *
      * @param capacity
      */
     public void setCapacity(int capacity) {
         if (size > 0) { //non-empty queue
 
             if (capacity >= size) {
+                int oldCapacity = this.capacity;
                 if (capacity < 25) {
                     this.capacity = capacity;
                 } else {
                     this.capacity = 25;
                 }
                 Object[] newArr = new Object[this.capacity];
-                System.arraycopy(elements, back, newArr, 0, size);
+                for (int i = 0; i < this.capacity; i++)
+                    newArr[i] = elements[(front + i) % oldCapacity];
                 elements = newArr;
                 front = 0;
                 back = size;

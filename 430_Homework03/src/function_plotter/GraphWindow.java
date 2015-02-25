@@ -16,6 +16,12 @@ import javax.swing.SwingUtilities;
 /**
  * Displays a polyline in a window of the Cartesian plane, with x and y in
  * (VIEWPORT_MIN, VIEWPORT_MAX).
+ *
+ * Change comments:
+ * The methods addPoint and clear are invoked from outside the event thread.
+ * These methods are modifying Swing components and models, so this
+ * modification should be done from the event thread. To do this, the methods
+ * were converted to runnables and passes to SwingUtilities.invokeAndWait().
  */
 public class GraphWindow {
 
@@ -65,16 +71,34 @@ public class GraphWindow {
      *            Y-coordinate of the new point.
      */
     public void addPoint(final double x, final double y) {
-        points.add(new Point2D.Double(x, y));
-        frame.repaint();
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    points.add(new Point2D.Double(x, y));
+                    frame.repaint();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Erases the current polyline.
      */
     public void clear() {
-        points.clear();
-        frame.repaint();
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    points.clear();
+                    frame.repaint();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

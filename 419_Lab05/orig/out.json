@@ -1,0 +1,30 @@
+0         
+
+"contributors": null,     
+"coordinates": null,  
+"created_at": "Fri Feb 20 18:46:35 +0000 2015",  
+"entities": {   
+	"hashtags": [    {     
+		"indices": [      33,      40     ],     
+		"text": "Oscars"    
+	},    
+	{     
+		"indices": [      70,      85     ],     
+		"text": "AmericanSniper"    
+	}   ]  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+316       "contributors": null,  "coordinates": null,  "created_at": "Fri Feb 20 18:46:35 +0000 2015",  "entities": {   "hashtags": [    {     "indices": [      55,      60     ],     "text": "Oscars2"    },    {     "indices": [      77,      88     ],     "text": "Some Movie"    }   ]  }

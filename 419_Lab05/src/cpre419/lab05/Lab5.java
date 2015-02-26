@@ -160,16 +160,14 @@ public class Lab5 extends Configured implements Tool {
                 pos += size;
                 String line = value.toString();
 
-                if (line.contains("{")) {
+                if (line.contains("{"))
                     braceStack++;
-                }
 
                 if (line.contains("}")) {
-                    braceStack--;
-                    if (braceStack == 0)
+                    if (--braceStack == 0)
                         break; // found the outer closing brace
                 }
-                sb.append(value.toString());
+                sb.append(line);
             } while (size > 0);
             value = new Text(sb.toString());
 
@@ -189,7 +187,7 @@ public class Lab5 extends Configured implements Tool {
         @Override
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
-            context.write(value, new Text("1"));
+            context.write(new Text(key.toString()), value);
         }
     }
 

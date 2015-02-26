@@ -71,34 +71,26 @@ public class GraphWindow {
      *            Y-coordinate of the new point.
      */
     public void addPoint(final double x, final double y) {
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    points.add(new Point2D.Double(x, y));
-                    frame.repaint();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                points.add(new Point2D.Double(x, y));
+                frame.repaint();
+            }
+        });
     }
 
     /**
      * Erases the current polyline.
      */
     public void clear() {
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    points.clear();
-                    frame.repaint();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                points.clear();
+                frame.repaint();
+            }
+        });
     }
 
     /**

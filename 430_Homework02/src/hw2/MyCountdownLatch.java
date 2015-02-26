@@ -3,29 +3,30 @@
  */
 package hw2;
 
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Andrew
  */
 public class MyCountdownLatch
 {
-    private final AtomicInteger count;
+    private Integer count;
 
     public MyCountdownLatch(int count) {
-        this.count = new AtomicInteger(count);
+        this.count = new Integer(count);
     }
 
     public void countDown() {
         synchronized (count) {
-            if (count.decrementAndGet() == 0)
+            if (--count == 0)
                 count.notifyAll();
         }
     }
 
     public void await() throws InterruptedException {
         synchronized (count) {
-            count.wait();
+            // added while loop after grading
+            while (count != 0)
+                count.wait();
         }
     }
 }

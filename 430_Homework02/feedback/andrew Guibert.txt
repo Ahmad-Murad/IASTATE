@@ -1,0 +1,15 @@
+Question 1:   18/30
+		String msg = msgQueue.remove(); throws exception when queue is empty, this not have been handled.-2
+		If queue once becomes empty then logger thread exits and then even if queue fills up it will not be written to file.-10		
+	  
+
+
+Question 2:  20/20
+
+
+Question 3:  14/20
+		Redundant use of Atmoc Integer here -1
+		Idiom for wait has not been followed. The given implemenatation will not work at all.-5
+
+
+Question 4: 30/30

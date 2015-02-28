@@ -1,0 +1,314 @@
+ {
+  "contributors": null,
+  "coordinates": null,
+  "created_at": "Fri Feb 20 18:46:35 +0000 2015",
+  "entities": {
+   "hashtags": [
+    {
+     "indices": [
+      33,
+      40
+     ],
+     "text": "Oscars"
+    },
+    {
+     "indices": [
+      70,
+      85
+     ],
+     "text": "AmericanSniper"
+    }
+   ],
+   "media": [
+    {
+     "display_url": "pic.twitter.com/AQTq6tW23G",
+     "expanded_url": "http://twitter.com/thebaselinemag/status/568840945791168512/photo/1",
+     "id": 568840945341181952,
+     "id_str": "568840945341181952",
+     "indices": [
+      139,
+      140
+     ],
+     "media_url": "http://pbs.twimg.com/media/B-Tt03DCMAALGpK.jpg",
+     "media_url_https": "https://pbs.twimg.com/media/B-Tt03DCMAALGpK.jpg",
+     "sizes": {
+      "large": {
+       "h": 301,
+       "resize": "fit",
+       "w": 591
+      },
+      "medium": {
+       "h": 301,
+       "resize": "fit",
+       "w": 591
+      },
+      "small": {
+       "h": 173,
+       "resize": "fit",
+       "w": 340
+      },
+      "thumb": {
+       "h": 150,
+       "resize": "crop",
+       "w": 150
+      }
+     },
+     "source_status_id": 568840945791168512,
+     "source_status_id_str": "568840945791168512",
+     "source_user_id": 1363006170,
+     "source_user_id_str": "1363006170",
+     "type": "photo",
+     "url": "http://t.co/AQTq6tW23G"
+    }
+   ],
+   "symbols": [],
+   "urls": [
+    {
+     "display_url": "thebaselinemagazine.com",
+     "expanded_url": "http://thebaselinemagazine.com",
+     "indices": [
+      115,
+      137
+     ],
+     "url": "http://t.co/dNwB4FHehy"
+    }
+   ],
+   "user_mentions": [
+    {
+     "id": 1363006170,
+     "id_str": "1363006170",
+     "indices": [
+      3,
+      18
+     ],
+     "name": " the base line ",
+     "screen_name": "thebaselinemag"
+    }
+   ]
+  },
+  "favorite_count": 0,
+  "favorited": false,
+  "geo": null,
+  "id": 568844180836913152,
+  "id_str": "568844180836913152",
+  "in_reply_to_screen_name": null,
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "lang": "en",
+  "metadata": {
+   "iso_language_code": "en",
+   "result_type": "recent"
+  },
+  "place": null,
+  "possibly_sensitive": false,
+  "retweet_count": 1,
+  "retweeted": false,
+  "retweeted_status": {
+   "contributors": null,
+   "coordinates": null,
+   "created_at": "Fri Feb 20 18:33:44 +0000 2015",
+   "entities": {
+    "hashtags": [
+     {
+      "indices": [
+       13,
+       20
+      ],
+      "text": "Oscars"
+     },
+     {
+      "indices": [
+       50,
+       65
+      ],
+      "text": "AmericanSniper"
+     }
+    ],
+    "media": [
+     {
+      "display_url": "pic.twitter.com/AQTq6tW23G",
+      "expanded_url": "http://twitter.com/thebaselinemag/status/568840945791168512/photo/1",
+      "id": 568840945341181952,
+      "id_str": "568840945341181952",
+      "indices": [
+       118,
+       140
+      ],
+      "media_url": "http://pbs.twimg.com/media/B-Tt03DCMAALGpK.jpg",
+      "media_url_https": "https://pbs.twimg.com/media/B-Tt03DCMAALGpK.jpg",
+      "sizes": {
+       "large": {
+        "h": 301,
+        "resize": "fit",
+        "w": 591
+       },
+       "medium": {
+        "h": 301,
+        "resize": "fit",
+        "w": 591
+       },
+       "small": {
+        "h": 173,
+        "resize": "fit",
+        "w": 340
+       },
+       "thumb": {
+        "h": 150,
+        "resize": "crop",
+        "w": 150
+       }
+      },
+      "type": "photo",
+      "url": "http://t.co/AQTq6tW23G"
+     }
+    ],
+    "symbols": [],
+    "urls": [
+     {
+      "display_url": "thebaselinemagazine.com",
+      "expanded_url": "http://thebaselinemagazine.com",
+      "indices": [
+       95,
+       117
+      ],
+      "url": "http://t.co/dNwB4FHehy"
+     }
+    ],
+    "user_mentions": []
+   },
+   "favorite_count": 0,
+   "favorited": false,
+   "geo": null,
+   "id": 568840945791168512,
+   "id_str": "568840945791168512",
+   "in_reply_to_screen_name": null,
+   "in_reply_to_status_id": null,
+   "in_reply_to_status_id_str": null,
+   "in_reply_to_user_id": null,
+   "in_reply_to_user_id_str": null,
+   "lang": "en",
+   "metadata": {
+    "iso_language_code": "en",
+    "result_type": "recent"
+   },
+   "place": null,
+   "possibly_sensitive": false,
+   "retweet_count": 1,
+   "retweeted": false,
+   "source": "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+   "text": "Countdown to #Oscars!  Will  Hanajun 's review of #AmericanSniper hold true?!  Check it out at http://t.co/dNwB4FHehy http://t.co/AQTq6tW23G",
+   "truncated": false,
+   "user": {
+    "contributors_enabled": false,
+    "created_at": "Thu Apr 18 22:16:48 +0000 2013",
+    "default_profile": true,
+    "default_profile_image": false,
+    "description": "",
+    "entities": {
+     "description": {
+      "urls": []
+     },
+     "url": {
+      "urls": [
+       {
+        "display_url": "thebaselinemagazine.com",
+        "expanded_url": "http://www.thebaselinemagazine.com",
+        "indices": [
+         0,
+         22
+        ],
+        "url": "http://t.co/OxiN2XQwS9"
+       }
+      ]
+     }
+    },
+    "favourites_count": 145,
+    "follow_request_sent": false,
+    "followers_count": 52,
+    "following": false,
+    "friends_count": 36,
+    "geo_enabled": false,
+    "id": 1363006170,
+    "id_str": "1363006170",
+    "is_translation_enabled": false,
+    "is_translator": false,
+    "lang": "en",
+    "listed_count": 0,
+    "location": "",
+    "name": " the base line ",
+    "notifications": false,
+    "profile_background_color": "C0DEED",
+    "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile": false,
+    "profile_image_url": "http://pbs.twimg.com/profile_images/3540885842/e25b284069ede181b4801a40913c1aed_normal.jpeg",
+    "profile_image_url_https": "https://pbs.twimg.com/profile_images/3540885842/e25b284069ede181b4801a40913c1aed_normal.jpeg",
+    "profile_link_color": "0084B4",
+    "profile_location": null,
+    "profile_sidebar_border_color": "C0DEED",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "protected": false,
+    "screen_name": "thebaselinemag",
+    "statuses_count": 203,
+    "time_zone": null,
+    "url": "http://t.co/OxiN2XQwS9",
+    "utc_offset": null,
+    "verified": false
+   }
+  },
+  "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+  "text": "RT @thebaselinemag: Countdown to #Oscars!  Will  Hanajun 's review of #AmericanSniper hold true?!  Check it out at http://t.co/dNwB4FHehy h\u2026",
+  "truncated": false,
+  "user": {
+   "contributors_enabled": false,
+   "created_at": "Wed Dec 26 02:28:02 +0000 2012",
+   "default_profile": true,
+   "default_profile_image": false,
+   "description": "love I try to follow",
+   "entities": {
+    "description": {
+     "urls": []
+    }
+   },
+   "favourites_count": 1704,
+   "follow_request_sent": false,
+   "followers_count": 151,
+   "following": false,
+   "friends_count": 154,
+   "geo_enabled": true,
+   "id": 1036105310,
+   "id_str": "1036105310",
+   "is_translation_enabled": false,
+   "is_translator": false,
+   "lang": "en",
+   "listed_count": 1,
+   "location": "",
+   "name": "Kyle Smith",
+   "notifications": false,
+   "profile_background_color": "C0DEED",
+   "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+   "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+   "profile_background_tile": false,
+   "profile_banner_url": "https://pbs.twimg.com/profile_banners/1036105310/1405182978",
+   "profile_image_url": "http://pbs.twimg.com/profile_images/567131389951504385/i_YsaItu_normal.jpeg",
+   "profile_image_url_https": "https://pbs.twimg.com/profile_images/567131389951504385/i_YsaItu_normal.jpeg",
+   "profile_link_color": "0084B4",
+   "profile_location": null,
+   "profile_sidebar_border_color": "C0DEED",
+   "profile_sidebar_fill_color": "DDEEF6",
+   "profile_text_color": "333333",
+   "profile_use_background_image": true,
+   "protected": false,
+   "screen_name": "_kyol",
+   "statuses_count": 4091,
+   "time_zone": null,
+   "url": null,
+   "utc_offset": null,
+   "verified": false
+  }
+ }
+

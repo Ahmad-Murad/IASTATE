@@ -21,7 +21,7 @@ import javax.swing.SwingUtilities;
  * The methods addPoint and clear are invoked from outside the event thread.
  * These methods are modifying Swing components and models, so this
  * modification should be done from the event thread. To do this, the methods
- * were converted to runnables and passes to SwingUtilities.invokeAndWait().
+ * were converted to runnables and passes to SwingUtilities.invokeLater().
  */
 public class GraphWindow {
 

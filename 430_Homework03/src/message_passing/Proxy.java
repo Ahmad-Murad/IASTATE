@@ -95,7 +95,6 @@ public class Proxy extends Component {
                 } catch (InterruptedException e) {
                 }
                 if (cur != null) {
-                    System.out.println(Thread.currentThread().getName() + " got message " + cur.getId());
                     cur.dispatch(proxy);
                 }
             } while (!done);

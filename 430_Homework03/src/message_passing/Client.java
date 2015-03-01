@@ -9,6 +9,8 @@ public class Client extends Component {
 
     private Component input;
     private Component proxy = new Proxy();
+    private Component timeout = new Timeout();
+    private static final long TIMEOUT = 5500L; // 5.5 seconds
 
     /**
      * Key: the key value being requested from the database
@@ -34,9 +36,10 @@ public class Client extends Component {
      */
     @Override
     public void start() {
-        input = new InputComponent(this);
+        input = new Input(this);
         input.start();
         proxy.start();
+        timeout.start();
         IMessage cur = null;
         do {
             try {
@@ -48,6 +51,7 @@ public class Client extends Component {
         } while (!done);
         // input will stop on its own, no need to send it StopMessage
         proxy.send(new StopMessage(this));
+        timeout.send(new StopMessage(this));
     }
 
     /**
@@ -86,10 +90,12 @@ public class Client extends Component {
             synchronized (pendingRequests) {
                 if (!pendingRequests.containsKey(key)) {
                     RequestMessage request = new RequestMessage(this, key);
+                    TimeoutMessage timeoutMsg = new TimeoutMessage(request.getId(), this, TIMEOUT);
                     correlationIDtoKey.put(request.getId(), key);
                     // If this key hasn't been requested before, add it to the pending requests
                     pendingRequests.put(key, 1);
                     proxy.send(request);
+                    timeout.send(timeoutMsg);
                 } else {
                     // If this key has been requested already (but not returned and cached yet)
                     // then increment the number of pending requests for this key.
@@ -183,19 +189,28 @@ public class Client extends Component {
 
     @Override
     public void handle(ResultMessage msg) {
-        int key = correlationIDtoKey.get(msg.getCorrelationId());
+        Integer key = correlationIDtoKey.remove(msg.getCorrelationId());
+        if (key == null)
+            return; // this request has already been completed
+
         String result = msg.getResult();
-        synchronized (cache) {
-            if (getLocalValue(key) == null) {
-                cache.put(key, new Record(key, result));
+        if ("TIMED_OUT".equalsIgnoreCase(result)) {
+            System.out.println("Request " + msg.getCorrelationId() + " has timed out after " + TIMEOUT + "ms.  Any late responses will be ignored for this request.");
+        } else {
+            synchronized (cache) {
+                if (getLocalValue(key) == null) {
+                    cache.put(key, new Record(key, result));
+                }
             }
         }
+
         // Now that we have finished getting a value from the database, print out the results
         // however many times the key has been requested since the original request.
         synchronized (pendingRequests) {
-            for (int numRequests = pendingRequests.get(key); numRequests > 0; numRequests--) {
-                printResponse(key, result);
-            }
+            if (!"TIMED_OUT".equalsIgnoreCase(result))
+                for (int numRequests = pendingRequests.get(key); numRequests > 0; numRequests--) {
+                    printResponse(key, result);
+                }
             pendingRequests.remove(key);
         }
     }

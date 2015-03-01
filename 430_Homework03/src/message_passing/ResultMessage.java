@@ -14,4 +14,10 @@ public class ResultMessage extends AbstractMessage
     {
         return result;
     }
+
+    @Override
+    public void dispatch(Component receiver)
+    {
+        receiver.handle(this);
+    }
 }

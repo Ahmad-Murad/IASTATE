@@ -22,7 +22,7 @@ public abstract class Component
      * Sends a message to this component. The implementation
      * of this method could vary between components but in all
      * case it should accept messages without blocking.
-     * 
+     *
      * @param message
      *            the message to send
      */
@@ -35,7 +35,7 @@ public abstract class Component
 
     /**
      * Default message handling method.
-     * 
+     *
      * @param msg
      */
     public void handle(IMessage msg)
@@ -59,6 +59,11 @@ public abstract class Component
     }
 
     public void handle(ResultMessage msg)
+    {
+        handle((IMessage) msg);
+    }
+
+    public void handle(StopMessage msg)
     {
         handle((IMessage) msg);
     }

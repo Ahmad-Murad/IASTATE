@@ -14,4 +14,10 @@ public class RequestMessage extends AbstractMessage
     {
         return key;
     }
+
+    @Override
+    public void dispatch(Component receiver)
+    {
+        receiver.handle(this);
+    }
 }

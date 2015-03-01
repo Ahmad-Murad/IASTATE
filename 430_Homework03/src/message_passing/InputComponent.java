@@ -1,6 +1,3 @@
-/**
- *
- */
 package message_passing;
 
 import java.util.Scanner;
@@ -11,15 +8,15 @@ import java.util.Scanner;
  */
 public class InputComponent extends Component
 {
-    private final Client c;
+    private final Component c;
 
-    public InputComponent(Client client) {
+    public InputComponent(Component client) {
         this.c = client;
     }
 
     @Override
     public void send(IMessage message) {
-        c.addMessage(message);
+        message.dispatch(this);
     }
 
     @Override
@@ -31,18 +28,17 @@ public class InputComponent extends Component
                 String input = null;
                 Scanner scanner = new Scanner(System.in);
                 do {
-                    System.out.print("\nEnter a message (or 'q' to quit): ");
+                    System.out.println("Please enter 'd', 'q', or an id number");
                     input = scanner.nextLine();
-                    send(new TextMessage(self, input));
+                    handle(new TextMessage(self, input));
                 } while (!"q".equalsIgnoreCase(input));
                 scanner.close();
             }
-        }).start();
+        }, "Input Component Thread").start();
     }
 
     @Override
-    public void handle(TextMessage msg)
-    {
-        System.out.println("handling message " + msg.getText());
+    public void handle(TextMessage msg) {
+        c.send(msg);
     }
 }

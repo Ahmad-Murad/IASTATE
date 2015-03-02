@@ -16,7 +16,7 @@ public class Cube extends Component
     private boolean done = false;
     private LinkedBlockingQueue<IMessage> messages = new LinkedBlockingQueue<>();
     private int[] counts = new int[Universe.NUM_CUBES];
-    private int position = 1;
+    private int position = 0;
 
     public Cube(TimerComponent timer)
     {
@@ -58,18 +58,19 @@ public class Cube extends Component
                     Universe.broadcastRight(msg);
                     try {
                         IMessage cur = self.messages.poll(POLL_FREQ, TimeUnit.MILLISECONDS);
-                        if (cur != null)
+                        if (cur != null) {
                             cur.dispatch(self);
-                        else {
+                            idleFor(POLL_FREQ);
+                        } else if (self.position != 0) {
                             // nothing on the queue, must be alone
-                            Universe.updateDisplay(self, 0);
+                            self.position = 0;
+                            Universe.updateDisplay(self, self.position);
                         }
                     } catch (InterruptedException e) {
                     }
-                    idleFor(POLL_FREQ);
                 } while (!done);
             }
-        }, "Cube-" + this.cubeID).start();
+        }, this.toString()).start();
     }
 
     @Override

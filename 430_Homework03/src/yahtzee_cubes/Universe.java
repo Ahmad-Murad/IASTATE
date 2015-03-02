@@ -133,7 +133,6 @@ public class Universe
      */
     public static void updateDisplay(Component c, int state)
     {
-        System.out.println(c.toString() + " changing to: " + state);
         // update UI with value
         int index = getIndex(c);
         if (index < 0)

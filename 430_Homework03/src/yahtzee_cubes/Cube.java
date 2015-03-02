@@ -9,16 +9,13 @@ public class Cube extends Component
     private static final long TIMEOUT = 500;
     private static int cubeIDcount = 0;
     private final int cubeID;
-    private TimerComponent timer;
     private boolean done = false;
-//    private LinkedBlockingQueue<IMessage> messages = new LinkedBlockingQueue<>();
     private IMessage[] recentMessages = new IMessage[Universe.NUM_CUBES];
     private int position = 0;
 
     public Cube(TimerComponent timer)
     {
         this.cubeID = cubeIDcount++;
-        this.timer = timer;
         for (int i = 0; i < Universe.NUM_CUBES; i++)
             recentMessages[i] = null;
     }
@@ -28,14 +25,12 @@ public class Cube extends Component
         synchronized (recentMessages) {
             recentMessages[message.getCorrelationId()] = message;
         }
-//        messages.add(message);
     }
 
     @Override
     public void handle(LocationMessage msg)
     {
         int max = 0;
-//        recentMessages[msg.getCorrelationId()] = msg;
         synchronized (recentMessages) {
             for (int i = 0; i < recentMessages.length; i++) {
                 LocationMessage lm = (LocationMessage) recentMessages[i];

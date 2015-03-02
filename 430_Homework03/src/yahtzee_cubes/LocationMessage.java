@@ -28,7 +28,6 @@ public class LocationMessage extends AbstractMessage
     @Override
     public void dispatch(Component receiver)
     {
-//        System.out.println(toString() + " is dispatching to " + receiver);
         receiver.handle(this);
     }
 
@@ -37,8 +36,6 @@ public class LocationMessage extends AbstractMessage
     }
 
     public boolean isExpired() {
-//        if (expiresAt == Long.MAX_VALUE)
-//            throw new RuntimeException("isExpired was called too early.");
         return System.currentTimeMillis() > expiresAt;
     }
 

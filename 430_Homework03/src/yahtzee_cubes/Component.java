@@ -14,7 +14,6 @@ public abstract class Component
     protected void log(String logString)
     {
         logString = this.getClass() + ": " + logString;
-        //System.out.println(logString);
         TextMessage m = new TextMessage(this, logString);
         logger.send(m);
     }

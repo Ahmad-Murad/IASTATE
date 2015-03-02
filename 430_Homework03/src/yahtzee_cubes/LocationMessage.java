@@ -1,19 +1,21 @@
 package yahtzee_cubes;
 
 /**
+ * A concrete message which tracks two things:
+ * <li>The number of cubes known to be left of the sender
+ * <li>Some expiration time which indicates the maximum time which this message is valid.
+ * 
  * @author Andrew
  */
 public class LocationMessage extends AbstractMessage
 {
     private final int cubesSeen;
     private final long expiresAt;
-    private final long timeToLive;
 
     public LocationMessage(int correlationId, Component sender, int seen, long timeToLive)
     {
         super(correlationId, sender);
         this.cubesSeen = seen;
-        this.timeToLive = timeToLive;
         expiresAt = System.currentTimeMillis() + timeToLive;
     }
 
@@ -21,7 +23,6 @@ public class LocationMessage extends AbstractMessage
     {
         super(sender);
         this.cubesSeen = seen;
-        this.timeToLive = timeToLive;
         expiresAt = System.currentTimeMillis() + timeToLive;
     }
 
@@ -48,7 +49,13 @@ public class LocationMessage extends AbstractMessage
         return "(id=" + this.id + "  corr=" + this.correlationId + "  count=" + cubesSeen + "  sender=" + this.getSender() + ")";
     }
 
+    /**
+     * Construct a new LocationMessage from this one.
+     * The correlationID is cloned from the original, cubesSeen is incremented by one,
+     * and the expiresAt time is the same as the original as well.
+     */
     public LocationMessage forward(Component sender) {
-        return new LocationMessage(this.getCorrelationId(), sender, this.cubesSeen + 1, this.timeToLive);
+        long timeToLive = this.expiresAt - System.currentTimeMillis();
+        return new LocationMessage(this.getCorrelationId(), sender, this.cubesSeen + 1, timeToLive);
     }
 }

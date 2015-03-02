@@ -27,7 +27,6 @@ public class Universe
     // Statically initialized fields are guaranteed to be correctly visible to
     // all threads
     private static final Component[] cubes;
-    private static final TimerComponent timer;
 
     // The methods of the UI that are called from this class are
     // thread-safe, but we need to make sure the reference is visible
@@ -35,13 +34,10 @@ public class Universe
 
     static
     {
-        // TODO - construct the cubes according to your implementation,
-        // your setup may be different from what's shown below
         cubes = new Component[NUM_CUBES];
-        timer = new TimerComponent();
         for (int i = 0; i < NUM_CUBES; ++i)
         {
-            cubes[i] = new Cube(timer);
+            cubes[i] = new Cube();
         }
     }
 
@@ -82,7 +78,6 @@ public class Universe
         {
             cubes[i].start();
         }
-        timer.start();
     }
 
     /**

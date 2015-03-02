@@ -2,6 +2,7 @@ package message_passing;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +22,7 @@ public class Client extends Component {
      * Key: correlation id
      * Value: the id value requested from the DB
      */
-    private Map<Integer, Integer> correlationIDtoKey = new HashMap<>();
+    private ConcurrentHashMap<Integer, Integer> correlationIDtoKey = new ConcurrentHashMap<>();
     private Map<Integer, Record> cache = new HashMap<Integer, Record>();
     private LinkedBlockingQueue<IMessage> messages = new LinkedBlockingQueue<>();
 

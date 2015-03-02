@@ -2,6 +2,8 @@ package yahtzee_cubes;
 
 /**
  * Component representing a Yahtzee Flash cube.
+ *
+ * @author Andrew
  */
 public class Cube extends Component
 {
@@ -15,7 +17,7 @@ public class Cube extends Component
     private IMessage[] recentMessages = new IMessage[Universe.NUM_CUBES];
     private int position = 0;
 
-    public Cube(TimerComponent timer)
+    public Cube()
     {
         this.cubeID = cubeIDcount++;
         for (int i = 0; i < Universe.NUM_CUBES; i++)
@@ -36,7 +38,7 @@ public class Cube extends Component
     {
         int maxPos = 0;
         synchronized (recentMessages) {
-            // find the cube broadcasting the largest number of seen cubes
+            // look at the most recent message from each cube
             for (int i = 0; i < recentMessages.length; i++) {
                 LocationMessage locMsg = (LocationMessage) recentMessages[i];
                 if (locMsg != null && locMsg.isExpired())
@@ -52,7 +54,7 @@ public class Cube extends Component
             Universe.updateDisplay(this, position);
         }
 
-        // don't forward leftbound messages
+        // don't forward leftbound messages to the right
         if (msg.isRightbound())
             Universe.broadcastRight(msg.forward(this));
     }
@@ -64,8 +66,12 @@ public class Cube extends Component
         new Thread(new Runnable() {
             @Override
             public void run() {
+                // Iterate over and dispatch all of the most recent messages
+                // received from each cube every POLL_FREQ ms.
                 do {
                     boolean alone = true;
+                    // it is ok to NOT synchronize on recentMessages here because
+                    // we poll the array every POLL_FREQ milliseconds
                     for (int i = 0; i < recentMessages.length; i++) {
                         IMessage cur = recentMessages[i];
                         if (cur != null) {
@@ -75,7 +81,7 @@ public class Cube extends Component
                     }
                     if (alone) {
                         self.position = 0;
-                        Universe.updateDisplay(self, 0);
+                        Universe.updateDisplay(self, 0); // set to '?'
                     }
                     sendHeartbeat();
                     idleFor(POLL_FREQ);

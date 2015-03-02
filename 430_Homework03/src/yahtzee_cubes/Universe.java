@@ -1,5 +1,7 @@
 package yahtzee_cubes;
 
+import java.util.concurrent.CountDownLatch;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -20,8 +22,9 @@ import javax.swing.SwingUtilities;
 public class Universe
 {
     public static final int NUM_CUBES = 5;
+    public static final CountDownLatch startLatch = new CountDownLatch(NUM_CUBES);
 
-    // Statically initialized fields are guaranteed to be correctly visible to 
+    // Statically initialized fields are guaranteed to be correctly visible to
     // all threads
     private static final Component[] cubes;
     private static final TimerComponent timer;
@@ -32,7 +35,7 @@ public class Universe
 
     static
     {
-        // TODO - construct the cubes according to your implementation, 
+        // TODO - construct the cubes according to your implementation,
         // your setup may be different from what's shown below
         cubes = new Component[NUM_CUBES];
         timer = new TimerComponent();
@@ -42,7 +45,7 @@ public class Universe
         }
     }
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
         Runnable r = new Runnable()
         {
@@ -84,7 +87,7 @@ public class Universe
 
     /**
      * Attempts to send a message to a neighbor on the left, if any.
-     * 
+     *
      * @param msg
      *            message to send
      */
@@ -95,7 +98,7 @@ public class Universe
 
     /**
      * Attempts to send a message to a neighbor on the right, if any.
-     * 
+     *
      * @param msg
      *            message to send
      */
@@ -106,7 +109,7 @@ public class Universe
 
     /**
      * Helper method for broadcasting left or right.
-     * 
+     *
      * @param msg
      * @param left
      */
@@ -124,12 +127,13 @@ public class Universe
 
     /**
      * Updates the representation of the given component in the UI.
-     * 
+     *
      * @param c
      * @param state
      */
     public static void updateDisplay(Component c, int state)
     {
+        System.out.println(c.toString() + " changing to: " + state);
         // update UI with value
         int index = getIndex(c);
         if (index < 0)
@@ -139,7 +143,7 @@ public class Universe
 
     /**
      * Returns the component with the given index.
-     * 
+     *
      * @param index
      * @return
      */
@@ -151,7 +155,7 @@ public class Universe
     /**
      * Returns the index of the given component, or -1 if
      * it is not present.
-     * 
+     *
      * @param c
      * @return
      */

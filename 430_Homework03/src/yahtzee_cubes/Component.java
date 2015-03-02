@@ -54,4 +54,14 @@ public abstract class Component
         handle((IMessage) msg);
     }
 
+    public void handle(TimeoutMessage msg)
+    {
+        handle((IMessage) msg);
+    }
+
+    public void handle(LocationMessage msg)
+    {
+        handle((IMessage) msg);
+    }
+
 }

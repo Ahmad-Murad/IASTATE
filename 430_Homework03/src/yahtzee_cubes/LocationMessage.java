@@ -39,6 +39,10 @@ public class LocationMessage extends AbstractMessage
         return System.currentTimeMillis() > expiresAt;
     }
 
+    public boolean isRightbound() {
+        return cubesSeen > 0;
+    }
+
     @Override
     public String toString() {
         return "(id=" + this.id + "  corr=" + this.correlationId + "  count=" + cubesSeen + "  sender=" + this.getSender() + ")";

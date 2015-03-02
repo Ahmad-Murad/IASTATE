@@ -9,7 +9,9 @@ public class Cube extends Component
     private static final long TIMEOUT = 500;
     private static int cubeIDcount = 0;
     private final int cubeID;
-    private boolean done = false;
+    /**
+     * An array of IMessages which stores the most recent message received from each cube.
+     */
     private IMessage[] recentMessages = new IMessage[Universe.NUM_CUBES];
     private int position = 0;
 
@@ -22,6 +24,8 @@ public class Cube extends Component
 
     @Override
     public void send(IMessage message) {
+        // put the message into the corresponding array index of whoever sent the message
+        // this is determined by the correlationID of the message
         synchronized (recentMessages) {
             recentMessages[message.getCorrelationId()] = message;
         }
@@ -30,21 +34,26 @@ public class Cube extends Component
     @Override
     public void handle(LocationMessage msg)
     {
-        int max = 0;
+        int maxPos = 0;
         synchronized (recentMessages) {
+            // find the cube broadcasting the largest number of seen cubes
             for (int i = 0; i < recentMessages.length; i++) {
-                LocationMessage lm = (LocationMessage) recentMessages[i];
-                if (lm != null && lm.isExpired())
-                    recentMessages[i] = null;
-                else if (lm != null && max < lm.getCubesSeen() + 1)
-                    max = lm.getCubesSeen() + 1;
+                LocationMessage locMsg = (LocationMessage) recentMessages[i];
+                if (locMsg != null && locMsg.isExpired())
+                    recentMessages[i] = null; // remove expired messages
+                else if (locMsg != null && maxPos < locMsg.getCubesSeen() + 1)
+                    maxPos = locMsg.getCubesSeen() + 1;
             }
         }
-        if (max != position) {
-            position = max;
+
+        // if the cube's position has changed, update the display
+        if (maxPos != position) {
+            position = maxPos;
             Universe.updateDisplay(this, position);
         }
-        if (msg.getCubesSeen() != 0)
+
+        // don't forward leftbound messages
+        if (msg.isRightbound())
             Universe.broadcastRight(msg.forward(this));
     }
 
@@ -58,8 +67,9 @@ public class Cube extends Component
                 do {
                     boolean alone = true;
                     for (int i = 0; i < recentMessages.length; i++) {
-                        if (recentMessages[i] != null) {
-                            recentMessages[i].dispatch(self);
+                        IMessage cur = recentMessages[i];
+                        if (cur != null) {
+                            cur.dispatch(self);
                             alone = false;
                         }
                     }
@@ -69,7 +79,7 @@ public class Cube extends Component
                     }
                     sendHeartbeat();
                     idleFor(POLL_FREQ);
-                } while (!done);
+                } while (true);
             }
         }, this.toString()).start();
     }
@@ -79,6 +89,9 @@ public class Cube extends Component
         return "Cube-" + cubeID;
     }
 
+    /**
+     * Sends a LocationMesage to the right and to the left
+     */
     public void sendHeartbeat() {
         Universe.broadcastRight(new LocationMessage(this.cubeID, this, 1, TIMEOUT));
         Universe.broadcastLeft(new LocationMessage(this.cubeID, this, 0, TIMEOUT));

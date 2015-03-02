@@ -6,7 +6,7 @@ package yahtzee_cubes;
 public class LocationMessage extends AbstractMessage
 {
     private final int cubesSeen;
-    private long expiresAt;
+    private final long expiresAt;
     private final long timeToLive;
 
     public LocationMessage(int correlationId, Component sender, int seen, long timeToLive)
@@ -14,6 +14,7 @@ public class LocationMessage extends AbstractMessage
         super(correlationId, sender);
         this.cubesSeen = seen;
         this.timeToLive = timeToLive;
+        expiresAt = System.currentTimeMillis() + timeToLive;
     }
 
     public LocationMessage(Component sender, int seen, long timeToLive)
@@ -21,13 +22,13 @@ public class LocationMessage extends AbstractMessage
         super(sender);
         this.cubesSeen = seen;
         this.timeToLive = timeToLive;
+        expiresAt = System.currentTimeMillis() + timeToLive;
     }
 
     @Override
     public void dispatch(Component receiver)
     {
 //        System.out.println(toString() + " is dispatching to " + receiver);
-        expiresAt = System.currentTimeMillis() + timeToLive;
         receiver.handle(this);
     }
 
@@ -36,6 +37,8 @@ public class LocationMessage extends AbstractMessage
     }
 
     public boolean isExpired() {
+//        if (expiresAt == Long.MAX_VALUE)
+//            throw new RuntimeException("isExpired was called too early.");
         return System.currentTimeMillis() > expiresAt;
     }
 

@@ -1,8 +1,5 @@
 package yahtzee_cubes;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Component representing a Yahtzee Flash cube.
  */
@@ -14,8 +11,8 @@ public class Cube extends Component
     private final int cubeID;
     private TimerComponent timer;
     private boolean done = false;
-    private LinkedBlockingQueue<IMessage> messages = new LinkedBlockingQueue<>();
-    private LocationMessage[] recentMessages = new LocationMessage[Universe.NUM_CUBES];
+//    private LinkedBlockingQueue<IMessage> messages = new LinkedBlockingQueue<>();
+    private IMessage[] recentMessages = new IMessage[Universe.NUM_CUBES];
     private int position = 0;
 
     public Cube(TimerComponent timer)
@@ -28,23 +25,24 @@ public class Cube extends Component
 
     @Override
     public void send(IMessage message) {
-        messages.add(message);
+        synchronized (recentMessages) {
+            recentMessages[message.getCorrelationId()] = message;
+        }
+//        messages.add(message);
     }
 
     @Override
     public void handle(LocationMessage msg)
     {
-        if (msg.isExpired())
-            return;
-
         int max = 0;
+//        recentMessages[msg.getCorrelationId()] = msg;
         synchronized (recentMessages) {
-            recentMessages[msg.getCorrelationId()] = msg;
             for (int i = 0; i < recentMessages.length; i++) {
-                if (recentMessages[i] != null && recentMessages[i].isExpired())
+                LocationMessage lm = (LocationMessage) recentMessages[i];
+                if (lm != null && lm.isExpired())
                     recentMessages[i] = null;
-                if (recentMessages[i] != null && max < recentMessages[i].getCubesSeen() + 1)
-                    max = recentMessages[i].getCubesSeen() + 1;
+                else if (lm != null && max < lm.getCubesSeen() + 1)
+                    max = lm.getCubesSeen() + 1;
             }
         }
         if (max != position) {
@@ -53,7 +51,6 @@ public class Cube extends Component
         }
         if (msg.getCubesSeen() != 0)
             Universe.broadcastRight(msg.forward(this));
-        idleFor(POLL_FREQ);
     }
 
     @Override
@@ -64,20 +61,19 @@ public class Cube extends Component
             @Override
             public void run() {
                 do {
-                    LocationMessage msg = new LocationMessage(self.cubeID, self, 1, TIMEOUT);
-                    Universe.broadcastRight(msg);
-                    try {
-                        IMessage cur = self.messages.poll(POLL_FREQ, TimeUnit.MILLISECONDS);
-                        if (cur != null) {
-                            cur.dispatch(self);
-                        } else if (self.position != 0) {
-                            // nothing on the queue, must be alone
-                            self.position = 0;
-                            Universe.updateDisplay(self, self.position);
+                    boolean alone = true;
+                    for (int i = 0; i < recentMessages.length; i++) {
+                        if (recentMessages[i] != null) {
+                            recentMessages[i].dispatch(self);
+                            alone = false;
                         }
-                    } catch (InterruptedException e) {
+                    }
+                    if (alone) {
+                        self.position = 0;
+                        Universe.updateDisplay(self, 0);
                     }
                     sendHeartbeat();
+                    idleFor(POLL_FREQ);
                 } while (!done);
             }
         }, this.toString()).start();
@@ -89,12 +85,7 @@ public class Cube extends Component
     }
 
     public void sendHeartbeat() {
-//        messages.clear();
-        synchronized (recentMessages) {
-            for (int i = 0; i < recentMessages.length; i++)
-                if (recentMessages[i] != null && recentMessages[i].isExpired())
-                    recentMessages[i] = null;
-        }
+        Universe.broadcastRight(new LocationMessage(this.cubeID, this, 1, TIMEOUT));
         Universe.broadcastLeft(new LocationMessage(this.cubeID, this, 0, TIMEOUT));
     }
 

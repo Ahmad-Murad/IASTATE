@@ -6,28 +6,37 @@ package yahtzee_cubes;
 public class LocationMessage extends AbstractMessage
 {
     private final int cubesSeen;
+    private long expiresAt;
+    private final long timeToLive;
 
-    public LocationMessage(int correlationId, Component sender, int seen)
+    public LocationMessage(int correlationId, Component sender, int seen, long timeToLive)
     {
         super(correlationId, sender);
         this.cubesSeen = seen;
+        this.timeToLive = timeToLive;
     }
 
-    public LocationMessage(Component sender, int seen)
+    public LocationMessage(Component sender, int seen, long timeToLive)
     {
         super(sender);
         this.cubesSeen = seen;
+        this.timeToLive = timeToLive;
     }
 
     @Override
     public void dispatch(Component receiver)
     {
-        System.out.println(toString() + " is dispatching to " + receiver);
+//        System.out.println(toString() + " is dispatching to " + receiver);
+        expiresAt = System.currentTimeMillis() + timeToLive;
         receiver.handle(this);
     }
 
     public int getCubesSeen() {
         return cubesSeen;
+    }
+
+    public boolean isExpired() {
+        return System.currentTimeMillis() > expiresAt;
     }
 
     @Override
@@ -36,6 +45,6 @@ public class LocationMessage extends AbstractMessage
     }
 
     public LocationMessage forward(Component sender) {
-        return new LocationMessage(this.getCorrelationId(), sender, this.cubesSeen + 1);
+        return new LocationMessage(this.getCorrelationId(), sender, this.cubesSeen + 1, this.timeToLive);
     }
 }

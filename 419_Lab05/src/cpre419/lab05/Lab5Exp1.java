@@ -45,7 +45,6 @@ public class Lab5Exp1 extends Configured implements Tool {
 //        System.out.println(t.entities.hashtags);
 //        fr.close();
         Configuration config = new Configuration();
-        config.set("mapreduce.map.java.opts", "-Xmx1024m");
         int res = ToolRunner.run(config, new Lab5Exp1(), args);
         System.exit(res);
     }
@@ -100,8 +99,9 @@ public class Lab5Exp1 extends Configured implements Tool {
         private long pos;
         private long end;
         private LineReader in;
-        private LongWritable key = null;
-        private Text value = null;
+        private LongWritable key = new LongWritable();
+        private Text value = new Text();
+        private int maxLineLength;
 
         @Override
         public void close() throws IOException {
@@ -131,69 +131,127 @@ public class Lab5Exp1 extends Configured implements Tool {
 
         @Override
         public void initialize(InputSplit iSplit, TaskAttemptContext context) throws IOException, InterruptedException {
+            // This InputSplit is a FileInputSplit
             FileSplit split = (FileSplit) iSplit;
+
+            // Retrieve configuration, and Max allowed
+            // bytes for a single record
             Configuration job = context.getConfiguration();
+            this.maxLineLength = job.getInt("mapred.linerecordreader.maxlength", Integer.MAX_VALUE);
+
+            // Split "S" is responsible for all records
+            // starting from "start" and "end" positions
             start = split.getStart();
             end = start + split.getLength();
-            final Path file = split.getPath();
 
-            // open the file and seek to the start of the split
+            // Retrieve file containing Split "S"
+            final Path file = split.getPath();
             FileSystem fs = file.getFileSystem(job);
             FSDataInputStream fileIn = fs.open(split.getPath());
+
+            // If Split "S" starts at byte 0, first line will be processed
+            // If Split "S" does not start at byte 0, first line has been already
+            // processed by "S-1" and therefore needs to be silently ignored
+            boolean skipFirstLine = false;
+            if (start != 0) {
+                skipFirstLine = true;
+                // Set the file pointer at "start - 1" position.
+                // This is to make sure we won't miss any line
+                // It could happen if "start" is located on a EOL
+                --start;
+                fileIn.seek(start);
+            }
+
             in = new LineReader(fileIn, job);
-            end = Long.MAX_VALUE;
+
+            // If first line needs to be skipped, read first line
+            // and stores its content to a dummy Text
+            if (skipFirstLine) {
+                Text dummy = new Text();
+                // Reset "start" to "start + line offset"
+                start += in.readLine(dummy, 0, (int) Math.min(Integer.MAX_VALUE, end - start));
+            }
+
+            // Position is the actual start
             this.pos = start;
         }
 
         @Override
         public boolean nextKeyValue() throws IOException, InterruptedException {
-            if (key == null)
-                key = new LongWritable();
-            else
-                key.set(pos);
-            if (value == null)
-                value = new Text();
+            // Current offset is the key
+            key.set(pos);
 
-            // look for the first brace
-            int size = 0, braceStack = 0;
-            StringBuilder sb = new StringBuilder();
-            do {
-                size = in.readLine(value);
-                pos += size;
-                if (value.toString().endsWith("{")) {
-                    sb.append(value.toString());
-                    braceStack++;
+            int newSize = 0;
+
+            // Make sure we get at least one record that starts in this Split
+            while (pos < end) {
+                // Read first line and store its content to "value"
+                newSize = nextJson(value);
+
+                if (newSize == 0)
+                    break; // end of file
+
+                pos += newSize;
+
+                // Line is lower than Maximum record line size
+                // break and return true (found key / value)
+                if (newSize < maxLineLength)
                     break;
-                }
-            } while (size > 0);
+            }
 
-            // now look for the closing brace
-            do {
-                size = in.readLine(value);
-                pos += size;
-                String line = value.toString();
-
-                if (line.endsWith("{"))
-                    braceStack++;
-
-                if (line.startsWith("}")) {
-                    if (--braceStack == 0) {
-                        sb.append("}"); // don't include the comma
-                        break; // found the outer closing brace
-                    }
-                }
-                sb.append(line);
-            } while (size > 0);
-            value = new Text(sb.toString());
-
-            if (size == 0) {
-                // end of file reached
+            if (newSize == 0) {
+                // We've reached end of Split
                 key = null;
                 value = null;
                 return false;
             } else {
+                // Tell Hadoop a new line has been found
+                // key / value will be retrieved by
+                // getCurrentKey getCurrentValue methods
                 return true;
             }
+        }
+
+        private int nextJson(Text text) throws IOException {
+
+            int maxBytesToConsume = Math.max((int) Math.min(Integer.MAX_VALUE, end - pos), maxLineLength);
+            int offset = 0;
+            text.clear();
+            Text tmp = new Text();
+            boolean jsonStarted = false;
+            String line;
+
+            for (int i = 0; i < maxBytesToConsume; i++) {
+                int offsetTmp = in.readLine(tmp, maxLineLength, maxBytesToConsume);
+                offset += offsetTmp;
+                // Check to see if a new JSON object is started
+                if (!jsonStarted) {
+                    line = tmp.toString();
+                    if (line.startsWith(" {")) {
+                        // Start of new json object
+                        jsonStarted = true;
+                    }
+                }
+
+                if (offsetTmp == 0)
+                    break;
+
+                // Pass along JSON object
+                if (jsonStarted) {
+                    line = tmp.toString();
+                    if (line.startsWith(" }")) {
+                        // End of new json object
+                        jsonStarted = false;
+                        tmp = new Text(" }"); // Make sure no comma is passed along
+                        text.append(tmp.getBytes(), 0, tmp.getLength());
+                        break;
+                    } else {
+                        text.append(tmp.getBytes(), 0, tmp.getLength());
+                    }
+
+                }
+            }
+            return offset;
         }
     }
 
@@ -202,13 +260,16 @@ public class Lab5Exp1 extends Configured implements Tool {
         @Override
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
+            if (value.toString().trim().length() == 0)
+                return;
+
             MinimalTweet t = new Gson().fromJson(value.toString(), MinimalTweet.class);
-            Set<String> hashTags = new HashSet<>();
-            for (HashTag ht : t.entities.hashtags)
-                if (hashTags.add(ht.toString()))
-                    context.write(new Text(ht.toString()), new IntWritable(1));
-            t = null;
-            hashTags = null;
+            if (t.entities != null && t.entities.hashtags != null) {
+                Set<String> hashTags = new HashSet<>();
+                for (HashTag ht : t.entities.hashtags)
+                    if (hashTags.add(ht.toString()))
+                        context.write(new Text(ht.toString()), new IntWritable(1));
+            }
         }
     }
 
@@ -220,7 +281,7 @@ public class Lab5Exp1 extends Configured implements Tool {
             int sum = 0;
             for (IntWritable val : values)
                 sum += val.get();
-            context.write(key, new Text("was tweeted " + sum + " times."));
+            context.write(new Text("" + sum), key);
         }
     }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<project name="Lab06" default="main" basedir=".">
+
+<target name="main" >
+	<mkdir dir="${basedir}/out"/>
+	<jar destfile="${basedir}/out/${ant.project.name}.jar" basedir="${basedir}/bin" update="true"/>
+</target>
+  
+</project>

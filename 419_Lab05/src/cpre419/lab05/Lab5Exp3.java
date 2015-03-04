@@ -1,8 +1,7 @@
 package cpre419.lab05;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -94,7 +93,7 @@ public class Lab5Exp3 extends Configured implements Tool {
                         throws IOException, InterruptedException {
 
             int max_prolific = 0;
-            Set<String> tags = new HashSet<String>();
+            HashMap<String, Integer> hashtagToCount = new HashMap<>();
 
             for (Text val : values) {
                 String value = val.toString();
@@ -103,14 +102,25 @@ public class Lab5Exp3 extends Configured implements Tool {
                     max_prolific = prolific;
 
                 for (String tag : value.substring(value.indexOf('\t')).split(" "))
-                    tags.add(tag);
+                    if (tag.trim().length() == 0)
+                        continue; // sometimes we get empty hashtags... \o/
+                    else if (!hashtagToCount.containsKey(tag))
+                        hashtagToCount.put(tag, 1);
+                    else
+                        hashtagToCount.put(tag, hashtagToCount.get(tag) + 1);
             }
 
-            StringBuilder hts = new StringBuilder();
-            for (String tag : tags)
-                hts.append(tag).append(' ');
+            String maxHTstring = "";
+            int maxHTcount = 0;
+            for (String tag : hashtagToCount.keySet())
+                if (hashtagToCount.get(tag) > maxHTcount) {
+                    maxHTcount = hashtagToCount.get(tag);
+                    maxHTstring = tag;
+                }
 
-            context.write(key, new Text("" + max_prolific + "\t" + hts.toString())); // Oldlady12345:    id=569920202571444224
+            context.write(key, new Text("" + max_prolific + "\thashtag " + maxHTstring + " was tweeted " + maxHTcount + " times."));
+            // Not all tweets in usa.json have #usa?
+            // Oldlady12345:    id=569920202571444224
         }
     }
 }

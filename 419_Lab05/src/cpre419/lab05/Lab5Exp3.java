@@ -1,6 +1,8 @@
 package cpre419.lab05;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -30,6 +32,10 @@ public class Lab5Exp3 extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception
     {
+//        String tweet = "123456\tusa murica yolo";
+//        int number = Integer.parseInt(tweet.substring(0, tweet.indexOf('\t')));
+//        String hts = tweet.substring(tweet.indexOf('\t') + 1);
+//        System.out.println("prolific=" + number + "  hts=" + hts);
         Configuration config = new Configuration();
         int res = ToolRunner.run(config, new Lab5Exp3(), args);
         System.exit(res);
@@ -87,8 +93,24 @@ public class Lab5Exp3 extends Configured implements Tool {
         public void reduce(Text key, Iterable<Text> values, Context context)
                         throws IOException, InterruptedException {
 
-            for (Text val : values)
-                context.write(key, val);
+            int max_prolific = 0;
+            Set<String> tags = new HashSet<String>();
+
+            for (Text val : values) {
+                String value = val.toString();
+                int prolific = Integer.parseInt(value.substring(0, value.indexOf('\t')));
+                if (prolific > max_prolific)
+                    max_prolific = prolific;
+
+                for (String tag : value.substring(value.indexOf('\t')).split(" "))
+                    tags.add(tag);
+            }
+
+            StringBuilder hts = new StringBuilder();
+            for (String tag : tags)
+                hts.append(tag).append(' ');
+
+            context.write(key, new Text("" + max_prolific + "\t" + hts.toString())); // Oldlady12345:    id=569920202571444224
         }
     }
 }

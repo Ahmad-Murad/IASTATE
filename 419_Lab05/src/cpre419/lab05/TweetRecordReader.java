@@ -60,7 +60,6 @@ public class TweetRecordReader extends RecordReader<LongWritable, Text> {
         Configuration job = context.getConfiguration();
         this.maxLineLength = job.getInt("mapred.linerecordreader.maxlength", Integer.MAX_VALUE);
 
-        // Split "S" is responsible for all records starting from "start" and "end" positions
         splitStart = split.getStart();
         splitEnd = splitStart + split.getLength();
 

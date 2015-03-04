@@ -8,6 +8,7 @@ import java.util.List;
 public class MinimalTweet {
 
     public Entity entities;
+    public User user;
 
     class Entity {
         public List<HashTag> hashtags;
@@ -24,5 +25,13 @@ public class MinimalTweet {
         public String toString() {
             return text;
         }
+    }
+
+    class User {
+        public int followers_count;
+        public String screen_name;
+        public int statuses_count;
+
+        public User() {}
     }
 }

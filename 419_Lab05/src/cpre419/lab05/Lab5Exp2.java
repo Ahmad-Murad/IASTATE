@@ -1,8 +1,6 @@
 package cpre419.lab05;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -22,19 +20,17 @@ import org.apache.hadoop.util.ToolRunner;
 
 import com.google.gson.Gson;
 
-import cpre419.lab05.MinimalTweet.HashTag;
-
-public class Lab5Exp1 extends Configured implements Tool {
+public class Lab5Exp2 extends Configured implements Tool {
 
     static final String temp0 = "/scr/aguibert/temp0";
     static final String temp1 = "/scr/aguibert/temp1";
     static String input = "/class/s15419x/lab5/oscars.json";
-    static String output = "/scr/aguibert/lab5/exp1";
+    static String output = "/scr/aguibert/lab5/exp2";
 
     public static void main(String[] args) throws Exception
     {
         Configuration config = new Configuration();
-        int res = ToolRunner.run(config, new Lab5Exp1(), args);
+        int res = ToolRunner.run(config, new Lab5Exp2(), args);
         System.exit(res);
     }
 
@@ -47,7 +43,7 @@ public class Lab5Exp1 extends Configured implements Tool {
         try {
             // Job 1
             Job job_one = new Job(super.getConf(), "Driver Program Round 1");
-            job_one.setJarByClass(Lab5Exp1.class);
+            job_one.setJarByClass(Lab5Exp2.class);
             job_one.setNumReduceTasks(1);
             job_one.setOutputKeyClass(Text.class);
             job_one.setOutputValueClass(IntWritable.class);
@@ -74,27 +70,23 @@ public class Lab5Exp1 extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
             if (value.toString().trim().length() == 0)
-                return;
+                return; // sometimes get empty keys
 
             MinimalTweet t = new Gson().fromJson(value.toString(), MinimalTweet.class);
-            if (t.entities != null && t.entities.hashtags != null) {
-                Set<String> hashTags = new HashSet<>();
-                for (HashTag ht : t.entities.hashtags)
-                    if (hashTags.add(ht.toString()))
-                        context.write(new Text(ht.toString()), new IntWritable(1));
-            }
+            context.write(new Text(t.user.screen_name), new IntWritable(t.user.followers_count));
         }
     }
 
-    public static class Reduce_One extends Reducer<Text, IntWritable, Text, Text> {
+    public static class Reduce_One extends Reducer<Text, IntWritable, Text, IntWritable> {
 
         @Override
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {
-            int sum = 0;
+            int maxFollowers = 0;
             for (IntWritable val : values)
-                sum += val.get();
-            context.write(new Text("" + sum), key);
+                if (val.get() > maxFollowers)
+                    maxFollowers = val.get();
+            context.write(key, new IntWritable(maxFollowers));
         }
     }
 }

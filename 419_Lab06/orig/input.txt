@@ -1,4 +1,4 @@
-USPS    GEOID   POP10   HU10    ALAND   AWATER  ALAND_SQMI      AWATER_SQMI     INTPTLAT        INTPTLONG                                                                                                                 
+USPS    GEOID           POP10   HU10    ALAND   AWATER  ALAND_SQMI      AWATER_SQMI     INTPTLAT        INTPTLONG                                                                                                                 
 AL      01001020100     1912    752     9809944 36312          3.788           0.014     32.4771112      -86.4903033                                                                                                      
 AL      01001020200     2170    822     3340505 5846           1.290           0.002     32.4757580      -86.4724678                                                                                                      
 AL      01001020300     3373    1326    5349274 9054           2.065           0.003     32.4740243      -86.4597033                                                                                                      

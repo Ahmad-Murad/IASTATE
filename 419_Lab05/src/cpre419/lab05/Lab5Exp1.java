@@ -78,6 +78,7 @@ public class Lab5Exp1 extends Configured implements Tool {
 
             MinimalTweet t = new Gson().fromJson(value.toString(), MinimalTweet.class);
             if (t.entities != null && t.entities.hashtags != null) {
+                // use a set so that hashtags may not be duplicates
                 Set<String> hashTags = new HashSet<>();
                 for (HashTag ht : t.entities.hashtags)
                     if (hashTags.add(ht.toString()))
@@ -91,9 +92,12 @@ public class Lab5Exp1 extends Configured implements Tool {
         @Override
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {
+            // key is the hashtag, value is just a 1
             int sum = 0;
             for (IntWritable val : values)
                 sum += val.get();
+
+            // print out key=hashtag and value=num occurrances of the hashtag
             context.write(new Text("" + sum), key);
         }
     }

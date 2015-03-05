@@ -3,6 +3,9 @@ package cpre419.lab05;
 import java.util.List;
 
 /**
+ * Represents a tweet JSON. Note that only the fields
+ * being looked at need to be filled in (not all 300 fields).
+ * 
  * @author Andrew
  */
 public class MinimalTweet {

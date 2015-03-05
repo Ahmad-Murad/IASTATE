@@ -31,10 +31,6 @@ public class Lab5Exp3 extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception
     {
-//        String tweet = "123456\tusa murica yolo";
-//        int number = Integer.parseInt(tweet.substring(0, tweet.indexOf('\t')));
-//        String hts = tweet.substring(tweet.indexOf('\t') + 1);
-//        System.out.println("prolific=" + number + "  hts=" + hts);
         Configuration config = new Configuration();
         int res = ToolRunner.run(config, new Lab5Exp3(), args);
         System.exit(res);
@@ -44,6 +40,7 @@ public class Lab5Exp3 extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
 
+        // must use super.getCon() in order to see the libs
         FileSystem.get(super.getConf()).delete(new Path(output), true);
 
         try {
@@ -76,12 +73,15 @@ public class Lab5Exp3 extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                         throws IOException, InterruptedException {
             if (value.toString().trim().length() == 0)
-                return; // sometimes get empty keys
+                return; // sometimes get empty strings as keys
 
             MinimalTweet t = new Gson().fromJson(value.toString(), MinimalTweet.class);
             StringBuilder hts = new StringBuilder();
+            // append each hash tag to a buffer, separated by a single space
             for (HashTag ht : t.entities.hashtags)
                 hts.append(' ').append(ht.text);
+
+            // write to context in format:  <screen_name>       <status_count>\t<hashtags>
             context.write(new Text(t.user.screen_name), new Text("" + t.user.statuses_count + "\t" + hts.toString()));
         }
     }
@@ -97,19 +97,22 @@ public class Lab5Exp3 extends Configured implements Tool {
 
             for (Text val : values) {
                 String value = val.toString();
+                // store the maximum prolific value of all occurrences of this user
                 int prolific = Integer.parseInt(value.substring(0, value.indexOf('\t')));
                 if (prolific > max_prolific)
                     max_prolific = prolific;
 
-                for (String tag : value.substring(value.indexOf('\t')).split(" "))
-                    if (tag.trim().length() == 0)
+                // for each hashtag in the hashtag, count how many times it has occurred
+                for (String hashtag : value.substring(value.indexOf('\t')).split(" "))
+                    if (hashtag.trim().length() == 0)
                         continue; // sometimes we get empty hashtags... \o/
-                    else if (!hashtagToCount.containsKey(tag))
-                        hashtagToCount.put(tag, 1);
+                    else if (!hashtagToCount.containsKey(hashtag))
+                        hashtagToCount.put(hashtag, 1);
                     else
-                        hashtagToCount.put(tag, hashtagToCount.get(tag) + 1);
+                        hashtagToCount.put(hashtag, hashtagToCount.get(hashtag) + 1);
             }
 
+            // figure out which hash tag is the most common, and what the count of is
             String maxHTstring = "";
             int maxHTcount = 0;
             for (String tag : hashtagToCount.keySet())
@@ -119,8 +122,6 @@ public class Lab5Exp3 extends Configured implements Tool {
                 }
 
             context.write(key, new Text("" + max_prolific + "\thashtag " + maxHTstring + " was tweeted " + maxHTcount + " times."));
-            // Not all tweets in usa.json have #usa?
-            // Oldlady12345:    id=569920202571444224
         }
     }
 }

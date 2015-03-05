@@ -73,6 +73,7 @@ public class Lab5Exp2 extends Configured implements Tool {
                 return; // sometimes get empty keys
 
             MinimalTweet t = new Gson().fromJson(value.toString(), MinimalTweet.class);
+            // key = screen_name and value = followers_count
             context.write(new Text(t.user.screen_name), new IntWritable(t.user.followers_count));
         }
     }
@@ -83,6 +84,8 @@ public class Lab5Exp2 extends Configured implements Tool {
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                         throws IOException, InterruptedException {
             int maxFollowers = 0;
+            // since a user may have gained/lost followers between tweets,
+            // check which profile snapshot had the most followers
             for (IntWritable val : values)
                 if (val.get() > maxFollowers)
                     maxFollowers = val.get();

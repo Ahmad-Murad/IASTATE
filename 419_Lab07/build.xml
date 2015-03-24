@@ -3,7 +3,7 @@
 
 <target name="main" >
 	<mkdir dir="${basedir}/out"/>
-	<jar destfile="${basedir}/out/${ant.project.name}.jar" basedir="${basedir}/bin" update="true"/>
+	<jar destfile="${basedir}/out/lab07.jar" basedir="${basedir}/bin" update="true"/>
 </target>
   
 </project>

@@ -12,39 +12,34 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Mystery
 {
-  // every instance must have a distinct id 
-  private static AtomicLong next = new AtomicLong(0);  
-  
-  private int x;
-  private int prev;
-  private final long id;
-  
-  public Mystery(int initial)
-  {
-    id = generateNextId();
-    prev = -1;
-    x = initial;
-  }
-  
-  public synchronized void update(int k)
-  {
-	  prev = x;
-	  x = 31 * x + k;
-  }
-  
-  public synchronized long get()
-  { 
-    // prev in the left 32 bits, x in the right
-    return (((long) prev) << 32) | x;
-  }
-  
-  public long getId()
-  {
-    return id;
-  }
-  
-  private long generateNextId()
-  {
-    return next.getAndIncrement();
-  }
+    // every instance must have a distinct id 
+    private static AtomicLong next = new AtomicLong(0);
+
+    private int x;
+    private int prev;
+    private final long id;
+
+    public Mystery(int initial)
+    {
+        id = next.incrementAndGet();
+        prev = -1;
+        x = initial;
+    }
+
+    public synchronized void update(int k)
+    {
+        prev = x;
+        x = 31 * x + k;
+    }
+
+    public synchronized long get()
+    {
+        // prev in the left 32 bits, x in the right
+        return (((long) prev) << 32) | x;
+    }
+
+    public long getId()
+    {
+        return id;
+    }
 }

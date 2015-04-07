@@ -1,4 +1,5 @@
 package hw1;
+
 import java.awt.Point;
 import java.util.Arrays;
 
@@ -12,25 +13,27 @@ import java.util.Arrays;
  */
 public class Trajectory
 {
-  private final Point[] data;
-  public Trajectory(Point[] data)
-  {
-	  this.data = Arrays.copyOf(data, data.length);
-  }
-  public synchronized Point[] getValues()
-  {
-	  return Arrays.copyOf(data, data.length);
-  }
-  
-  public synchronized Point getValue(int index)
-  {
-    return new Point(data[index]);
-  }
-  
-  public synchronized void update(int i, Point p)
-  {
-	  data[i] = p;
-  }
+    private final Point[] data;
+
+    public Trajectory(Point[] data)
+    {
+        this.data = new Point[data.length];
+        for (int i = 0; i < this.data.length; i++)
+            this.data[i] = new Point(data[i]);
+    }
+
+    public synchronized Point[] getValues()
+    {
+        return Arrays.copyOf(data, data.length);
+    }
+
+    public synchronized Point getValue(int index)
+    {
+        return new Point(data[index]);
+    }
+
+    public synchronized void update(int i, Point p)
+    {
+        data[i] = new Point(p);
+    }
 }
-
-

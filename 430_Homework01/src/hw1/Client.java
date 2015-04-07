@@ -220,8 +220,9 @@ public class Client {
                 // read response, which we expect to be line-oriented text
                 Scanner scanner = new Scanner(s.getInputStream());
                 String result = scanner.nextLine();
-                if (getLocalValue(key) == null) {
-                    cache.put(key, new Record(key, result));
+                synchronized (cache) {
+                    if (getLocalValue(key) == null)
+                        cache.put(key, new Record(key, result));
                 }
                 scanner.close();
             } catch (IOException e) {

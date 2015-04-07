@@ -13,20 +13,21 @@ import java.util.List;
  */
 public class ImmutableTrajectory
 {
-  private final List<Point> data;
-  public ImmutableTrajectory(Point[] data)
-  {
-	  this.data = Collections.unmodifiableList(Arrays.asList(data));
-  }
-  
-  public Point[] getValues()
-  {
-    return data.toArray(new Point[data.size()]);
-  }
-  
-  public Point getValue(int index)
-  {
-	  return new Point(data.get(index));
-  }
-  
+    private final List<Point> data;
+
+    public ImmutableTrajectory(Point[] data)
+    {
+        this.data = Collections.unmodifiableList(Arrays.asList(data));
+    }
+
+    public Point[] getValues()
+    {
+        return data.toArray(new Point[data.size()]);
+    }
+
+    public Point getValue(int index)
+    {
+        return new Point(data.get(index));
+    }
+
 }

@@ -1,3 +1,5 @@
+package cs417.hw3;
+
 import java.util.Scanner;
 
 public class Account
@@ -6,7 +8,6 @@ public class Account
     private String name;
     private long acctNum;
     public static int numAccounts = 0;
-    public static double newBalance;
 
     //----------------------------------------------
     //Constructor -- initializes balance, owner, and account number
@@ -102,6 +103,7 @@ public class Account
 
     public static Account Accountconsolidate(Account acct1, Account acct2) throws Exception
     {
+        double newBalance;
         if (acct1.acctNum == acct2.acctNum)
         {
             System.out.println("Same account numbers cannot be consolidated.");

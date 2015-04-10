@@ -3,6 +3,10 @@ package cs417.hw3.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,8 +15,7 @@ import cs417.hw3.Account;
 /**
  * @author Andrew
  */
-public class AccountTest
-{
+public class AccountTestAfter {
     @Test(expected = Exception.class)
     public void testZeroBalance() throws Exception {
         new Account(0.0, "Andy", 123);
@@ -63,6 +66,13 @@ public class AccountTest
     public void testDepositZero() throws Exception {
         Account a = new Account(100, "Andy", 123);
         a.deposit(0.0);
+    }
+
+    @Test
+    public void testDeposit() throws Exception {
+        Account a = new Account(100, "Andy", 123);
+        a.deposit(100.0);
+        assertEquals(200.0, a.getBalance(), 0.00001);
     }
 
     @Test
@@ -136,14 +146,34 @@ public class AccountTest
     public void testMergeAccountsByNumber() throws Exception {
         Account a1 = new Account(100, "Andy1", 123);
         Account a2 = new Account(100, "Andy2", 123);
+
+        // Set a readable output stream
+        PrintStream realOutStream = System.out;
+        OutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
         assertNull(Account.Accountconsolidate(a1, a2));
+
+        // restore default output
+        System.setOut(realOutStream);
+        assertEquals("Same account numbers cannot be consolidated.".trim(), out.toString().trim());
     }
 
     @Test
     public void testMergeAccountsByName() throws Exception {
         Account a1 = new Account(100, "Andy1", 123);
         Account a2 = new Account(100, "Andy2", 124);
+
+        // Set a readable output stream
+        PrintStream realOutStream = System.out;
+        OutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
         assertNull(Account.Accountconsolidate(a1, a2));
+
+        // restore default output
+        System.setOut(realOutStream);
+        assertEquals("Different account names cannot be consolidated.".trim(), out.toString().trim());
     }
 
     @Test

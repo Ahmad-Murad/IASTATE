@@ -8,5 +8,5 @@ output/
 */out/
 RemoteSystemsTempFiles/
 clientdb.xml
-
+*.beam
 319_01_Swing/forms-1.3.0.jar

@@ -1,9 +1,7 @@
 package ex1_review;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import org.junit.Test;
+import java.util.Arrays;
+import java.util.Random;
 
 /**
  * @author Andrew
@@ -11,19 +9,23 @@ import org.junit.Test;
  */
 public class Main {
 
-    @Test
-    public void test() throws Exception {
-        MyLock l = new MyLock();
-        assertNull(l.getOwner());
-        l.lockInterruptibly();
-        assertEquals(Thread.currentThread(), l.getOwner());
-        assertEquals(1, l.getHoldCount());
+    public static void main(String args[]) {
+        sortAndTime(100);
+        sortAndTime(1000);
+        sortAndTime(10000);
+        sortAndTime(100000);
+    }
 
-        l.lockInterruptibly();
-        l.lockInterruptibly();
-        assertEquals(3, l.getHoldCount());
+    private static long sortAndTime(int SIZE) {
+        Random r = new Random();
+        int[] arr = new int[SIZE];
+        for (int i = 0; i < SIZE; i++)
+            arr[i] = r.nextInt(SIZE);
 
-        l.unlock();
-        assertEquals(0, l.getHoldCount());
+        long start = System.nanoTime();
+        Arrays.sort(arr);
+        long total = (System.nanoTime() - start) / 1000;
+        System.out.println("Sorting time for " + SIZE + " elements was: " + total + " microseconds");
+        return total;
     }
 }

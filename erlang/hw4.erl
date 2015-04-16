@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 -module(hw4).
--export([tailFib/1, listCompare/1, erlQuickSort/1, doRun/4, pi/3]).
+-export([tailFib/1, listCompare/1, erlQuickSort/1, doRun/5, pi/3, calcPi/2]).
 
 %% question 1
 %% N : the Nth fibbonaci number to compute
@@ -70,29 +70,31 @@ sort([]) -> [].
 	
 	
 %% question 4
-%% cd("R:/User Folders/Documents/GitHub/IASTATE/erlang").
-doRun(NumSamples, 0, 0, Total) ->
-	io:fwrite("PI : ~w\n", [4.0 * Total / NumSamples]);
-doRun(NumSamples, 0, RemaingingThreads, Total) ->
+calcPi(NumSamples, TotalThreads) ->
+	doRun(NumSamples, TotalThreads, TotalThreads, 0, 0).
+	
+doRun(NumSamples, TotalThreads, 0, 0, Total) ->
+	io:format("PI : ~w\n", [4.0 * Total / NumSamples]);
+doRun(NumSamples, TotalThreads, 0, RunningThreads, Total) ->
 	receive
 		N ->
-			%%io:fwrite("GOT MESSAGE ~w\n", [N])
-			doRun(NumSamples, 0, RemaingingThreads - 1, Total + N)
+			doRun(NumSamples, TotalThreads, 0, RunningThreads - 1, Total + N)
 	end;
-doRun(NumSamples, NumThreads, _, _) ->
-	spawn(hw4, pi, [NumSamples, 0, self()]),
-	doRun(NumSamples, NumThreads - 1, NumThreads, 0).
+doRun(NumSamples, TotalThreads, ToStart, RunningThreads, Total) ->
+	spawn(?MODULE, pi, [(NumSamples div TotalThreads), 0, self()]),
+	doRun(NumSamples, TotalThreads, ToStart-1, RunningThreads+1, 0).
 
-pi(0, Count, RUN_PID) ->
-	io:fwrite("Count is : ~w\n", [Count]),
-	RUN_PID ! Count;
-pi(NumSamples, Count, RUN_PID) ->
+pi(0, Count, ParentPid) ->
+	ParentPid ! Count;
+pi(NumSamples, Count, ParentPid) ->
+	{A1,A2,A3} = now(),
+    random:seed(A1, A2, A3),
 	X = random:uniform(),
 	Y = random:uniform(),
 	if
-		(X * X) + (Y * Y) < 1 ->
-			pi(NumSamples - 1, Count + 1, RUN_PID);
+		(X * X + Y * Y) < 1 ->
+			pi(NumSamples - 1, Count + 1, ParentPid);
 		true ->
-			pi(NumSamples - 1, Count, RUN_PID)
+			pi(NumSamples - 1, Count, ParentPid)
 	end.
 	

@@ -184,8 +184,10 @@ cube(Value, HasLeftNeighbor, HasRightNeighbor) ->
 			if
 				PingMsg == undefined ->
 					ok;
+				%% left msg timed out... no left neighbor
 				element(3,PingMsg) == left ->
 					if
+						%% leftmost cube in the group (value=1)
 						HasRightNeighbor == 1 ->
 							{mailbox, universe@localhost} ! {update, {self(), 1}},
 							cube(1, 0, HasRightNeighbor);
@@ -193,12 +195,13 @@ cube(Value, HasLeftNeighbor, HasRightNeighbor) ->
 							{mailbox, universe@localhost} ! {update, {self(), Value}},
 							cube(Value, 0, HasRightNeighbor)
 					end;
-				HasLeftNeighbor == 1  ->
+				%% right msg timed out... rightmost cube in group
+				HasLeftNeighbor == 0  ->
 					%% no neighbors
 					{mailbox, universe@localhost} ! {update, {self(), 0}},
 					cube(0, 0, 0);
 				true ->
-					ok
+					{mailbox, universe@localhost} ! {update, {self(), Value}}
 			end;
 		true ->
 			io:format("unknown message\n")

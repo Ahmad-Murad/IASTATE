@@ -142,40 +142,57 @@ startCube() ->
 cube(Value, HasLeftNeighbor, HasRightNeighbor) ->
 	receive
 		%% Handle a ping message
-		{Sender, pingmessage, Direction, Msgval} ->
-			timer:send_after(100, Sender, {pingreply, Direction, Msgval});
+		{Sender, pingmessage, Direction, CorrelationID} ->
+			timer:send_after(50, Sender, {pingreply, Direction, CorrelationID, Value});
 		%% Handle ping reply message
-		{pingreply, left, Msgval} ->
-			{mailbox, universe@localhost} ! {update, {self(), Msgval+1}},
-			cube(Msgval+1, 1, HasRightNeighbor);
-		{pingreply, right, Msgval} ->
-			{mailbox, universe@localhost} ! {update, {self(), Value}},
-			cube(Value, HasLeftNeighbor, 1);
+		{pingreply, left, CorrelationID, Msgval} ->
+			CurMsg = erase(CorrelationID),
+			if
+				CurMsg == undefined ->
+					ok;
+				true ->
+					{mailbox, universe@localhost} ! {update, {self(), Msgval+1}},
+					cube(Msgval+1, 1, HasRightNeighbor)
+			end;
+		{pingreply, right, CorrelationID, Msgval} ->
+			CurMsg = erase(CorrelationID),
+			if
+				CurMsg == undefined ->
+					ok;
+				true ->
+					{mailbox, universe@localhost} ! {update, {self(), Value}},
+					cube(Value, HasLeftNeighbor, 1)
+			end;
 		%% Handle self timeout message
 		{timeout, -1} ->
 			%% reminder that it's time to send a ping left and right
-			PingMsgL = {self(),pingmessage,left,Value},
-			timer:send_after(250, self(), {timeout, left}),
+			PingMsgL = {self(),pingmessage,left,now()},
+			put(element(4,PingMsgL),PingMsgL),
+			timer:send_after(250, self(), {timeout, element(4,PingMsgL)}),
 			{mailbox, universe@localhost} ! {left, PingMsgL},
 			
-			PingMsgR = {self(),pingmessage,right,Value},
-			timer:send_after(250, self(), {timeout, right}),
+			PingMsgR = {self(),pingmessage,right,now()},
+			put(element(4,PingMsgR),PingMsgR),
+			timer:send_after(250, self(), {timeout, element(4,PingMsgR)}),
 			{mailbox, universe@localhost} ! {right, PingMsgR},	
 
 			%% and remind me to do it again after 50 ms
-			timer:send_after(500, self(), {timeout, -1});
+			timer:send_after(50, self(), {timeout, -1});
 		%% Handle timeout messages with correlation IDs
-		{timeout, left} ->
+		{timeout, CorrelationID} ->
+			PingMsg = erase(CorrelationID),
 			if
-				HasRightNeighbor == 1 ->
-					{mailbox, universe@localhost} ! {update, {self(), 1}},
-					cube(1, 0, HasRightNeighbor);
-				true ->
-					{mailbox, universe@localhost} ! {update, {self(), Value}},
-					cube(Value, 0, HasRightNeighbor)
-			end;
-		{timeout, right} ->
-			if
+				PingMsg == undefined ->
+					ok;
+				element(3,PingMsg) == left ->
+					if
+						HasRightNeighbor == 1 ->
+							{mailbox, universe@localhost} ! {update, {self(), 1}},
+							cube(1, 0, HasRightNeighbor);
+						true ->
+							{mailbox, universe@localhost} ! {update, {self(), Value}},
+							cube(Value, 0, HasRightNeighbor)
+					end;
 				HasLeftNeighbor == 1  ->
 					%% no neighbors
 					{mailbox, universe@localhost} ! {update, {self(), 0}},

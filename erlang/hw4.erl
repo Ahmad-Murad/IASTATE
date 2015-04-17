@@ -126,7 +126,8 @@ noDups(Element, Acc) ->
 	
 	
 %% Question 6
-%% cd("R:/User Folders/Documents/GitHub/IASTATE/erlang/").
+%% To run question 6, have the Universe server running first.
+%% Then run: hw4:startCubes(5).
 startCubes(0) ->
 	io:format("All cubes started.\n");
 startCubes(NumCubes) ->

@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 -module(hw4).
--export([tailFib/1, listCompare/1, erlQuickSort/1, doRun/5, pi/3, calcPi/2, noDups/2]).
+-export([startCubes/1, startCube/0, cube/3, tailFib/1, listCompare/1, erlQuickSort/1, doRun/5, pi/3, calcPi/2, noDups/2]).
 
 %% Question 1
 %% N : the Nth fibbonaci number to compute
@@ -123,6 +123,68 @@ noDups(Element, Acc) ->
 		true ->
 			Acc
 	end.
+	
+	
+%% Question 6
+%% cd("R:/User Folders/Documents/GitHub/IASTATE/erlang/").
+startCubes(0) ->
+	io:format("All cubes started.\n");
+startCubes(NumCubes) ->
+	spawn(?MODULE, startCube, []),
+	startCubes(NumCubes-1).
 
+startCube() ->
+	{mailbox, universe@localhost} ! {register, {self()}},
+	timer:send_after(250, self(), {timeout, -1}),
+	io:format("Cube started.\n"),
+	cube(0,0,0).
+	
+cube(Value, HasLeftNeighbor, HasRightNeighbor) ->
+	receive
+		%% Handle a ping message
+		{Sender, pingmessage, Direction, Msgval} ->
+			timer:send_after(100, Sender, {pingreply, Direction, Msgval});
+		%% Handle ping reply message
+		{pingreply, left, Msgval} ->
+			{mailbox, universe@localhost} ! {update, {self(), Msgval+1}},
+			cube(Msgval+1, 1, HasRightNeighbor);
+		{pingreply, right, Msgval} ->
+			{mailbox, universe@localhost} ! {update, {self(), Value}},
+			cube(Value, HasLeftNeighbor, 1);
+		%% Handle self timeout message
+		{timeout, -1} ->
+			%% reminder that it's time to send a ping left and right
+			PingMsgL = {self(),pingmessage,left,Value},
+			timer:send_after(250, self(), {timeout, left}),
+			{mailbox, universe@localhost} ! {left, PingMsgL},
+			
+			PingMsgR = {self(),pingmessage,right,Value},
+			timer:send_after(250, self(), {timeout, right}),
+			{mailbox, universe@localhost} ! {right, PingMsgR},	
 
+			%% and remind me to do it again after 50 ms
+			timer:send_after(500, self(), {timeout, -1});
+		%% Handle timeout messages with correlation IDs
+		{timeout, left} ->
+			if
+				HasRightNeighbor == 1 ->
+					{mailbox, universe@localhost} ! {update, {self(), 1}},
+					cube(1, 0, HasRightNeighbor);
+				true ->
+					{mailbox, universe@localhost} ! {update, {self(), Value}},
+					cube(Value, 0, HasRightNeighbor)
+			end;
+		{timeout, right} ->
+			if
+				HasLeftNeighbor == 1  ->
+					%% no neighbors
+					{mailbox, universe@localhost} ! {update, {self(), 0}},
+					cube(0, 0, 0);
+				true ->
+					ok
+			end;
+		true ->
+			io:format("unknown message\n")
+	end,
+	cube(Value, HasLeftNeighbor, HasRightNeighbor).
 	

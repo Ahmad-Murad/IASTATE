@@ -4,9 +4,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 -module(hw4).
--export([startCubes/1, startCube/0, cube/3, tailFib/1, listCompare/1, erlQuickSort/1, doRun/5, pi/3, calcPi/2, noDups/2]).
+-export([startCubes/1, startCube/0, cube/3, runQ5/1, tailFib/1, listCompare/1, erlQuickSort/1, doRun/5, pi/3, calcPi/2, noDups/2]).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Question 1
+%% To run: hw4:tailFib(N).
 %% N : the Nth fibbonaci number to compute
 tailFib(0) ->
 	0;
@@ -16,7 +18,9 @@ tailFib(N) ->
 	tailFib(N-1) + tailFib(N-2).
 
 	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Question 2
+%% To run: hw4:listCompare(ArrSize).
 %% Adding elements to the head of the list is much more efficient than adding them to the tail.
 %% Comparison results:
 %% Array Size | Add to Head | Add to Tail
@@ -49,8 +53,10 @@ addToTail(List, 0) ->
 addToTail(List, N) ->
 	addToTail(List ++ [random:uniform(100)], N-1).
 	
-	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 %% Question 3
+%% To run: hw4:erlQuickSort(ArrSize).
 %% Quick sort results:
 %% Array Size | Erlang | Java
 %%  100       | 1      | 206 
@@ -75,10 +81,10 @@ sort([Pivot|T]) ->
     sort([ X || X <- T, X >= Pivot]);
 sort([]) -> [].
 	
-	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 %% Question 4
-%% This is the driver method that the user will type in.
-%% The number of samples and number of worker threads must be specified.
+%% To run:  hw4:calcPi(NumSamples, TotalThreads)
 calcPi(NumSamples, TotalThreads) ->
 	doRun(NumSamples, TotalThreads, TotalThreads, 0, 0).
 	
@@ -113,7 +119,8 @@ pi(NumSamples, Count, ParentPid) ->
 	end.
 	
 	
-%% Question 5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Question 5	
 noDups(Element, Acc) ->
 	if
 		Acc == [] ->
@@ -124,10 +131,11 @@ noDups(Element, Acc) ->
 			Acc
 	end.
 	
-	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 %% Question 6
-%% To run question 6, have the Universe server running first.
-%% Then run: hw4:startCubes(5).
+%% To run: 1 - have the Universe server running first
+%%         2 - hw4:startCubes(5).
 startCubes(0) ->
 	io:format("All cubes started.\n");
 startCubes(NumCubes) ->

@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 -module(hw4).
--export([startCubes/1, startCube/0, cube/3, runQ5/1, tailFib/1, listCompare/1, erlQuickSort/1, doRun/5, pi/3, calcPi/2, noDups/2]).
+-export([startCubes/1, startCube/0, cube/3, tailFib/1, listCompare/1, erlQuickSort/1, doRun/5, pi/3, calcPi/2, noDups/2]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Question 1
